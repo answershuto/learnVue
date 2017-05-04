@@ -50,7 +50,7 @@ let app = new Vue({
 
 ## 代理
 
-我们可以在Vue的构造函数constructor中为data执行一个代理。
+我们可以在Vue的构造函数constructor中为data执行一个代理[proxy](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L33)。这样我们就把data上面的属性代理到了vm实例上。
 
 ```javascript
 _proxy(options.data);/*构造函数中*/
@@ -73,3 +73,4 @@ function _proxy (data) {
 }
 ```
 
+我们就可以用app.text代替app._data.text了。
