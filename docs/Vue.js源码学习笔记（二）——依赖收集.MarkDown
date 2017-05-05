@@ -59,8 +59,11 @@ class Watcher () {
         this.cb = cb;
         this.vm = vm;
 
-        /*在这里将观察者本身赋值给全局的target，只有呗target标记过的才会进行依赖收集*/
+        /*在这里将观察者本身赋值给全局的target，只有被target标记过的才会进行依赖收集*/
         Dep.target = this;
+
+        /*触发渲染操作进行依赖收集*/
+        this.cb.call(this.vm);
     }
 
     update () {
@@ -72,7 +75,16 @@ class Watcher () {
 ## 开始依赖收集
 
 ```javascript
+class Vue {
+    constructor(options) {
+        this._data = options.data;
+        observer(this._data, options.render);
+        let watcher = new Watcher(this, );
+    }
+}
+
 function defineReactive (obj, key, val, cb) {
+    ／**／
     const dep = new Dep();
 
     Object.defineProperty(obj, key, {
@@ -80,13 +92,18 @@ function defineReactive (obj, key, val, cb) {
         configurable: true,
         get: ()=>{
             if (Dep.target) {
-                dep.addSub(Dep.target);/*Watcher对象存在全局的Dep.target中*/
+                /*Watcher对象存在全局的Dep.target中*/
+                dep.addSub(Dep.target);
             }
         },
         set:newVal=> {
             /*只有之前addSub中的函数才会触发*/
-            dep.update();
+            dep.notify();
         }
     })
 }
+
+Dep.target = null;
 ```
+
+将观察者Watcher实例赋值给全局的Dep.target，然后触发render操作只有被Dep.target标记过的才会进行依赖收集。有Dep.target的对象会讲Watcher的实例push到subs中，在对象被修改出发setter操作的时候dep会调用subs中的Watcher实例的update方法进行渲染。
