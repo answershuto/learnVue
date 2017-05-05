@@ -21,7 +21,7 @@ new Vue({
 
 ## 先说说Dep
 
-当对data上的对象进行修改值的时候会触发它的setter，那么取值的时候自然就会触发getter事件，所以我们只要在最开始进行一次render，那么所有被渲染所依赖的data中的数据就会被getter收集到Dep的subs中去。在对data中的数据进行修改的时候setter只会触发Dep的subs的函数。
+当对data上的对象进行修改值的时候会触发它的setter，那么取值的时候自然就会触发getter事件，所以我们只要在最开始进行一次render，那么所有被渲染所依赖的data中的数据就会被getter收集到Dep的subs中去。在对data中的数据进行修改的时候setter只会触发Dep的subs的函数。
 
 定义一个依赖收集类Dep。
 
@@ -51,7 +51,7 @@ class Dep () {
 
 ## Watcher
 
-观察者，当依赖收集的时候回addSub到sub中，在修改data中数据的时候会触发Watcher的notify，从而回调渲染函数。
+观察者，当依赖收集的时候回addSub到sub中，在修改data中数据的时候会触发Watcher的notify，从而回调渲染函数。
 
 ```javascript
 class Watcher () {
