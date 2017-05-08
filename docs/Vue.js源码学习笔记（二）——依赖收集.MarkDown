@@ -84,7 +84,7 @@ class Vue {
 }
 
 function defineReactive (obj, key, val, cb) {
-    ／**／
+    ／*在闭包内存储一个Dep对象*／
     const dep = new Dep();
 
     Object.defineProperty(obj, key, {
