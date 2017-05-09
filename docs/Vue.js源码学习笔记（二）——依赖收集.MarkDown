@@ -51,7 +51,7 @@ class Dep () {
 
 ## Watcher
 
-观察者，当依赖收集的时候回addSub到sub中，在修改data中数据的时候会触发Watcher的notify，从而回调渲染函数。
+订阅者，当依赖收集的时候回addSub到sub中，在修改data中数据的时候会触发Watcher的notify，从而回调渲染函数。
 
 ```javascript
 class Watcher () {
