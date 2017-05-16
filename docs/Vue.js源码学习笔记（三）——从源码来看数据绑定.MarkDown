@@ -2,10 +2,11 @@
 
 Vue在初始化组件数据时，在生命周期的init与created钩子函数之间实现了对data、props、computed、methods、events以及watch的处理。
 
-这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，这里我加一下注释。
+这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是由大大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
 
 ```javascript
 function initData (vm: Component) {
+
   /*得到data数据*/
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -27,6 +28,7 @@ function initData (vm: Component) {
   const keys = Object.keys(data)
   const props = vm.$options.props
   let i = keys.length
+
   //遍历data中的数据
   while (i--) {
     /*保证data中的key不与props中的key重复，props优先，如果有冲突会产生warning*/
@@ -36,11 +38,14 @@ function initData (vm: Component) {
         `Use prop default value instead.`,
         vm
       )
-    } else if (!isReserved(keys[i])) {/*判断是否是保留字段*/
+    } else if (!isReserved(keys[i])) {
+      /*判断是否是保留字段*/
+
       /*这里是我们前面讲过的代理，将data上面的属性代理到了vm实例上*/
       proxy(vm, `_data`, keys[i])
     }
   }
+
   // observe data
   /*从这里开始我们要observe了，开始对数据进行绑定，这里有尤大大的注释asRootData，这步作为根数据，下面会进行递归observe进行对深层对象的绑定。*/
   observe(data, true /* asRootData */)
@@ -74,7 +79,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
  * or the existing observer if the value already has one.
  */
  /*
- 尝试创建一个观察者实例（__ob__），如果成功创建观察者则返回新的观察者，如果已有观察者实例则返回现有的观察者。
+ 尝试创建一个观察者实例（__ob__），如果成功创建观察者则返回新的观察者，如果已有观察者实例则返回现有的观察者。
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   /*判断是否是一个对象*/
@@ -82,10 +87,12 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     return
   }
   let ob: Observer | void
+
   /*这里用__ob__这个属性来判断是否已经有观察者，如果没有观察者则会新建一个观察者并赋值给__ob__这个属性，如果已有观察者对象则直接返回该观察者对象*/
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
+
     /*这里的判断是为了确保value是单纯的对象，而不是函数或者是Regexp等情况。*/
     observerState.shouldConvert &&
     !isServerRendering() &&
@@ -96,6 +103,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     ob = new Observer(value)
   }
   if (asRootData && ob) {
+
     /*如果是根数据则计数，后面观察者Observer中的observe的asRootData非true*/
     ob.vmCount++
   }
@@ -132,9 +140,11 @@ export class Observer {
         ? protoAugment
         : copyAugment
       augment(value, arrayMethods, arrayKeys)
+
       /*如果是数组则需要遍历数组的每一个成员进行observe*/
       this.observeArray(value)
     } else {
+
       /*如果是对象则直接walk进行绑定*/
       this.walk(value)
     }
@@ -147,6 +157,7 @@ export class Observer {
    */
   walk (obj: Object) {
     const keys = Object.keys(obj)
+
     /*walk方法会遍历对象的每一个属性进行defineReactive绑定*/
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i], obj[keys[i]])
@@ -157,6 +168,7 @@ export class Observer {
    * Observe a list of Array items.
    */
   observeArray (items: Array<any>) {
+
     /*数组需要便利每一个成员进行observe*/
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
@@ -228,6 +240,7 @@ export function defineReactive (
   val: any,
   customSetter?: Function
 ) {
+  /*在闭包中定义一个dep对象*/
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -246,16 +259,20 @@ export function defineReactive (
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+
       /*如果原本对象拥有getter方法则执行*/
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+
         /*进行依赖收集*/
         dep.depend()
         if (childOb) {
+
           /*子对象观察者依赖收集*/
           childOb.dep.depend()
         }
         if (Array.isArray(value)) {
+
           /*是数组则需要对每一个成员都进行依赖收集，如果数组的成员还是数组，则递归。*/
           dependArray(value)
         }
@@ -263,6 +280,7 @@ export function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
+
       /*通过getter方法获取当前值，与新值进行比较，一致则不需要执行下面的操作*/
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
@@ -274,11 +292,13 @@ export function defineReactive (
         customSetter()
       }
       if (setter) {
+
         /*如果原本对象拥有setter方法则执行setter*/
         setter.call(obj, newVal)
       } else {
         val = newVal
       }
+
       /*新的值需要重新进行observe，保证数据响应式*/
       childOb = observe(newVal)
 
