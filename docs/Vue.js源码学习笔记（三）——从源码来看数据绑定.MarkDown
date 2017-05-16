@@ -86,6 +86,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
+    /*这里的判断是为了确保value是单纯的对象，而不是函数或者是Regexp等情况。*/
     observerState.shouldConvert &&
     !isServerRendering() &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -164,7 +165,58 @@ export class Observer {
 }
 ```
 
-来看看defineReactive。
+先来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者。
+
+```javascript
+/**
+ * A dep is an observable that can have multiple
+ * directives subscribing to it.
+ */
+export default class Dep {
+  static target: ?Watcher;
+  id: number;
+  subs: Array<Watcher>;
+
+  constructor () {
+    this.id = uid++
+    this.subs = []
+  }
+
+  /*添加一个观察者对象*/
+  addSub (sub: Watcher) {
+    this.subs.push(sub)
+  }
+
+  /*移除一个观察者对象*/
+  removeSub (sub: Watcher) {
+    remove(this.subs, sub)
+  }
+
+  /*依赖收集，当存在Dep.target的时候添加观察者对象*/
+  depend () {
+    if (Dep.target) {
+      Dep.target.addDep(this)
+    }
+  }
+
+  /*通知所有订阅者*/
+  notify () {
+    // stabilize the subscriber list first
+    const subs = this.subs.slice()
+    for (let i = 0, l = subs.length; i < l; i++) {
+      subs[i].update()
+    }
+  }
+}
+
+// the current target watcher being evaluated.
+// this is globally unique because there could be only one
+// watcher being evaluated at any time.
+Dep.target = null
+/*依赖收集完需要将Dep.target设为null，防止后面重复添加依赖。*/
+```
+
+接下来是[defineReactive](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L131)。
 
 ```javascript
 /**
@@ -176,7 +228,6 @@ export function defineReactive (
   val: any,
   customSetter?: Function
 ) {
-  /*新建一个Dep实例*/
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -184,28 +235,35 @@ export function defineReactive (
     return
   }
 
+  /*如果之前该对象已经预设了getter以及setter函数则将其取出来，新定义的getter/setter中会将其执行，保证不会覆盖之前已经定义的getter/setter。*/
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
 
+  /*对象的子对象递归进行observe并返回子节点的观察者对象*/
   let childOb = observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      /*如果原本对象拥有getter方法则执行*/
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        /*进行依赖收集*/
         dep.depend()
         if (childOb) {
+          /*子对象观察者依赖收集*/
           childOb.dep.depend()
         }
         if (Array.isArray(value)) {
+          /*是数组则需要对每一个成员都进行依赖收集，如果数组的成员还是数组，则递归。*/
           dependArray(value)
         }
       }
       return value
     },
     set: function reactiveSetter (newVal) {
+      /*通过getter方法获取当前值，与新值进行比较，一致则不需要执行下面的操作*/
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
@@ -216,11 +274,15 @@ export function defineReactive (
         customSetter()
       }
       if (setter) {
+        /*如果原本对象拥有setter方法则执行setter*/
         setter.call(obj, newVal)
       } else {
         val = newVal
       }
+      /*新的值需要重新进行observe，保证数据响应式*/
       childOb = observe(newVal)
+
+      /*dep对象通知所有的观察者*/
       dep.notify()
     }
   })
