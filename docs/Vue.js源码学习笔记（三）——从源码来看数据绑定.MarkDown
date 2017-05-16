@@ -2,11 +2,11 @@
 
 Vue在初始化组件数据时，在生命周期的init与created钩子函数之间实现了对data、props、computed、methods、events以及watch的处理。
 
-这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，这里我加一下注释。
+这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，这里我加一下注释。
 
 ```javascript
 function initData (vm: Component) {
-  /*得到data数据*/
+  /*得到data数据*/
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
@@ -65,7 +65,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 
 这里比较好理解，通过proxy函数将data上面的数据代理到vm上，这样就可以用app.text代替app._data.text了。
 
-接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下oberver的index.js文件中。
+接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下oberver的index.js文件中。
 
 ```javascript
 /**
