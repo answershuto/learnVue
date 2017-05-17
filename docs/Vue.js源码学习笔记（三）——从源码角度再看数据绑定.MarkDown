@@ -4,6 +4,8 @@ Vue在初始化组件数据时，在生命周期的init与created钩子函数之
 
 这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是由大大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
 
+加注释版的vue源码也可以直接通过[传送门](https://github.com/answershuto/learnVue/tree/master/vue-src)查看，这些是我在阅读Vue源码过程中加的注释，持续更新中。
+
 ```javascript
 function initData (vm: Component) {
 
@@ -41,7 +43,7 @@ function initData (vm: Component) {
     } else if (!isReserved(keys[i])) {
       /*判断是否是保留字段*/
 
-      /*这里是我们前面讲过的代理，将data上面的属性代理到了vm实例上*/
+      /*这里是我们前面讲过的代理，将data上面的属性代理到了vm实例上*/
       proxy(vm, `_data`, keys[i])
     }
   }
@@ -79,7 +81,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
  * or the existing observer if the value already has one.
  */
  /*
- 尝试创建一个观察者实例（__ob__），如果成功创建观察者则返回新的观察者，如果已有观察者实例则返回现有的观察者。
+ 尝试创建一个Observer实例（__ob__），如果成功创建Observer实例则返回新的Observer实例，如果已有Observer实例则返回现有的Observer实例。
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   /*判断是否是一个对象*/
@@ -88,7 +90,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   }
   let ob: Observer | void
 
-  /*这里用__ob__这个属性来判断是否已经有观察者，如果没有观察者则会新建一个观察者并赋值给__ob__这个属性，如果已有观察者对象则直接返回该观察者对象*/
+  /*这里用__ob__这个属性来判断是否已经有Observer实例，如果没有Observer实例则会新建一个Observer实例并赋值给__ob__这个属性，如果已有Observer实例则直接返回该Observer实例*/
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -104,7 +106,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   }
   if (asRootData && ob) {
 
-    /*如果是根数据则计数，后面观察者Observer中的observe的asRootData非true*/
+    /*如果是根数据则计数，后面Observer中的observe的asRootData非true*/
     ob.vmCount++
   }
   return ob
@@ -112,7 +114,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 
 ```
 
-接下来看一下新建的观察者对象[Observer](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L34)。 
+接下来看一下新建的[Observer](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L34)。 
 
 ```javascript
 /**
@@ -132,7 +134,7 @@ export class Observer {
     this.vmCount = 0
 
     /* 
-    将观察者实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放观察者实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16 
+    将Observer实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放Observer实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16 
     */
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -175,6 +177,12 @@ export class Observer {
     }
   }
 }
+```
+
+[Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。
+
+```javascript
+
 ```
 
 先来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者。
@@ -253,7 +261,7 @@ export function defineReactive (
   const getter = property && property.get
   const setter = property && property.set
 
-  /*对象的子对象递归进行observe并返回子节点的观察者对象*/
+  /*对象的子对象递归进行observe并返回子节点的Observer对象*/
   let childOb = observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
@@ -268,7 +276,7 @@ export function defineReactive (
         dep.depend()
         if (childOb) {
 
-          /*子对象观察者依赖收集*/
+          /*子对象依赖收集*/
           childOb.dep.depend()
         }
         if (Array.isArray(value)) {

@@ -46,6 +46,7 @@ export default class Watcher {
     options?: Object
   ) {
     this.vm = vm
+    /*_watchers存放观察者实例*/
     vm._watchers.push(this)
     // options
     if (options) {

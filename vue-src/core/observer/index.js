@@ -40,8 +40,8 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-     /* 
-    将观察者实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放观察者实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16 
+    /* 
+    将Observer实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放Observer实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16 
     */
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -111,14 +111,14 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
   /*
- 尝试创建一个观察者实例（__ob__），如果成功创建观察者则返回新的观察者，如果已有观察者实例则返回现有的观察者。
+ 尝试创建一个Observer实例（__ob__），如果成功创建Observer实例则返回新的Observer实例，如果已有Observer实例则返回现有的Observer实例。
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value)) {
     return
   }
   let ob: Observer | void
-  /*这里用__ob__这个属性来判断是否已经有观察者，如果没有观察者则会新建一个观察者并赋值给__ob__这个属性，如果已有观察者对象则直接返回该观察者对象*/
+  /*这里用__ob__这个属性来判断是否已经有Observer实例，如果没有Observer实例则会新建一个Observer实例并赋值给__ob__这个属性，如果已有Observer实例则直接返回该Observer实例*/
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -132,7 +132,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     ob = new Observer(value)
   }
   if (asRootData && ob) {
-     /*如果是根数据则计数，后面观察者Observer中的observe的asRootData非true*/
+     /*如果是根数据则计数，后面Observer中的observe的asRootData非true*/
     ob.vmCount++
   }
   return ob
@@ -160,7 +160,7 @@ export function defineReactive (
   const getter = property && property.get
   const setter = property && property.set
 
-  /*对象的子对象递归进行observe并返回子节点的观察者对象*/
+  /*对象的子对象递归进行observe并返回子节点的Observer对象*/
   let childOb = observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
