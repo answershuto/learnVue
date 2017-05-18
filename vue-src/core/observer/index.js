@@ -172,7 +172,7 @@ export function defineReactive (
         /*进行依赖收集*/
         dep.depend()
         if (childOb) {
-          /*子对象观察者依赖收集*/
+          /*子对象进行依赖收集，其实就是将同一个watcher观察者实例放进了两个depend中，一个是正在本身闭包中的depend，另一个是子元素的depend*/
           childOb.dep.depend()
         }
         if (Array.isArray(value)) {

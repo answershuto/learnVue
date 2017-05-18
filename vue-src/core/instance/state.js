@@ -30,7 +30,7 @@ const sharedPropertyDefinition = {
   set: noop
 }
 
-/*通过proxy函数将data上面的数据代理到vm上，这样就可以用app.text代替app._data.text了。*/
+/*通过proxy函数将_data（或者_props等）上面的数据代理到vm上，这样就可以用app.text代替app._data.text了。*/
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]

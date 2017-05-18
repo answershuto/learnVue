@@ -46,7 +46,7 @@ export default class Watcher {
     options?: Object
   ) {
     this.vm = vm
-    /*_watchers存放观察者实例*/
+    /*_watchers存放订阅者实例*/
     vm._watchers.push(this)
     // options
     if (options) {
@@ -117,6 +117,7 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+   /*添加一个依赖关系到Deps集合中*/
   addDep (dep: Dep) {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
@@ -168,6 +169,7 @@ export default class Watcher {
    * Scheduler job interface.
    * Will be called by the scheduler.
    */
+
   run () {
     if (this.active) {
       const value = this.get()

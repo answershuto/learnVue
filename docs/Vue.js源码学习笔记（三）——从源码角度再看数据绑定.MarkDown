@@ -2,6 +2,8 @@
 
 Vue在初始化组件数据时，在生命周期的init与created钩子函数之间实现了对data、props、computed、methods、events以及watch的处理。
 
+## initData
+
 这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是由大大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
 
 加注释版的vue源码也可以直接通过[传送门](https://github.com/answershuto/learnVue/tree/master/vue-src)查看，这些是我在阅读Vue源码过程中加的注释，持续更新中。
@@ -54,6 +56,8 @@ function initData (vm: Component) {
 }
 ```
 
+## proxy
+
 其实这段代码主要做了两件事，一是将_data上面的数据代理到vm上，另一件事通过observe将所有数据变成observable。
 接下来看一下proxy代理。
 
@@ -71,6 +75,8 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 ```
 
 这里比较好理解，通过proxy函数将data上面的数据代理到vm上，这样就可以用app.text代替app._data.text了。
+
+## observe
 
 接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下oberver的index.js文件中。
 
@@ -113,6 +119,8 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 }
 
 ```
+
+## Observer
 
 接下来看一下新建的[Observer](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L34)。 
 
@@ -179,13 +187,17 @@ export class Observer {
 }
 ```
 
+## Watcher
+
 [Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。
 
 ```javascript
 
 ```
 
-先来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者。
+## Dep
+
+来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者。
 
 ```javascript
 /**
@@ -236,6 +248,8 @@ Dep.target = null
 /*依赖收集完需要将Dep.target设为null，防止后面重复添加依赖。*/
 ```
 
+## defineReactive
+
 接下来是[defineReactive](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L131)。
 
 ```javascript
@@ -276,7 +290,7 @@ export function defineReactive (
         dep.depend()
         if (childOb) {
 
-          /*子对象依赖收集*/
+          /*子对象进行依赖收集，其实就是将同一个watcher观察者实例放进了两个depend中，一个是正在本身闭包中的depend，另一个是子元素的depend*/
           childOb.dep.depend()
         }
         if (Array.isArray(value)) {
