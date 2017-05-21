@@ -146,9 +146,11 @@ export class Observer {
     */
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
+
+      /*如果是数组，将修改后可以截获响应的数组方法替换掉该数组的原型中的原生方法，达到监听数组数据变化响应的效果*/
       const augment = hasProto
-        ? protoAugment
-        : copyAugment
+        ? protoAugment  /*直接覆盖原型的方法来修改目标对象*/
+        : copyAugment   /*定义（覆盖）目标对象或数组的某一个方法*/
       augment(value, arrayMethods, arrayKeys)
 
       /*如果是数组则需要遍历数组的每一个成员进行observe*/
