@@ -69,6 +69,7 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    /*把表达式expOrFn解析成getter*/
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
@@ -92,6 +93,7 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    /*将自身watcher观察者实例设置给Dep.target，用以依赖收集。*/
     pushTarget(this)
     let value
     const vm = this.vm

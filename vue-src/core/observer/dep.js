@@ -53,11 +53,13 @@ export default class Dep {
 Dep.target = null
 const targetStack = []
 
+/*将watcher观察者实例设置给Dep.target，用以依赖收集。同时将该实例存入target栈中*/
 export function pushTarget (_target: Watcher) {
   if (Dep.target) targetStack.push(Dep.target)
   Dep.target = _target
 }
 
+/*将观察者实例从target栈中取出并设置给Dep.target*/
 export function popTarget () {
   Dep.target = targetStack.pop()
 }
