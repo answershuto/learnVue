@@ -97,6 +97,15 @@ export default class Watcher {
     pushTarget(this)
     let value
     const vm = this.vm
+
+    /*
+      执行了getter操作，看似执行了渲染操作，其实是执行了依赖收集。
+      在将Dep.target设置为自生观察者实例以后，执行getter操作。
+      譬如说现在的的data中可能有a、b、c三个数据，getter渲染需要依赖a跟c，
+      那么在执行getter的时候就会触发a跟c两个数据的getter函数，
+      在getter函数中即可判断Dep.target是否存在然后完成依赖收集，
+      将该观察者对象放入闭包中的Dep的subs中去。
+    */
     if (this.user) {
       try {
         value = this.getter.call(vm, vm)
