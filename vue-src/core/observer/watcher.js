@@ -117,9 +117,13 @@ export default class Watcher {
     }
     // "touch" every property so they are all tracked as
     // dependencies for deep watching
+    /*如果存在deep，则触发每个深层对象的依赖，追踪其变化*/
     if (this.deep) {
+      /*递归每一个对象或者数组，触发它们的getter，使得对象或数组的每一个成员都被依赖收集，形成一个“深（deep）”依赖关系*/
       traverse(value)
     }
+
+    /*将观察者实例从target栈中取出并设置给Dep.target*/
     popTarget()
     this.cleanupDeps()
     return value
@@ -143,7 +147,9 @@ export default class Watcher {
   /**
    * Clean up for dependency collection.
    */
+   /*清理依赖收集*/
   cleanupDeps () {
+    /*移除所有观察者对象*/
     let i = this.deps.length
     while (i--) {
       const dep = this.deps[i]
@@ -252,6 +258,9 @@ export default class Watcher {
  * getters, so that every nested property inside the object
  * is collected as a "deep" dependency.
  */
+ /*递归每一个对象或者数组，触发它们的getter，使得对象或数组的每一个成员都被依赖收集，形成一个“深（deep）”依赖关系*/
+
+ /*用来存放Oberser实例等id，避免重复读取*/
 const seenObjects = new Set()
 function traverse (val: any) {
   seenObjects.clear()
@@ -265,12 +274,15 @@ function _traverse (val: any, seen: ISet) {
     return
   }
   if (val.__ob__) {
+    /*避免重复读取*/
     const depId = val.__ob__.dep.id
     if (seen.has(depId)) {
       return
     }
     seen.add(depId)
   }
+
+  /*递归对象及数组*/
   if (isA) {
     i = val.length
     while (i--) _traverse(val[i], seen)
