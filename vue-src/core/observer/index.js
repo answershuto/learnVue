@@ -31,6 +31,9 @@ export const observerState = {
  * object's property keys into getter/setters that
  * collect dependencies and dispatches updates.
  */
+ /*
+    每个被观察到对象被附加上观察者实例，一旦被添加，观察者将为目标对象加上getter\setter属性，进行依赖收集以及调度更新。
+*/
 export class Observer {
   value: any;
   dep: Dep;

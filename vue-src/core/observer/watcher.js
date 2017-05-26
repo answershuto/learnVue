@@ -171,13 +171,18 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
+   /*
+      调度者接口，当依赖发生改变的时候进行回调。
+   */
   update () {
     /* istanbul ignore else */
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
+      /*同步则执行run直接渲染视图*/
       this.run()
     } else {
+      /*异步推送到观察者队列中，由调度者调用。*/
       queueWatcher(this)
     }
   }
@@ -186,7 +191,9 @@ export default class Watcher {
    * Scheduler job interface.
    * Will be called by the scheduler.
    */
-
+   /*
+      调度者工作接口，将被调度者回调。
+    */
   run () {
     if (this.active) {
       const value = this.get()
@@ -195,12 +202,18 @@ export default class Watcher {
         // Deep watchers and watchers on Object/Arrays should fire even
         // when the value is the same, because the value may
         // have mutated.
+        /*
+            即便值相同，拥有Deep属性的观察者以及在对象／数组上的观察者应该被触发更新，因为它们的值可能发生改变。
+        */
         isObject(value) ||
         this.deep
       ) {
         // set new value
         const oldValue = this.value
+        /*设置新的值*/
         this.value = value
+
+        /*触发回调渲染视图*/
         if (this.user) {
           try {
             this.cb.call(this.vm, value, oldValue)
@@ -241,6 +254,7 @@ export default class Watcher {
       // remove self from vm's watcher list
       // this is a somewhat expensive operation so we skip it
       // if the vm is being destroyed.
+      /*从vm实例的观察者列表中将自身移除，由于该操作比较耗费资源，所以如果vm实例正在被销毁则跳过该步骤。*/
       if (!this.vm._isBeingDestroyed) {
         remove(this.vm._watchers, this)
       }
@@ -270,6 +284,7 @@ function traverse (val: any) {
 function _traverse (val: any, seen: ISet) {
   let i, keys
   const isA = Array.isArray(val)
+  /*非对象或数组或是不可扩展对象直接return，不需要收集深层依赖关系。*/
   if ((!isA && !isObject(val)) || !Object.isExtensible(val)) {
     return
   }
