@@ -3,6 +3,7 @@
 import { updateListeners } from '../vdom/helpers/index'
 import { toArray, tip, hyphenate, formatComponentName } from '../util/index'
 
+/*初始化事件*/
 export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false

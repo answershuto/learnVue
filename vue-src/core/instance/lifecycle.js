@@ -19,6 +19,7 @@ import {
 
 export let activeInstance: any = null
 
+/*初始化生命周期*/
 export function initLifecycle (vm: Component) {
   const options = vm.$options
 
