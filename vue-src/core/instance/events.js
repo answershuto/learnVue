@@ -37,6 +37,7 @@ export function updateComponentListeners (
   updateListeners(listeners, oldListeners || {}, add, remove, vm)
 }
 
+/*为Vue原型加入操作事件的方法*/
 export function eventsMixin (Vue: Class<Component>) {
   const hookRE = /^hook:/
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {

@@ -47,6 +47,7 @@ export function updateListeners (
   vm: Component
 ) {
   let name, cur, old, event
+  /*遍历新事件的所有方法*/
   for (name in on) {
     cur = on[name]
     old = oldOn[name]
