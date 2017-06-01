@@ -23,6 +23,7 @@ const normalizeEvent = cached((name: string): {
   }
 })
 
+/*返回一个函数，该函数的作用是将生成时的fns执行，如果fns是数组，则便利执行它的每一项*/
 export function createFnInvoker (fns: Function | Array<Function>): Function {
   function invoker () {
     const fns = invoker.fns
@@ -51,8 +52,12 @@ export function updateListeners (
   for (name in on) {
     cur = on[name]
     old = oldOn[name]
+
+    /*取得并去除事件的~、!、&等前缀*/
     event = normalizeEvent(name)
+    /*isUndef用于判断传入对象不等于undefined或者null*/
     if (isUndef(cur)) {
+      /*新方法不存在抛出打印*/
       process.env.NODE_ENV !== 'production' && warn(
         `Invalid handler for event "${event.name}": got ` + String(cur),
         vm

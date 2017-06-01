@@ -16,6 +16,7 @@ export function initEvents (vm: Component) {
 
 let target: Component
 
+/*有once的时候注册一个只会触发一次的方法，没有once的时候注册一个事件方法*/
 function add (event, fn, once) {
   if (once) {
     target.$once(event, fn)
@@ -24,6 +25,7 @@ function add (event, fn, once) {
   }
 }
 
+/*销毁一个事件方法*/
 function remove (event, fn) {
   target.$off(event, fn)
 }
