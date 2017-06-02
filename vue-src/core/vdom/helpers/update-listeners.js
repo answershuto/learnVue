@@ -40,6 +40,7 @@ export function createFnInvoker (fns: Function | Array<Function>): Function {
   return invoker
 }
 
+/*更新监听事件*/
 export function updateListeners (
   on: Object,
   oldOn: Object,
@@ -64,6 +65,7 @@ export function updateListeners (
       )
     } else if (isUndef(old)) {
       if (isUndef(cur.fns)) {
+        /*createFnInvoker返回一个函数，该函数的作用是将生成时的fns执行，如果fns是数组，则便利执行它的每一项*/
         cur = on[name] = createFnInvoker(cur)
       }
       add(event.name, cur, event.once, event.capture, event.passive)
@@ -72,6 +74,7 @@ export function updateListeners (
       on[name] = old
     }
   }
+  /*移除所有旧的事件*/
   for (name in oldOn) {
     if (isUndef(on[name])) {
       event = normalizeEvent(name)

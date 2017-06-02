@@ -54,6 +54,7 @@ export function initMixin (Vue: Class<Component>) {
     initLifecycle(vm)
     /*初始化事件*/
     initEvents(vm)
+    /*初始化render*/
     initRender(vm)
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props

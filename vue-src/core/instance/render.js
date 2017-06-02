@@ -26,10 +26,11 @@ import { bindObjectProps } from './render-helpers/bind-object-props'
 import { renderStatic, markOnce } from './render-helpers/render-static'
 import { resolveSlots, resolveScopedSlots } from './render-helpers/resolve-slots'
 
+/*初始化render*/
 export function initRender (vm: Component) {
   vm._vnode = null // the root of the child tree
   vm._staticTrees = null
-  const parentVnode = vm.$vnode = vm.$options._parentVnode // the placeholder node in parent tree
+  const parentVnode = vm.$vnode = vm.$options._parentVnode // the placeholder node in parent tree  父树中的占位符节点
   const renderContext = parentVnode && parentVnode.context
   vm.$slots = resolveSlots(vm.$options._renderChildren, renderContext)
   vm.$scopedSlots = emptyObject
@@ -37,9 +38,11 @@ export function initRender (vm: Component) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  /*将createElement函数绑定到该实例上，该vm存在闭包中，不可修改，vm实例则固定。这样我们就可以得到正确的上下文渲染*/
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
+  /*常规方法呗用于公共版本，被用来作为用户界面的渲染方法*/
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 }
 

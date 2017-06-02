@@ -30,6 +30,7 @@ function remove (event, fn) {
   target.$off(event, fn)
 }
 
+/*更新组件的监听事件*/
 export function updateComponentListeners (
   vm: Component,
   listeners: Object,
