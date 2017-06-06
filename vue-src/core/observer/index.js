@@ -20,6 +20,7 @@ const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
  * we don't want to force conversion because the value may be a nested value
  * under a frozen data structure. Converting it would defeat the optimization.
  */
+ /*默认情况下，当一个无效的属性被设置时，新的值也会被转换成无效的。不管怎样当传递props时，我们不需要进行强制转换*/
 export const observerState = {
   shouldConvert: true,
   isSettingProps: false
@@ -151,6 +152,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 /**
  * Define a reactive property on an Object.
  */
+ /*为对象defineProperty上在变化时通知的属性*/
 export function defineReactive (
   obj: Object,
   key: string,

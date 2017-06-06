@@ -41,9 +41,11 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/*初始化props、methods、data、computed与watch*/
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  /*初始化props*/
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
@@ -61,17 +63,23 @@ const isReservedProp = {
   slot: 1
 }
 
+/*初始化props*/
 function initProps (vm: Component, propsOptions: Object) {
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
+  /*缓存属性的key，使得将来能直接使用数组的索引值来更新props来替代动态地枚举对象*/
   const keys = vm.$options._propKeys = []
+  /*根据$parent是否存在来判断当前是否是根结点*/
   const isRoot = !vm.$parent
   // root instance props should be converted
+  /*根结点会给shouldConvert赋true，根结点的props应该被转换*/
   observerState.shouldConvert = isRoot
   for (const key in propsOptions) {
+    /*props的key值存入keys（_propKeys）中*/
     keys.push(key)
+    /*验证prop,不存在用默认值替换，类型为bool则声称true或false，当使用default中的默认值的时候会将默认值的副本进行observe*/
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {

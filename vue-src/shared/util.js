@@ -136,6 +136,7 @@ export const capitalize = cached((str: string): string => {
 /**
  * Hyphenate a camelCase string.
  */
+ /*连接一个camelCase字符串。*/
 const hyphenateRE = /([^-])([A-Z])/g
 export const hyphenate = cached((str: string): string => {
   return str

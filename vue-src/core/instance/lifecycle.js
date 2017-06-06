@@ -296,6 +296,7 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
   }
 }
 
+/*调用钩子函数并且触发钩子事件*/
 export function callHook (vm: Component, hook: string) {
   const handlers = vm.$options[hook]
   if (handlers) {
