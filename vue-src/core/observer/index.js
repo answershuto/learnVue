@@ -133,7 +133,10 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
-    /*这里的判断是为了确保value是单纯的对象，而不是函数或者是Regexp等情况。*/
+    /*
+      这里的判断是为了确保value是单纯的对象，而不是函数或者是Regexp等情况。
+      而且该对象在shouldConvert的时候才会进行Observer。这是一个标识为，避免重复对value进行Observer
+    */
     observerState.shouldConvert &&
     !isServerRendering() &&
     (Array.isArray(value) || isPlainObject(value)) &&

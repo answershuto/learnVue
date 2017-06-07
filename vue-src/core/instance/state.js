@@ -47,12 +47,16 @@ export function initState (vm: Component) {
   const opts = vm.$options
   /*初始化props*/
   if (opts.props) initProps(vm, opts.props)
+  /*初始化方法*/
   if (opts.methods) initMethods(vm, opts.methods)
+  /*初始化data*/
   if (opts.data) {
     initData(vm)
   } else {
+    /*该组件没有data的时候绑定一个空对象*/
     observe(vm._data = {}, true /* asRootData */)
   }
+  /*初始化computed*/
   if (opts.computed) initComputed(vm, opts.computed)
   if (opts.watch) initWatch(vm, opts.watch)
 }
@@ -83,6 +87,7 @@ function initProps (vm: Component, propsOptions: Object) {
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      /*判断是否是保留字段，如果是则发出warning*/
       if (isReservedProp[key] || config.isReservedAttr(key)) {
         warn(
           `"${key}" is a reserved attribute and cannot be used as component prop.`,
@@ -90,6 +95,10 @@ function initProps (vm: Component, propsOptions: Object) {
         )
       }
       defineReactive(props, key, value, () => {
+        /*
+          由于父组件重新渲染的时候会充血prop的值，所以应该直接使用prop来作为一个data或者计算属性的依赖
+          https://cn.vuejs.org/v2/guide/components.html#字面量语法-vs-动态语法
+        */
         if (vm.$parent && !observerState.isSettingProps) {
           warn(
             `Avoid mutating a prop directly since the value will be ` +
@@ -106,6 +115,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    /*Vue.extend()期间，静态prop已经在组件原型上代理了，我们只需要在这里进行代理prop*/
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
@@ -113,6 +123,7 @@ function initProps (vm: Component, propsOptions: Object) {
   observerState.shouldConvert = true
 }
 
+/*初始化data*/
 function initData (vm: Component) {
 
   /*得到data数据*/
@@ -169,13 +180,19 @@ function getData (data: Function, vm: Component): any {
 
 const computedWatcherOptions = { lazy: true }
 
+/*初始化computed*/
 function initComputed (vm: Component, computed: Object) {
   const watchers = vm._computedWatchers = Object.create(null)
 
   for (const key in computed) {
     const userDef = computed[key]
+    /*
+      计算属性可能是一个function，也有可能设置了get以及set的对象。
+      可以参考 https://cn.vuejs.org/v2/guide/computed.html#计算-setter
+    */
     let getter = typeof userDef === 'function' ? userDef : userDef.get
     if (process.env.NODE_ENV !== 'production') {
+      /*getter不存在的时候抛出warning并且给getter赋空函数*/
       if (getter === undefined) {
         warn(
           `No getter function has been defined for computed property "${key}".`,
@@ -185,6 +202,7 @@ function initComputed (vm: Component, computed: Object) {
       }
     }
     // create internal watcher for the computed property.
+    /*为计算属性创建一个内部的监视器Watcher，内部会触发getter进行依赖收集，后续用该Watcher实例来观察属性变化*/
     watchers[key] = new Watcher(vm, getter, noop, computedWatcherOptions)
 
     // component-defined computed properties are already defined on the
@@ -234,9 +252,11 @@ function createComputedGetter (key) {
   }
 }
 
+/*初始化方法*/
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
+    /*在为null的时候写上空方法，有值时候将上下文替换成vm*/
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm)
     if (process.env.NODE_ENV !== 'production') {
       if (methods[key] == null) {
@@ -246,6 +266,7 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
+      /*与props名称冲突报出warning*/
       if (props && hasOwn(props, key)) {
         warn(
           `method "${key}" has already been defined as a prop.`,
