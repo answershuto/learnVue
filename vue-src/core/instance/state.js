@@ -202,13 +202,18 @@ function initComputed (vm: Component, computed: Object) {
       }
     }
     // create internal watcher for the computed property.
-    /*为计算属性创建一个内部的监视器Watcher，内部会触发getter进行依赖收集，后续用该Watcher实例来观察属性变化*/
+    /*
+      为计算属性创建一个内部的监视器Watcher，
+      这里的computedWatcherOptions参数传递了一个lazy为true，会使得watch实例的dirty为true
+    */
     watchers[key] = new Watcher(vm, getter, noop, computedWatcherOptions)
 
     // component-defined computed properties are already defined on the
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
+    /*组件正在定义的计算属性已经定义在现有组件的原型上则不会进行重复定义*/
     if (!(key in vm)) {
+      /*定义计算属性*/
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
       if (key in vm.$data) {
@@ -220,11 +225,19 @@ function initComputed (vm: Component, computed: Object) {
   }
 }
 
+/*定义计算属性*/
 export function defineComputed (target: any, key: string, userDef: Object | Function) {
   if (typeof userDef === 'function') {
+    /*创建计算属性的getter*/
     sharedPropertyDefinition.get = createComputedGetter(key)
+    /*
+      当userDef是一个function的时候是不需要setter的，所以这边给它设置成了空函数。
+      因为计算属性默认是一个function，只设置getter。
+      当需要设置setter的时候，会将计算属性设置成一个对象。参考：https://cn.vuejs.org/v2/guide/computed.html#计算-setter
+    */
     sharedPropertyDefinition.set = noop
   } else {
+    /*get不存在则直接给空函数，如果存在则查看是否有缓存cache，没有依旧赋值get，有的话使用createComputedGetter创建*/
     sharedPropertyDefinition.get = userDef.get
       ? userDef.cache !== false
         ? createComputedGetter(key)
@@ -237,13 +250,16 @@ export function defineComputed (target: any, key: string, userDef: Object | Func
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/*创建计算属性的getter*/
 function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
+      /*dirty为true的时候会调用get触发依赖*/
       if (watcher.dirty) {
         watcher.evaluate()
       }
+      /*依赖收集*/
       if (Dep.target) {
         watcher.depend()
       }
