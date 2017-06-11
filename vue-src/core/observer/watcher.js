@@ -92,6 +92,7 @@ export default class Watcher {
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
+   /*获得getter的值并且重新进行依赖收集*/
   get () {
     /*将自身watcher观察者实例设置给Dep.target，用以依赖收集。*/
     pushTarget(this)
