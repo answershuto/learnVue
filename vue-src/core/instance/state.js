@@ -58,6 +58,7 @@ export function initState (vm: Component) {
   }
   /*初始化computed*/
   if (opts.computed) initComputed(vm, opts.computed)
+  /*初始化watchers*/
   if (opts.watch) initWatch(vm, opts.watch)
 }
 
@@ -132,7 +133,7 @@ function initData (vm: Component) {
     ? getData(data, vm)
     : data || {}
 
-  /*判断是否是对象*/
+  /*对对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
   if (!isPlainObject(data)) {
     data = {}
     process.env.NODE_ENV !== 'production' && warn(
@@ -160,7 +161,7 @@ function initData (vm: Component) {
     } else if (!isReserved(keys[i])) {
       /*判断是否是保留字段*/
 
-      /*这里是我们前面讲过的代理，将data上面的属性代理到了vm实例上*/
+      /*这里是我们前面讲过的代理，将data上面的属性代理到了vm实例上*/
       proxy(vm, `_data`, keys[i])
     }
   }
@@ -203,7 +204,7 @@ function initComputed (vm: Component, computed: Object) {
     }
     // create internal watcher for the computed property.
     /*
-      为计算属性创建一个内部的监视器Watcher，
+      为计算属性创建一个内部的监视器Watcher，保存在vm实例的_computedWatchers中
       这里的computedWatcherOptions参数传递了一个lazy为true，会使得watch实例的dirty为true
     */
     watchers[key] = new Watcher(vm, getter, noop, computedWatcherOptions)
@@ -216,6 +217,7 @@ function initComputed (vm: Component, computed: Object) {
       /*定义计算属性*/
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
+      /*如果计算属性与已定义的data或者props中的名称冲突则发出warning*/
       if (key in vm.$data) {
         warn(`The computed property "${key}" is already defined in data.`, vm)
       } else if (vm.$options.props && key in vm.$options.props) {
@@ -243,10 +245,12 @@ export function defineComputed (target: any, key: string, userDef: Object | Func
         ? createComputedGetter(key)
         : userDef.get
       : noop
+    /*如果有设置set方法则直接使用，否则赋值空函数*/
     sharedPropertyDefinition.set = userDef.set
       ? userDef.set
       : noop
   }
+  /*defineProperty上getter与setter*/
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
@@ -293,9 +297,11 @@ function initMethods (vm: Component, methods: Object) {
   }
 }
 
+/*初始化watchers*/
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
+    /*数组则遍历进行createWatcher*/
     if (Array.isArray(handler)) {
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
@@ -306,8 +312,10 @@ function initWatch (vm: Component, watch: Object) {
   }
 }
 
+/*创建一个观察者Watcher*/
 function createWatcher (vm: Component, key: string, handler: any) {
   let options
+  /*对对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
   if (isPlainObject(handler)) {
     options = handler
     handler = handler.handler

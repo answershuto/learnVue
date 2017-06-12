@@ -36,6 +36,7 @@ const _toString = Object.prototype.toString
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
+ /*对对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
 export function isPlainObject (obj: any): boolean {
   return _toString.call(obj) === '[object Object]'
 }

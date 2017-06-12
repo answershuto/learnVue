@@ -71,6 +71,9 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
+   /*
+      遍历每一个对象并且在它们上面绑定getter与setter。这个方法只有在value的类型是对象的时候才能被调用
+   */
   walk (obj: Object) {
     const keys = Object.keys(obj)
     /*walk方法会遍历对象的每一个属性进行defineReactive绑定*/
@@ -82,6 +85,7 @@ export class Observer {
   /**
    * Observe a list of Array items.
    */
+   /*对一个数组的每一个成员进行observe*/
   observeArray (items: Array<any>) {
     for (let i = 0, l = items.length; i < l; i++) {
       /*数组需要遍历每一个成员进行observe*/
@@ -135,7 +139,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   } else if (
     /*
       这里的判断是为了确保value是单纯的对象，而不是函数或者是Regexp等情况。
-      而且该对象在shouldConvert的时候才会进行Observer。这是一个标识为，避免重复对value进行Observer
+      而且该对象在shouldConvert的时候才会进行Observer。这是一个标识位，避免重复对value进行Observer
     */
     observerState.shouldConvert &&
     !isServerRendering() &&
