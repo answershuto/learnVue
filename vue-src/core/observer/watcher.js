@@ -250,6 +250,7 @@ export default class Watcher {
   /**
    * Remove self from all dependencies' subscriber list.
    */
+   /*将自身从所有依赖收集订阅列表删除*/
   teardown () {
     if (this.active) {
       // remove self from vm's watcher list

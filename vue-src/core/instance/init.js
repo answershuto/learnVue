@@ -67,12 +67,14 @@ export function initMixin (Vue: Class<Component>) {
 
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+      /*格式化组件名*/
       vm._name = formatComponentName(vm, false)
       mark(endTag)
       measure(`${vm._name} init`, startTag, endTag)
     }
 
     if (vm.$options.el) {
+      /*挂在组件*/
       vm.$mount(vm.$options.el)
     }
   }

@@ -323,6 +323,7 @@ function createWatcher (vm: Component, key: string, handler: any) {
   if (typeof handler === 'string') {
     handler = vm[handler]
   }
+  /*用$watch方法创建一个watch来观察该对象的变化*/
   vm.$watch(key, handler, options)
 }
 
@@ -352,6 +353,11 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
+  /*
+    https://cn.vuejs.org/v2/api/#vm-watch
+    $watch方法
+    用以为对象建立观察者监视变化
+  */
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: Function,
@@ -361,10 +367,13 @@ export function stateMixin (Vue: Class<Component>) {
     options = options || {}
     options.user = true
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    /*有immediate参数的时候会立即执行*/
     if (options.immediate) {
       cb.call(vm, watcher.value)
     }
+    /*返回一个取消观察函数，用来停止触发回调*/
     return function unwatchFn () {
+      /*将自身从所有依赖收集订阅列表删除*/
       watcher.teardown()
     }
   }

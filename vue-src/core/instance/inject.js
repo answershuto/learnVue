@@ -18,6 +18,7 @@ export function initInjections (vm: Component) {
   if (result) {
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */
+      /*为对象defineProperty上在变化时通知的属性*/
       if (process.env.NODE_ENV !== 'production') {
         defineReactive(vm, key, result[key], () => {
           warn(

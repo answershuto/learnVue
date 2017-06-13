@@ -30,6 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
+  /*格式化组件名*/
   formatComponentName = (vm, includeFile) => {
     if (vm.$root === vm) {
       return '<Root>'
