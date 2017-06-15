@@ -21,6 +21,9 @@ let uid = 0
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
  */
+ /*
+    一个解析表达式，进行依赖收集的观察者，同时在表达式数据变更时触发回调函数。它被用于$watch api以及指令
+ */
 export default class Watcher {
   vm: Component;
   expression: string;
@@ -232,6 +235,7 @@ export default class Watcher {
    * Evaluate the value of the watcher.
    * This only gets called for lazy watchers.
    */
+   /*获取观察者的值*/
   evaluate () {
     this.value = this.get()
     this.dirty = false
@@ -240,6 +244,7 @@ export default class Watcher {
   /**
    * Depend on all deps collected by this watcher.
    */
+   /*收集该watcher的所有deps依赖*/
   depend () {
     let i = this.deps.length
     while (i--) {
