@@ -1,12 +1,14 @@
 前面已经讲过Vue数据绑定的原理了，现在从源码来看一下数据绑定在Vue中是如何实现的。
 
-Vue在初始化组件数据时，在生命周期的init与created钩子函数之间实现了对data、props、computed、methods、events以及watch的处理。
+Vue在初始化组件数据时，在生命周期的[beforeCreate](https://github.com/vuejs/vue/blob/dev/src/core/instance/init.js#L55)与[created](https://github.com/vuejs/vue/blob/dev/src/core/instance/init.js#L59)钩子函数之间实现了对[data、props、computed、methods、events以及watch](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L43)的处理。
 
 ## initData
 
 这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是由大大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
 
 加注释版的vue源码也可以直接通过[传送门](https://github.com/answershuto/learnVue/tree/master/vue-src)查看，这些是我在阅读Vue源码过程中加的注释，持续更新中。
+
+initData主要是初始化data中的数据，将数据进行Oberver，监听数据的变化，其他的监视原理一致，这里以data为例。
 
 ```javascript
 function initData (vm: Component) {
@@ -56,9 +58,10 @@ function initData (vm: Component) {
 }
 ```
 
+其实这段代码主要做了两件事，一是将_data上面的数据代理到vm上，另一件事通过observe将所有数据变成observable。
+
 ## proxy
 
-其实这段代码主要做了两件事，一是将_data上面的数据代理到vm上，另一件事通过observe将所有数据变成observable。
 接下来看一下proxy代理。
 
 ```javascript
@@ -267,7 +270,7 @@ export const arrayMethods = Object.create(arrayProto)
 
 ## Watcher
 
-[Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。
+[Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。依赖收集以后Watcher对象会被保存在Deps中，数据变动的时候会由于Deps通知Watcher实例，然后由Watcher实例回调cb进行实图的更新。
 
 ```javascript
 export default class Watcher {
@@ -523,7 +526,7 @@ export default class Watcher {
 
 ## Dep
 
-来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者。
+来看看[Dep](https://github.com/vuejs/vue/blob/dev/src/core/observer/dep.js#L12)类。其实Dep就是一个发布者，可以订阅多个观察者，依赖收集之后Deps中会存在一个或多个Watcher对象，在数据变更的时候通知所有的Watcher。
 
 ```javascript
 /**
@@ -576,7 +579,7 @@ Dep.target = null
 
 ## defineReactive
 
-接下来是[defineReactive](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L131)。
+接下来是[defineReactive](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L131)。defineReactive的作用是通过Object.defineProperty为数据定义上getter\setter方法，进行依赖收集后闭包中的Deps会存放Watcher对象。触发setter改变数据的时候会通知Deps订阅者通知所有的Watcher观察者对象进行试图的更新。
 
 ```javascript
 /**
