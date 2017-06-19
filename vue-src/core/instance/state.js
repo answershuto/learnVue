@@ -259,7 +259,7 @@ function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
-      /*dirty为true的时候会调用get触发依赖*/
+      /*实际是脏检查，在计算属性中的依赖发生改变的时候dirty会变成true，在get的时候重新计算计算属性的输出值*/
       if (watcher.dirty) {
         watcher.evaluate()
       }
