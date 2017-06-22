@@ -43,12 +43,13 @@ let platformGetTagNamespace
 /**
  * Convert HTML string to AST.
  */
+ /*将HTML字符串转换成AST*/
 export function parse (
   template: string,
   options: CompilerOptions
 ): ASTElement | void {
-  warn = options.warn || baseWarn
-  platformGetTagNamespace = options.getTagNamespace || no
+  warn = options.warn || baseWarn /*警告函数，baseWarn是Vue 编译器默认警告*/
+  platformGetTagNamespace = options.platformGetTagNamespace || no
   platformMustUseProp = options.mustUseProp || no
   platformIsPreTag = options.isPreTag || no
   preTransforms = pluckModuleFunction(options.modules, 'preTransformNode')
@@ -64,6 +65,7 @@ export function parse (
   let inPre = false
   let warned = false
 
+  /*只发出一次的warning*/
   function warnOnce (msg) {
     if (!warned) {
       warned = true
@@ -81,6 +83,7 @@ export function parse (
     }
   }
 
+  /*解析HTML*/
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,

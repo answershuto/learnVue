@@ -36,7 +36,9 @@ const qnameCapture = '((?:' + ncname + '\\:)?' + ncname + ')'
 const startTagOpen = new RegExp('^<' + qnameCapture)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp('^<\\/' + qnameCapture + '[^>]*>')
+/*匹配<!DOCTYPE> 标签*/
 const doctype = /^<!DOCTYPE [^>]+>/i
+/*匹配注释*/
 const comment = /^<!--/
 const conditionalComment = /^<!\[/
 
@@ -46,9 +48,11 @@ let IS_REGEX_CAPTURING_BROKEN = false
 })
 
 // Special Elements (can contain anything)
+/*返回一个函数用以检测传入的key值是否为script、style或者是textarea*/
 export const isPlainTextElement = makeMap('script,style,textarea', true)
 const reCache = {}
 
+/*转义表*/
 const decodingMap = {
   '&lt;': '<',
   '&gt;': '>',
@@ -64,6 +68,7 @@ function decodeAttr (value, shouldDecodeNewlines) {
   return value.replace(re, match => decodingMap[match])
 }
 
+/*解析HTML*/
 export function parseHTML (html, options) {
   const stack = []
   const expectHTML = options.expectHTML
@@ -74,10 +79,12 @@ export function parseHTML (html, options) {
   while (html) {
     last = html
     // Make sure we're not in a plaintext content element like script/style
+    /*保证lastTag不是纯文本标签，比如script、style以及textarea*/
     if (!lastTag || !isPlainTextElement(lastTag)) {
       let textEnd = html.indexOf('<')
       if (textEnd === 0) {
         // Comment:
+        /*如果是注释则直接去除*/
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
 
@@ -98,6 +105,7 @@ export function parseHTML (html, options) {
         }
 
         // Doctype:
+        /*<!DOCTYPE>标签不需要处理直接去除*/
         const doctypeMatch = html.match(doctype)
         if (doctypeMatch) {
           advance(doctypeMatch[0].length)
@@ -179,8 +187,10 @@ export function parseHTML (html, options) {
   }
 
   // Clean up any remaining tags
+  /*清楚多余的标签*/
   parseEndTag()
 
+  /*为计数index加上n，同时，使html到n个字符以后到位置作为起始位*/
   function advance (n) {
     index += n
     html = html.substring(n)

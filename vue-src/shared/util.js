@@ -69,6 +69,21 @@ export function toNumber (val: string): number | string {
  * Make a map and return a function for checking if a key
  * is in that map.
  */
+ /*
+返回一个函数用以检测是否一个key值存在这个函数中
+比如str = "a, b, c"
+则返回 (key) => {
+  return map[key];
+}
+map为{
+  a: true,
+  b: true,
+  c: true
+}
+存在expectsLowerCase参数的时候会将所有的参数转化成小写
+ */
+}
+}
 export function makeMap (
   str: string,
   expectsLowerCase?: boolean

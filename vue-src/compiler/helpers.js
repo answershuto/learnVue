@@ -2,6 +2,7 @@
 
 import { parseFilters } from './parser/filter-parser'
 
+/*Vue 编译器警告*/
 export function baseWarn (msg: string) {
   console.error(`[Vue compiler]: ${msg}`)
 }
