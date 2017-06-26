@@ -19,7 +19,9 @@ import {
   pluckModuleFunction
 } from '../helpers'
 
+/*匹配@以及v-on，绑定事件 */
 export const onRE = /^@|^v-on:/
+/*匹配v-、@以及:*/
 export const dirRE = /^v-|^@|^:/
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
