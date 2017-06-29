@@ -23,6 +23,7 @@ import {
 export const onRE = /^@|^v-on:/
 /*匹配v-、@以及:*/
 export const dirRE = /^v-|^@|^:/
+/*匹配v-for中的in以及of*/
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
@@ -322,16 +323,31 @@ function processRef (el) {
 
 function processFor (el) {
   let exp
+  /*取出v-for属性*/
   if ((exp = getAndRemoveAttr(el, 'v-for'))) {
+    /*匹配v-for中的in以及of 以item in sz为例 inMatch = [ 'item of sz', 'item', 'sz', index: 0, input: 'item of sz' ]*/
     const inMatch = exp.match(forAliasRE)
+    /*匹配失败则在非生产环境中打印v-for的无效表达式*/
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' && warn(
         `Invalid v-for expression: ${exp}`
       )
       return
     }
+    /*在这里是sz*/
     el.for = inMatch[2].trim()
+    /*item*/
     const alias = inMatch[1].trim()
+    /*
+      因为item可能是被括号包裹的，比如(item, index) in sz这样的形式，匹配出这些项
+      例：(item, index)匹配得到结果
+      [ '(item, index, l)',
+      'item',
+      ' index',
+      l,
+      index: 0,
+      input: '(item, index, l);' ]
+    */
     const iteratorMatch = alias.match(forIteratorRE)
     if (iteratorMatch) {
       el.alias = iteratorMatch[1].trim()

@@ -105,6 +105,7 @@ export function getBindingAttr (
   }
 }
 
+/*从ele的属性中获取name对应的值并将它从中删除*/
 export function getAndRemoveAttr (el: ASTElement, name: string): ?string {
   let val
   if ((val = el.attrsMap[name]) != null) {
