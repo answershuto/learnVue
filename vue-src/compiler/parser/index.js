@@ -25,6 +25,7 @@ export const onRE = /^@|^v-on:/
 export const dirRE = /^v-|^@|^:/
 /*匹配v-for中的in以及of*/
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
+/*v-for参数中带括号的情况匹配，比如(item, index)这样的参数*/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
 const argRE = /:(.*)$/
@@ -51,9 +52,11 @@ export function parse (
   template: string,
   options: CompilerOptions
 ): ASTElement | void {
-  warn = options.warn || baseWarn /*警告函数，baseWarn是Vue 编译器默认警告*/
+  /*警告函数，baseWarn是Vue 编译器默认警告*/
+  warn = options.warn || baseWarn 
   platformGetTagNamespace = options.platformGetTagNamespace || no
   platformMustUseProp = options.mustUseProp || no
+  /*检测是否是<pre>标签*/
   platformIsPreTag = options.isPreTag || no
   preTransforms = pluckModuleFunction(options.modules, 'preTransformNode')
   transforms = pluckModuleFunction(options.modules, 'transformNode')
@@ -64,7 +67,9 @@ export function parse (
   const preserveWhitespace = options.preserveWhitespace !== false
   let root
   let currentParent
+  /*标志位，是否有v-pre属性*/
   let inVPre = false
+  /*标志位，是否是pre标签*/
   let inPre = false
   let warned = false
 
@@ -78,9 +83,11 @@ export function parse (
 
   function endPre (element) {
     // check pre state
+    /*是否有v-pre属性，存在则标志位变为false，因为这里已经是结束end，存在v-pre时在start中会被标志为true*/
     if (element.pre) {
       inVPre = false
     }
+    /*检测是否是<pre>标签*/
     if (platformIsPreTag(element.tag)) {
       inPre = false
     }
@@ -100,6 +107,7 @@ export function parse (
 
       // handle IE svg bug
       /* istanbul ignore if */
+      /*处理IE的svg bug*/
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
@@ -116,6 +124,7 @@ export function parse (
         element.ns = ns
       }
 
+      /*如果是被禁止的标签或者是服务端渲染*/
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true
         process.env.NODE_ENV !== 'production' && warn(
@@ -131,17 +140,24 @@ export function parse (
       }
 
       if (!inVPre) {
+        /*
+          处理v-pre属性
+          v-pre元素及其子元素不会被编译
+          https://cn.vuejs.org/v2/api/#v-pre
+        */
         processPre(element)
         if (element.pre) {
           inVPre = true
         }
       }
+      /*检测是否是<pre>标签*/
       if (platformIsPreTag(element.tag)) {
         inPre = true
       }
       if (inVPre) {
         processRawAttrs(element)
       } else {
+        /*匹配v-for属性*/
         processFor(element)
         processIf(element)
         processOnce(element)
@@ -281,6 +297,11 @@ export function parse (
   return root
 }
 
+/*
+  处理v-pre属性
+  v-pre元素及其子元素不会被编译
+  https://cn.vuejs.org/v2/api/#v-pre
+*/
 function processPre (el) {
   if (getAndRemoveAttr(el, 'v-pre') != null) {
     el.pre = true
@@ -321,6 +342,7 @@ function processRef (el) {
   }
 }
 
+/*匹配v-for属性*/
 function processFor (el) {
   let exp
   /*取出v-for属性*/
@@ -570,6 +592,7 @@ function isTextTag (el): boolean {
   return el.tag === 'script' || el.tag === 'style'
 }
 
+/*判断是否是被禁止的标签（style标签或者script标签）*/
 function isForbiddenTag (el): boolean {
   return (
     el.tag === 'style' ||
