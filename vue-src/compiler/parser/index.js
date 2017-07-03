@@ -142,7 +142,7 @@ export function parse (
       if (!inVPre) {
         /*
           处理v-pre属性
-          v-pre元素及其子元素不会被编译
+          v-pre元素及其子元素被跳过编译
           https://cn.vuejs.org/v2/api/#v-pre
         */
         processPre(element)
@@ -154,19 +154,25 @@ export function parse (
       if (platformIsPreTag(element.tag)) {
         inPre = true
       }
+      /*如果有v-pre属性，元素及其子元素不会被编译*/
       if (inVPre) {
         processRawAttrs(element)
       } else {
         /*匹配v-for属性*/
         processFor(element)
+        /*匹配if属性，分别处理v-if、v-else以及v-else-if属性*/
         processIf(element)
+        /*处理v-once属性，https://cn.vuejs.org/v2/api/#v-once*/
         processOnce(element)
+        /*处理key属性 https://cn.vuejs.org/v2/api/#key*/
         processKey(element)
 
         // determine whether this is a plain element after
         // removing structural attributes
+        /*去掉属性后，确定这是一个普通元素。*/
         element.plain = !element.key && !attrs.length
 
+        /*处理ref属性 https://cn.vuejs.org/v2/api/#ref*/
         processRef(element)
         processSlot(element)
         processComponent(element)
@@ -299,7 +305,7 @@ export function parse (
 
 /*
   处理v-pre属性
-  v-pre元素及其子元素不会被编译
+  v-pre元素及其子元素被跳过编译
   https://cn.vuejs.org/v2/api/#v-pre
 */
 function processPre (el) {
@@ -308,6 +314,7 @@ function processPre (el) {
   }
 }
 
+/*处理原生属性，将其放入attrs中，以{name, value}的形式*/
 function processRawAttrs (el) {
   const l = el.attrsList.length
   if (l) {
@@ -324,6 +331,7 @@ function processRawAttrs (el) {
   }
 }
 
+/*处理key属性 https://cn.vuejs.org/v2/api/#key*/
 function processKey (el) {
   const exp = getBindingAttr(el, 'key')
   if (exp) {
@@ -334,10 +342,16 @@ function processKey (el) {
   }
 }
 
+/*处理ref属性 https://cn.vuejs.org/v2/api/#ref*/
 function processRef (el) {
   const ref = getBindingAttr(el, 'ref')
   if (ref) {
     el.ref = ref
+    /*
+      检测该元素是否存在一个for循环中。
+      将会沿着parent元素一级一级向上便利寻找是否处于一个for循环中。
+      当 v-for 用于元素或组件的时候，引用信息将是包含 DOM 节点或组件实例的数组。
+    */
     el.refInFor = checkInFor(el)
   }
 }
@@ -383,15 +397,20 @@ function processFor (el) {
   }
 }
 
+/*匹配if属性，分别处理v-if、v-else以及v-else-if属性*/
 function processIf (el) {
+  /*取出v-if属性*/
   const exp = getAndRemoveAttr(el, 'v-if')
   if (exp) {
+  /*存在v-if属性*/
     el.if = exp
+    /*在el的ifConditions属性汇总加入{exp, block}*/
     addIfCondition(el, {
       exp: exp,
       block: el
     })
   } else {
+  /*不存在v-if属性*/
     if (getAndRemoveAttr(el, 'v-else') != null) {
       el.else = true
     }
@@ -434,6 +453,7 @@ function findPrevElement (children: Array<any>): ASTElement | void {
   }
 }
 
+/*在el的ifConditions属性汇总加入condition*/
 function addIfCondition (el, condition) {
   if (!el.ifConditions) {
     el.ifConditions = []
@@ -441,6 +461,7 @@ function addIfCondition (el, condition) {
   el.ifConditions.push(condition)
 }
 
+/*处理v-once属性，https://cn.vuejs.org/v2/api/#v-once*/
 function processOnce (el) {
   const once = getAndRemoveAttr(el, 'v-once')
   if (once != null) {
@@ -553,6 +574,7 @@ function processAttrs (el) {
   }
 }
 
+/*检测该元素是否存在一个for循环中，将会沿着parent元素一级一级向上便利寻找是否处于一个for循环中。*/
 function checkInFor (el: ASTElement): boolean {
   let parent = el
   while (parent) {
