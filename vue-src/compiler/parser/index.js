@@ -469,8 +469,10 @@ function processOnce (el) {
   }
 }
 
+/*处理slot属性 https://cn.vuejs.org/v2/api/#slot*/
 function processSlot (el) {
   if (el.tag === 'slot') {
+    /*获取name特殊属性:name或者bind:name*/
     el.slotName = getBindingAttr(el, 'name')
     if (process.env.NODE_ENV !== 'production' && el.key) {
       warn(

@@ -92,12 +92,15 @@ export function getBindingAttr (
   name: string,
   getStatic?: boolean
 ): ?string {
+  /*得到用:或者v-bind:修饰的特殊属性*/
   const dynamicValue =
     getAndRemoveAttr(el, ':' + name) ||
     getAndRemoveAttr(el, 'v-bind:' + name)
   if (dynamicValue != null) {
+    /*存在特殊属性*/
     return parseFilters(dynamicValue)
   } else if (getStatic !== false) {
+    /*getStatic非false的时候返回静态属性，即一般的属性*/
     const staticValue = getAndRemoveAttr(el, name)
     if (staticValue != null) {
       return JSON.stringify(staticValue)
