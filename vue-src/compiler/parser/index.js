@@ -29,7 +29,9 @@ export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
 const argRE = /:(.*)$/
+/*匹配v-bind以及:*/
 const bindRE = /^:|^v-bind:/
+/*根据点来分开各个级别的正则，比如a.b.c.d解析后可以得到.b .c .d*/
 const modifierRE = /\.[^.]+/g
 
 const decodeHTMLCached = cached(decode)
@@ -174,11 +176,15 @@ export function parse (
 
         /*处理ref属性 https://cn.vuejs.org/v2/api/#ref*/
         processRef(element)
+        /*处理slot属性 https://cn.vuejs.org/v2/api/#slot*/
         processSlot(element)
+        /*处理组件*/
         processComponent(element)
+        /*转换*/
         for (let i = 0; i < transforms.length; i++) {
           transforms[i](element, options)
         }
+        /*处理属性*/
         processAttrs(element)
       }
 
@@ -472,7 +478,7 @@ function processOnce (el) {
 /*处理slot属性 https://cn.vuejs.org/v2/api/#slot*/
 function processSlot (el) {
   if (el.tag === 'slot') {
-    /*获取name特殊属性:name或者bind:name*/
+    /*获取name特殊属性:name或者bind:name，用作slot的name https://cn.vuejs.org/v2/api/#slot-1*/
     el.slotName = getBindingAttr(el, 'name')
     if (process.env.NODE_ENV !== 'production' && el.key) {
       warn(
@@ -482,6 +488,7 @@ function processSlot (el) {
       )
     }
   } else {
+    /*获取属性为slot的slot https://cn.vuejs.org/v2/api/#slot*/
     const slotTarget = getBindingAttr(el, 'slot')
     if (slotTarget) {
       el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget
@@ -492,31 +499,42 @@ function processSlot (el) {
   }
 }
 
+/*处理组件*/
 function processComponent (el) {
   let binding
+  /*获取is属性，用于动态动态组件 https://cn.vuejs.org/v2/api/#is */
   if ((binding = getBindingAttr(el, 'is'))) {
     el.component = binding
   }
+  /*inline-template 内置组件 https://cn.vuejs.org/v2/api/#内置的组件*/
   if (getAndRemoveAttr(el, 'inline-template') != null) {
     el.inlineTemplate = true
   }
 }
 
+/*处理属性*/
 function processAttrs (el) {
+  /*获取元素属性列表*/
   const list = el.attrsList
   let i, l, name, rawName, value, modifiers, isProp
   for (i = 0, l = list.length; i < l; i++) {
     name = rawName = list[i].name
     value = list[i].value
+    /*匹配v-、@以及:*/
     if (dirRE.test(name)) {
+      /*标记该ele为动态的*/
       // mark element as dynamic
       el.hasBindings = true
       // modifiers
+      /*解析表达式，比如a.b.c.d得到结果{b: true, c: true, d:true}*/
       modifiers = parseModifiers(name)
       if (modifiers) {
+        /*得到第一级，比如a.b.c.d得到a，也就是上面的操作把所有子级取出来，这个把第一级取出来*/
         name = name.replace(modifierRE, '')
       }
+      /*如果属性是v-bind的*/
       if (bindRE.test(name)) { // v-bind
+        /*这样处理以后v-bind:aaa得到aaa*/
         name = name.replace(bindRE, '')
         value = parseFilters(value)
         isProp = false
@@ -588,7 +606,9 @@ function checkInFor (el: ASTElement): boolean {
   return false
 }
 
+/*解析表达式，比如a.b.c.d得到结果{b: true, c: true, d:true}*/
 function parseModifiers (name: string): Object | void {
+  /*根据点来分开各个级别的正则，比如a.b.c.d解析后可以得到.b .c .d*/
   const match = name.match(modifierRE)
   if (match) {
     const ret = {}
