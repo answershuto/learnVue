@@ -16,10 +16,12 @@ export function pluckModuleFunction<F: Function> (
     : []
 }
 
+/*将属性放入ele的props属性中*/
 export function addProp (el: ASTElement, name: string, value: string) {
   (el.props || (el.props = [])).push({ name, value })
 }
 
+/*将属性放入ele的attr属性中*/
 export function addAttr (el: ASTElement, name: string, value: string) {
   (el.attrs || (el.attrs = [])).push({ name, value })
 }

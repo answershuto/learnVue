@@ -536,17 +536,26 @@ function processAttrs (el) {
       if (bindRE.test(name)) { // v-bind
         /*这样处理以后v-bind:aaa得到aaa*/
         name = name.replace(bindRE, '')
+        /*解析过滤器*/
         value = parseFilters(value)
         isProp = false
         if (modifiers) {
+          /*
+              https://cn.vuejs.org/v2/api/#v-bind
+              这里用来处理v-bind的修饰符
+          */
+          /*.prop - 被用于绑定 DOM 属性。*/
           if (modifiers.prop) {
             isProp = true
+             /*将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc*/
             name = camelize(name)
             if (name === 'innerHtml') name = 'innerHTML'
           }
+          /*.camel - (2.1.0+) 将 kebab-case 特性名转换为 camelCase. (从 2.1.0 开始支持)*/
           if (modifiers.camel) {
             name = camelize(name)
           }
+          //.sync (2.3.0+) 语法糖，会扩展成一个更新父组件绑定值的 v-on 侦听器。
           if (modifiers.sync) {
             addHandler(
               el,
@@ -556,8 +565,10 @@ function processAttrs (el) {
           }
         }
         if (isProp || platformMustUseProp(el.tag, el.attrsMap.type, name)) {
+          /*将属性放入ele的props属性中*/
           addProp(el, name, value)
         } else {
+          /*将属性放入ele的attr属性中*/
           addAttr(el, name, value)
         }
       } else if (onRE.test(name)) { // v-on

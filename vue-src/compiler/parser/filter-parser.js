@@ -2,6 +2,7 @@
 
 const validDivisionCharRE = /[\w).+\-_$\]]/
 
+/*解析过滤器*/
 export function parseFilters (exp: string): string {
   let inSingle = false
   let inDouble = false
@@ -17,14 +18,19 @@ export function parseFilters (exp: string): string {
     prev = c
     c = exp.charCodeAt(i)
     if (inSingle) {
+      // '  单引号
       if (c === 0x27 && prev !== 0x5C) inSingle = false
     } else if (inDouble) {
+      // "  双引号
       if (c === 0x22 && prev !== 0x5C) inDouble = false
     } else if (inTemplateString) {
+      // `  模板字符串
       if (c === 0x60 && prev !== 0x5C) inTemplateString = false
     } else if (inRegex) {
+      // /  正则
       if (c === 0x2f && prev !== 0x5C) inRegex = false
     } else if (
+      // |  管道
       c === 0x7C && // pipe
       exp.charCodeAt(i + 1) !== 0x7C &&
       exp.charCodeAt(i - 1) !== 0x7C &&
