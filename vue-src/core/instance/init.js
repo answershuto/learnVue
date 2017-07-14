@@ -28,6 +28,7 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // a flag to avoid this being observed
+    /*一个防止vm实例自身被观察的标志位*/
     vm._isVue = true
     // merge options
     if (options && options._isComponent) {

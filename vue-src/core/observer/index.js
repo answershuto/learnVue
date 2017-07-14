@@ -232,17 +232,29 @@ export function defineReactive (
  * already exist.
  */
 export function set (target: Array<any> | Object, key: any, val: any): any {
+  /*如果传入数组则在指定位置插入val*/
   if (Array.isArray(target) && typeof key === 'number') {
     target.length = Math.max(target.length, key)
     target.splice(key, 1, val)
+    /*因为数组不需要进行响应式处理，数组会修改七个Array原型上的方法来进行响应式处理*/
     return val
   }
+  /*如果是一个对象，并且已经存在了这个key则直接返回*/
   if (hasOwn(target, key)) {
     target[key] = val
     return val
   }
+  /*获得target的Oberver实例*/
   const ob = (target : any).__ob__
+  /*
+    _isVue 一个防止vm实例自身被观察的标志位 ，_isVue为true则代表vm实例，也就是this
+    vmCount判断是否为根节点，存在则代表是data的根节点，Vue 不允许在已经创建的实例上动态添加新的根级响应式属性(root-level reactive property)
+  */
   if (target._isVue || (ob && ob.vmCount)) {
+    /*  
+      Vue 不允许在已经创建的实例上动态添加新的根级响应式属性(root-level reactive property)。
+      https://cn.vuejs.org/v2/guide/reactivity.html#变化检测问题
+    */
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
       'at runtime - declare it upfront in the data option.'

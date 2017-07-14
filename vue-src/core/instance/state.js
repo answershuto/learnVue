@@ -350,7 +350,15 @@ export function stateMixin (Vue: Class<Component>) {
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
+  /*
+    https://cn.vuejs.org/v2/api/#vm-set
+    用以将data之外的对象绑定成响应式的
+  */
   Vue.prototype.$set = set
+  /*
+    https://cn.vuejs.org/v2/api/#vm-delete
+    与set对立，解除绑定
+  */
   Vue.prototype.$delete = del
 
   /*
