@@ -317,10 +317,22 @@ function createWatcher (vm: Component, key: string, handler: any) {
   let options
   /*对对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
   if (isPlainObject(handler)) {
+    /*
+      这里是当watch的写法是这样的时候
+      watch: {
+          test: {
+              handler: function () {},
+              deep: true
+          }
+      }
+    */
     options = handler
     handler = handler.handler
   }
   if (typeof handler === 'string') {
+    /*
+        当然，也可以直接使用vm中methods的方法
+    */
     handler = vm[handler]
   }
   /*用$watch方法创建一个watch来观察该对象的变化*/
