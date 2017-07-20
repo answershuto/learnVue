@@ -26,6 +26,7 @@ export function addAttr (el: ASTElement, name: string, value: string) {
   (el.attrs || (el.attrs = [])).push({ name, value })
 }
 
+/*将参数加入到ele的directives中去*/
 export function addDirective (
   el: ASTElement,
   name: string,
