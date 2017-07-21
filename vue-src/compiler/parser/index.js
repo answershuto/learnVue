@@ -65,6 +65,7 @@ export function parse (
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
   delimiters = options.delimiters
 
+  /*存放ele*/
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
   let root
@@ -248,7 +249,11 @@ export function parse (
           processIfConditions(element, currentParent)
         } else if (element.slotScope) { // scoped slot
           currentParent.plain = false
+          /*slot如果没有则是默认的default*/
           const name = element.slotTarget || '"default"'
+          /*
+              scopedSlots中存放slot元素 https://cn.vuejs.org/v2/api/#vm-scopedSlots
+          */
           ;(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element
         } else {
           currentParent.children.push(element)
@@ -269,12 +274,16 @@ export function parse (
 
     end () {
       // remove trailing whitespace
+      /*从stack中取出最后一个ele*/
       const element = stack[stack.length - 1]
+      /*获取该ele的最后一个子节点*/
       const lastNode = element.children[element.children.length - 1]
+      /*该子节点是非<pre>标签的文本*/
       if (lastNode && lastNode.type === 3 && lastNode.text === ' ' && !inPre) {
         element.children.pop()
       }
       // pop stack
+      /*ele出栈*/
       stack.length -= 1
       currentParent = stack[stack.length - 1]
       endPre(element)
