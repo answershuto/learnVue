@@ -75,7 +75,7 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     if (vm.$options.el) {
-      /*挂在组件*/
+      /*挂载组件*/
       vm.$mount(vm.$options.el)
     }
   }

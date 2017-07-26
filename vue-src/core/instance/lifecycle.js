@@ -47,8 +47,10 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  /*更新节点*/
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
+    /*如果已经该组件已经挂载过了则代表进入这个步骤是个更新的过程，触发beforeUpdate钩子*/
     if (vm._isMounted) {
       callHook(vm, 'beforeUpdate')
     }
@@ -59,6 +61,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    /*基于后端渲染Vue.prototype.__patch__被用来作为一个入口*/
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(
@@ -72,6 +75,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     }
     activeInstance = prevActiveInstance
     // update __vue__ reference
+    /*更新新的实例对象的__vue__*/
     if (prevEl) {
       prevEl.__vue__ = null
     }
@@ -142,6 +146,7 @@ export function mountComponent (
 ): Component {
   vm.$el = el
   if (!vm.$options.render) {
+    /*render函数不存在的时候创建一个空的VNode节点*/
     vm.$options.render = createEmptyVNode
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
@@ -161,8 +166,10 @@ export function mountComponent (
       }
     }
   }
+  /*触发beforeMount钩子*/
   callHook(vm, 'beforeMount')
 
+  /*updateComponent作为Watcher对象的getter函数，用来依赖收集*/
   let updateComponent
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -188,13 +195,16 @@ export function mountComponent (
     }
   }
 
+  /*这里对该vm注册一个Watcher实例，Watcher的getter为updateComponent函数，用于触发所有渲染所需要用到的数据的getter，进行依赖收集，该Watcher实例会存在所有渲染所需数据的闭包Dep中*/
   vm._watcher = new Watcher(vm, updateComponent, noop)
   hydrating = false
 
   // manually mounted instance, call mounted on self
   // mounted is called for render-created child components in its inserted hook
   if (vm.$vnode == null) {
+    /*标志位，代表该组件已经挂载*/
     vm._isMounted = true
+    /*调用mounted钩子*/
     callHook(vm, 'mounted')
   }
   return vm
