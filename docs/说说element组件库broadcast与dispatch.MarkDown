@@ -56,4 +56,6 @@ export default {
 
 broadcast通过递归遍历子组件找到所需组件广播事件，而dispatch则逐级向上查找对应父组件派发事件。
 
-broadcast需要三个参数，componentName（组件名）
+broadcast需要三个参数，componentName（组件名），componentName（事件名称）以及params（数据）。根据componentName深度遍历子组件找到对应组件emit事件eventName。
+
+dispatch同样道理，需要三个参数，componentName（组件名），componentName（事件名称）以及params（数据）。根据componentName向上级一直寻找对应父组件，找到以后emit事件eventName。
