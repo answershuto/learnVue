@@ -2,6 +2,7 @@
 
 import { makeMap } from 'shared/util'
 
+/*判断是否是保留的标签*/
 export const isReservedTag = makeMap(
   'template,script,style,element,content,slot,link,meta,svg,view,' +
   'a,div,img,image,text,span,richtext,input,switch,textarea,spinner,select,' +
