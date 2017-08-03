@@ -99,7 +99,7 @@ export function _createElement (
       )
     } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
-      /*从vm实例的option的components中寻找该tag，存在则就是一个组件，创建相应节点*/
+      /*从vm实例的option的components中寻找该tag，存在则就是一个组件，创建相应节点，Ctor为组件的构造类*/
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
       // unknown or unlisted namespaced elements
@@ -113,12 +113,15 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
+    /*tag不是字符串的时候则是组件的构造类*/
     vnode = createComponent(tag, data, context, children)
   }
   if (isDef(vnode)) {
+    /*如果有名字空间，则递归所有子节点应用该名字空间*/
     if (ns) applyNS(vnode, ns)
     return vnode
   } else {
+    /*如果vnode没有成功创建则创建空节点*/
     return createEmptyVNode()
   }
 }

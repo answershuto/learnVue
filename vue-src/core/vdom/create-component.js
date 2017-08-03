@@ -95,6 +95,7 @@ const componentVNodeHooks = {
 
 const hooksToMerge = Object.keys(componentVNodeHooks)
 
+/*创建一个组件节点，返回Vnode节点*/
 export function createComponent (
   Ctor: Class<Component> | Function | Object | void,
   data?: VNodeData,
@@ -102,6 +103,7 @@ export function createComponent (
   children: ?Array<VNode>,
   tag?: string
 ): VNode | void {
+  /*没有传组件构造类直接返回*/
   if (isUndef(Ctor)) {
     return
   }

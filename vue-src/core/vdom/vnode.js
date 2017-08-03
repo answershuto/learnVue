@@ -31,21 +31,35 @@ export default class VNode {
   ) {
     this.tag = tag
     this.data = data
+    /*当前节点的子节点，是一个数组*/
     this.children = children
+    /*当前节点的文本*/
     this.text = text
+    /*当前虚拟节点对应的真实dom节点*/
     this.elm = elm
+    /*当前节点的名字空间*/
     this.ns = undefined
     this.context = context
+    /*函数化组件作用域*/
     this.functionalContext = undefined
+    /*节点的key属性，被当作节点的标志，用以优化*/
     this.key = data && data.key
+    /*组件的option选项*/
     this.componentOptions = componentOptions
+    /*当前节点对应的组件的实例*/
     this.componentInstance = undefined
+    /*当前节点的父节点*/
     this.parent = undefined
     this.raw = false
+    /*静态节点标志*/
     this.isStatic = false
+    /*是否作为跟节点插入*/
     this.isRootInsert = true
+    /*是否为注释节点*/
     this.isComment = false
+    /*是否为克隆节点*/
     this.isCloned = false
+    /*是否有v-once指令*/
     this.isOnce = false
   }
 
@@ -64,6 +78,7 @@ export const createEmptyVNode = () => {
   return node
 }
 
+/*创建一个文本节点*/
 export function createTextVNode (val: string | number) {
   return new VNode(undefined, undefined, undefined, String(val))
 }
