@@ -20,14 +20,17 @@ export function resolveAsyncComponent (
   baseCtor: Class<Component>,
   context: Component
 ): Class<Component> | void {
+  /*出错组件工厂返回出错组件*/
   if (isTrue(factory.error) && isDef(factory.errorComp)) {
     return factory.errorComp
   }
 
+  /*resoved时候返回resolved组件*/
   if (isDef(factory.resolved)) {
     return factory.resolved
   }
 
+  /*加载组件*/
   if (isTrue(factory.loading) && isDef(factory.loadingComp)) {
     return factory.loadingComp
   }
