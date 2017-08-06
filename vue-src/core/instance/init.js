@@ -100,12 +100,19 @@ function initInternalComponent (vm: Component, options: InternalComponentOptions
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  /*如果存在父类的时候*/
   if (Ctor.super) {
+    /*对其父类进行resolveConstructorOptions，获取父类的options*/
     const superOptions = resolveConstructorOptions(Ctor.super)
+    /*之前已经缓存起来的父类的options，用以检测是否更新*/
     const cachedSuperOptions = Ctor.superOptions
+    /*对比当前父类的option以及缓存中的option，两个不一样则代表已经被更新*/
     if (superOptions !== cachedSuperOptions) {
       // super option changed,
       // need to resolve new options.
+      /*父类的opiton已经被改变，需要去处理新的option*/
+
+      /*把新的option缓存起来*/
       Ctor.superOptions = superOptions
       // check if there are any late-modified/attached options (#4976)
       const modifiedOptions = resolveModifiedOptions(Ctor)
