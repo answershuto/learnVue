@@ -26,7 +26,9 @@ export function initExtend (Vue: GlobalAPI) {
    */
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
+    /*父类的构造*/
     const Super = this
+    /*父类的cid*/
     const SuperId = Super.cid
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
     /*如果构造函数中已经存在了该cid，则代表已经extend过了，直接返回*/
@@ -36,6 +38,7 @@ export function initExtend (Vue: GlobalAPI) {
 
     const name = extendOptions.name || Super.options.name
     if (process.env.NODE_ENV !== 'production') {
+      /*name只能包含字母与连字符*/
       if (!/^[a-zA-Z][\w-]*$/.test(name)) {
         warn(
           'Invalid component name: "' + name + '". Component names ' +
@@ -45,11 +48,15 @@ export function initExtend (Vue: GlobalAPI) {
       }
     }
 
+    /*Sub构造函数其实就一个_init方法，这跟Vue的构造方法是一致的，在_init中处理各种数据初始化、生命周期等*/
     const Sub = function VueComponent (options) {
       this._init(options)
     }
+    /*继承父类*/
     Sub.prototype = Object.create(Super.prototype)
+    /*构造函数*/
     Sub.prototype.constructor = Sub
+    /*创建一个新的cid*/
     Sub.cid = cid++
     Sub.options = mergeOptions(
       Super.options,

@@ -203,6 +203,7 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
 /**
  * Validate component names
  */
+ /*检查是否是有效的组件名*/
 function checkComponents (options: Object) {
   for (const key in options.components) {
     const lower = key.toLowerCase()
@@ -219,6 +220,7 @@ function checkComponents (options: Object) {
  * Ensure all props option syntax are normalized into the
  * Object-based format.
  */
+ /*确保所有props option序列化成正确的格式*/
 function normalizeProps (options: Object) {
   const props = options.props
   if (!props) return
@@ -229,6 +231,7 @@ function normalizeProps (options: Object) {
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
+        /*将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc*/
         name = camelize(val)
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
@@ -238,6 +241,7 @@ function normalizeProps (options: Object) {
   } else if (isPlainObject(props)) {
     for (const key in props) {
       val = props[key]
+      /*将原本用-连接的字符串变成驼峰 aaa-bbb-ccc => aaaBbbCcc*/
       name = camelize(key)
       res[name] = isPlainObject(val)
         ? val
@@ -250,6 +254,7 @@ function normalizeProps (options: Object) {
 /**
  * Normalize raw function directives into object format.
  */
+ /*将函数指令序列化后加入对象*/
 function normalizeDirectives (options: Object) {
   const dirs = options.directives
   if (dirs) {
@@ -266,12 +271,14 @@ function normalizeDirectives (options: Object) {
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
  */
+ /*合并两个option对象到一个新的对象中*/
 export function mergeOptions (
   parent: Object,
   child: Object,
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
+    /*检查是否是有效的组件名*/
     checkComponents(child)
   }
 
@@ -279,12 +286,20 @@ export function mergeOptions (
     child = child.options
   }
 
+  /*确保所有props option序列化成正确的格式*/
   normalizeProps(child)
+  /*将函数指令序列化后加入对象*/
   normalizeDirectives(child)
+  /*
+    https://cn.vuejs.org/v2/api/#extends
+    允许声明扩展另一个组件(可以是一个简单的选项对象或构造函数),而无需使用 
+    将child的extends也加入parent扩展
+  */
   const extendsFrom = child.extends
   if (extendsFrom) {
     parent = mergeOptions(parent, extendsFrom, vm)
   }
+  /*child的mixins加入parent中*/
   if (child.mixins) {
     for (let i = 0, l = child.mixins.length; i < l; i++) {
       parent = mergeOptions(parent, child.mixins[i], vm)
