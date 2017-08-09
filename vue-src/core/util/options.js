@@ -23,6 +23,10 @@ import {
  * how to merge a parent option value and a child option
  * value into the final value.
  */
+ /*
+  这个strats的作用就是，当要合并两个option（比如父组件的option与子组件的option）合并的时候，
+  这里写了如何合并两个数据（或者function等）得到最终结果的方法
+ */
 const strats = config.optionMergeStrategies
 
 /**
@@ -310,13 +314,16 @@ export function mergeOptions (
   for (key in parent) {
     mergeField(key)
   }
+  /*合并parent与child*/
   for (key in child) {
     if (!hasOwn(parent, key)) {
       mergeField(key)
     }
   }
   function mergeField (key) {
+    /*strats里面存了options中每一个属性（el、props、watch等等）的合并方法，先取出*/
     const strat = strats[key] || defaultStrat
+    /*根据合并方法来合并两个option*/
     options[key] = strat(parent[key], child[key], vm, key)
   }
   return options

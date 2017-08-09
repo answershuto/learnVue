@@ -21,7 +21,7 @@ export function initExtend (Vue: GlobalAPI) {
    * Class inheritance
    */
    /*
-   使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。  
+   使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件option的对象。  
     https://cn.vuejs.org/v2/api/#Vue-extend-options
    */
   Vue.extend = function (extendOptions: Object): Function {
@@ -58,10 +58,12 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.prototype.constructor = Sub
     /*创建一个新的cid*/
     Sub.cid = cid++
+    /*将父组件的option与子组件的合并到一起(Vue有一个cid为0的基类，即Vue本身，会将一些默认初始化的option何入)*/
     Sub.options = mergeOptions(
       Super.options,
       extendOptions
     )
+    /*es6语法，super为父类构造*/
     Sub['super'] = Super
 
     // For props and computed properties, we define the proxy getters on
