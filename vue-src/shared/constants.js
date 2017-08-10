@@ -1,5 +1,6 @@
 export const SSR_ATTR = 'data-server-rendered'
 
+/*选项／资源集合*/
 export const ASSET_TYPES = [
   'component',
   'directive',
