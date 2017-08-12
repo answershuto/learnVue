@@ -22,4 +22,6 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 ### 随笔杂谈
 
+[Vue组件间通信](./docs/Vue组件间通信.MarkDown)
+
 [说说element组件库broadcast与dispatch](./docs/说说element组件库broadcast与dispatch.MarkDown)
