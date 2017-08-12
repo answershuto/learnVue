@@ -2,6 +2,9 @@
 
 [组件 (Component) 是 Vue.js 最强大的功能之一。组件可以扩展 HTML 元素，封装可重用的代码。在较高层面上，组件是自定义元素，Vue.js 的编译器为它添加特殊功能。在有些情况下，组件也可以是原生 HTML 元素的形式，以 is 特性扩展。](https://cn.vuejs.org/v2/guide/components.html)
 
+<br />
+<br />
+
 ## Vue组件间通信
 
 ### 父组件向子组件通信
@@ -51,9 +54,14 @@ export default {
 </script>
 ```
 
+<br /> 
+<br /> 
+
 ### 子组件向父组件通信
 
-#### 方法二:使用[vue事件](https://cn.vuejs.org/v2/guide/components.html#使用-v-on-绑定自定义事件)
+<br />
+
+#### 方法一:使用[vue事件](https://cn.vuejs.org/v2/guide/components.html#使用-v-on-绑定自定义事件)
 
 父组件向子组件传递事件方法，子组件通过$emit触发事件，回调给父组件。
 
@@ -106,11 +114,16 @@ export default {
 </script>
 ```
 
+<br />
+
 #### 方法二： 通过修改父组件传递的props来修改父组件数据
 
 这种方法只能在父组件传递一个引用变量时可以使用，字面变量无法达到相应效果。因为饮用变量最终无论是父组件中的数据还是子组件得到的props中的数据都是指向同一块内存地址，所以修改了子组件中props的数据即修改了父组件的数据。
 
 但是并不推荐这么做，并不建议直接修改props的值，如果数据是用于显示修改的，在实际开发中我经常会将其放入data中，在需要回传给父组件的时候再用事件回传数据。这样做保持了组件独立以及解耦，不会因为使用同一份数据而导致数据流异常混乱，只通过特定的接口传递数据来达到修改数据的目的，而内部数据状态由专门的data负责管理。
+
+<br />
+<br />
 
 ### 非父子组件、兄弟组件之间的数据传递
 
@@ -135,11 +148,17 @@ event.$on('eventName', (val) => {
 eventName.$emit('eventName', 'this is a message.');
 ```
 
+<br />
+<br />
+
 ### 多层级父子组件通信：
 
 在Vue1.0中实现了$broadcast与$dispatch两个方法用来向子组件（或父组件）广播（或派发），当子组件（或父组件）上监听了事件并返回true的时候会向爷孙级组件继续广播（或派发）事件。但是这个方法在Vue2.0里面已经被移除了。
 
-之前在学习饿了么的开源组件库[element](https://github.com/ElemeFE/element)的时候发现他们重新实现了broadcast以及dispatch的方法，以mixin的方式引入，具体可以参考[《说说element组件库broadcast与dispatch》](https://github.com/answershuto/learnVue/blob/master/docs/%E8%AF%B4%E8%AF%B4element%E7%BB%84%E4%BB%B6%E5%BA%93broadcast%E4%B8%8Edispatch.MarkDown)。但是跟Vue1.0的两个方法实现有略微的不同。这两个方法实现了向子孙组件事件广播以及向多层级父组件事件派发的功能。但是并非广义上的事件广播，它需要制定一个commentName进行向指定组件名组件定向广播（派发）事件。
+之前在学习饿了么的开源组件库[element](https://github.com/ElemeFE/element)的时候发现他们重新实现了broadcast以及dispatch的方法，以mixin的方式引入，具体可以参考[《说说element组件库broadcast与dispatch》](https://github.com/answershuto/learnVue/blob/master/docs/%E8%AF%B4%E8%AF%B4element%E7%BB%84%E4%BB%B6%E5%BA%93broadcast%E4%B8%8Edispatch.MarkDown)。但是跟Vue1.0的两个方法实现有略微的不同。这两个方法实现了向子孙组件事件广播以及向多层级父组件事件派发的功能。但是并非广义上的事件广播，它需要指定一个commentName进行向指定组件名组件定向广播（派发）事件。
+
+<br />
+<br />
 
 ### 复杂的单页应用数据管理
 
