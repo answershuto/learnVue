@@ -9,6 +9,8 @@
 
 ### 父组件向子组件通信
 
+#### 方法一：props
+
 使用[props](https://cn.vuejs.org/v2/guide/components.html#Prop)，父组件可以使用props向子组件传递数据。
 
 父组件vue模板father.vue
@@ -53,6 +55,12 @@ export default {
 }
 </script>
 ```
+
+<br />
+
+#### 方法二 使用$children
+
+使用[$children](https://cn.vuejs.org/v2/api/#vm-children)可以在父组件中访问子组件。
 
 <br /> 
 <br /> 
@@ -121,6 +129,12 @@ export default {
 这种方法只能在父组件传递一个引用变量时可以使用，字面变量无法达到相应效果。因为饮用变量最终无论是父组件中的数据还是子组件得到的props中的数据都是指向同一块内存地址，所以修改了子组件中props的数据即修改了父组件的数据。
 
 但是并不推荐这么做，并不建议直接修改props的值，如果数据是用于显示修改的，在实际开发中我经常会将其放入data中，在需要回传给父组件的时候再用事件回传数据。这样做保持了组件独立以及解耦，不会因为使用同一份数据而导致数据流异常混乱，只通过特定的接口传递数据来达到修改数据的目的，而内部数据状态由专门的data负责管理。
+
+<br />
+
+#### 方法三：使用$parent
+
+使用[$parent](https://cn.vuejs.org/v2/api/#vm-parent)可以访问父组件的数据。
 
 <br />
 <br />
