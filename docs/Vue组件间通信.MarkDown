@@ -159,7 +159,7 @@ event.$on('eventName', (val) => {
 });
 
 /*触发事件*/
-eventName.$emit('eventName', 'this is a message.');
+event.$emit('eventName', 'this is a message.');
 ```
 
 <br />
@@ -170,6 +170,8 @@ eventName.$emit('eventName', 'this is a message.');
 在Vue1.0中实现了$broadcast与$dispatch两个方法用来向子组件（或父组件）广播（或派发），当子组件（或父组件）上监听了事件并返回true的时候会向爷孙级组件继续广播（或派发）事件。但是这个方法在Vue2.0里面已经被移除了。
 
 之前在学习饿了么的开源组件库[element](https://github.com/ElemeFE/element)的时候发现他们重新实现了broadcast以及dispatch的方法，以mixin的方式引入，具体可以参考[《说说element组件库broadcast与dispatch》](https://github.com/answershuto/learnVue/blob/master/docs/%E8%AF%B4%E8%AF%B4element%E7%BB%84%E4%BB%B6%E5%BA%93broadcast%E4%B8%8Edispatch.MarkDown)。但是跟Vue1.0的两个方法实现有略微的不同。这两个方法实现了向子孙组件事件广播以及向多层级父组件事件派发的功能。但是并非广义上的事件广播，它需要指定一个commentName进行向指定组件名组件定向广播（派发）事件。
+
+其实这两个方法内部实现还是用到的还是$parent以及$children，用以遍历子节点或是逐级向上查询父节点，访问到指定组件名的时候，调用$emit触发指定事件。
 
 <br />
 <br />
