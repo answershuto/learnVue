@@ -21,8 +21,9 @@ export function initExtend (Vue: GlobalAPI) {
    * Class inheritance
    */
    /*
-   使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件option的对象。  
-    https://cn.vuejs.org/v2/api/#Vue-extend-options
+   使用基础 Vue 构造器，创建一个“子类”。
+   其实就是扩展了基础构造器，形成了一个可复用的有指定选项功能的子构造器。
+   参数是一个包含组件option的对象。  https://cn.vuejs.org/v2/api/#Vue-extend-options
    */
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
@@ -48,7 +49,10 @@ export function initExtend (Vue: GlobalAPI) {
       }
     }
 
-    /*Sub构造函数其实就一个_init方法，这跟Vue的构造方法是一致的，在_init中处理各种数据初始化、生命周期等*/
+    /*
+      Sub构造函数其实就一个_init方法，这跟Vue的构造方法是一致的，在_init中处理各种数据初始化、生命周期等。
+      因为Sub作为一个Vue的扩展构造器，所以基础的功能还是需要保持一致，跟Vue构造器一样在构造函数中初始化_init。
+    */
     const Sub = function VueComponent (options) {
       this._init(options)
     }
@@ -87,7 +91,7 @@ export function initExtend (Vue: GlobalAPI) {
 
     // create asset registers, so extended classes
     // can have their private assets too.
-    /*创建选项登记，使得Sub也会拥有父类的私有选项（directives、filters、components）*/
+    /*使得Sub也会拥有父类的私有选项（directives、filters、components）*/
     ASSET_TYPES.forEach(function (type) {
       Sub[type] = Super[type]
     })

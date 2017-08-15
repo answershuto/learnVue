@@ -104,6 +104,7 @@ export function cloneVNode (vnode: VNode): VNode {
   return cloned
 }
 
+/*对一个节点数组依次进行clone*/
 export function cloneVNodes (vnodes: Array<VNode>): Array<VNode> {
   const len = vnodes.length
   const res = new Array(len)

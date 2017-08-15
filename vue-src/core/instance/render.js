@@ -61,6 +61,7 @@ export function renderMixin (Vue: Class<Component>) {
 
     if (vm._isMounted) {
       // clone slot nodes on re-renders
+      /*在重新渲染时会克隆槽位节点 不知道是不是因为Vnode必须必须唯一的原因，网上也没找到答案，此处存疑。*/
       for (const key in vm.$slots) {
         vm.$slots[key] = cloneVNodes(vm.$slots[key])
       }
