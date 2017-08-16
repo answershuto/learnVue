@@ -1,8 +1,19 @@
-/* @flow */
+## Vue事件API
 
-import { updateListeners } from '../vdom/helpers/index'
-import { toArray, tip, hyphenate, formatComponentName } from '../util/index'
+众所周知，Vue.js为我们提供了四个事件API，分别是[$on](https://cn.vuejs.org/v2/api/#vm-on-event-callback)，[$once](https://cn.vuejs.org/v2/api/#vm-once-event-callback)，[$off](https://cn.vuejs.org/v2/api/#vm-off-event-callback)，[$emit](https://cn.vuejs.org/v2/api/#vm-emit-event-…args)。
 
+## 初始化事件
+
+初始化事件在vm上创建一个_events对象，用来存放事件。_events的内容如下：
+```json
+{
+    eventName: [func1, func2, func3]
+}
+```
+存放事件名以及对应执行方法。
+
+
+```javascript
 /*初始化事件*/
 export function initEvents (vm: Component) {
   /*在vm上创建一个_events对象，用来存放事件。*/
@@ -16,38 +27,13 @@ export function initEvents (vm: Component) {
     updateComponentListeners(vm, listeners)
   }
 }
+```
 
-let target: Component
+## $on
 
-/*有once的时候注册一个只会触发一次的方法，没有once的时候注册一个事件方法*/
-function add (event, fn, once) {
-  if (once) {
-    target.$once(event, fn)
-  } else {
-    target.$on(event, fn)
-  }
-}
+$on方法用来在vm实例上监听一个自定义事件，该事件可用$emit触发。
 
-/*销毁一个事件方法*/
-function remove (event, fn) {
-  target.$off(event, fn)
-}
-
-/*更新组件的监听事件*/
-export function updateComponentListeners (
-  vm: Component,
-  listeners: Object,
-  oldListeners: ?Object
-) {
-  target = vm
-  updateListeners(listeners, oldListeners || {}, add, remove, vm)
-}
-
-/*为Vue原型加入操作事件的方法*/
-export function eventsMixin (Vue: Class<Component>) {
-  const hookRE = /^hook:/
-
-  /*在vm实例上绑定事件方法*/
+```javascript
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {
     const vm: Component = this
 
@@ -67,8 +53,13 @@ export function eventsMixin (Vue: Class<Component>) {
     }
     return vm
   }
+```
 
-  /*注册一个只执行一次的事件方法*/
+## $once
+
+$once监听一个只能触发一次的事件，在触发以后会自动移除该事件。
+
+```javascript
   Vue.prototype.$once = function (event: string, fn: Function): Component {
     const vm: Component = this
     function on () {
@@ -81,9 +72,14 @@ export function eventsMixin (Vue: Class<Component>) {
     vm.$on(event, on)
     return vm
   }
+```
 
-  /*注销一个事件，如果不传参则注销所有事件，如果只传event名则注销该event下的所有方法*/
-  Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): Component {
+## $off
+
+$off用来移除自定义事件
+
+```javascript
+Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): Component {
     const vm: Component = this
     // all
     /*如果不传参数则注销所有事件*/
@@ -123,9 +119,14 @@ export function eventsMixin (Vue: Class<Component>) {
     }
     return vm
   }
+```
 
-  /*触发一个事件方法*/
-  Vue.prototype.$emit = function (event: string): Component {
+## $emit
+
+$emit用来触发指定的自定义事件。
+
+```javascript
+Vue.prototype.$emit = function (event: string): Component {
     const vm: Component = this
     if (process.env.NODE_ENV !== 'production') {
       const lowerCaseEvent = event.toLowerCase()
@@ -151,4 +152,4 @@ export function eventsMixin (Vue: Class<Component>) {
     }
     return vm
   }
-}
+```

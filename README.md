@@ -13,11 +13,13 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 ### Vue源码相关
 
-[Vue.js源码分析（一）——响应式原理](./docs/响应式原理.MarkDown)
+[响应式原理](./docs/响应式原理.MarkDown)
 
-[Vue.js源码分析（二）——依赖收集](./docs/依赖收集.MarkDown)
+[依赖收集](./docs/依赖收集.MarkDown)
 
-[Vue.js源码分析（三）——从源码角度再看数据绑定](./docs/从源码角度再看数据绑定.MarkDown)
+[从源码角度再看数据绑定](./docs/从源码角度再看数据绑定.MarkDown)
+
+[Vue事件机制](./docs/Vue事件机制.MarkDown)
 
 
 ### 随笔杂谈
