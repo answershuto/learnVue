@@ -61,12 +61,14 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+/*创建patch方法*/
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
 
   const { modules, nodeOps } = backend
 
+  /*构建cbs回调函数，web平台上见/platforms/web/runtime/modules*/
   for (i = 0; i < hooks.length; ++i) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {
@@ -297,6 +299,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*调用销毁的钩子函数*/
   function invokeDestroyHook (vnode) {
     let i, j
     const data = vnode.data
@@ -304,6 +307,7 @@ export function createPatchFunction (backend) {
       if (isDef(i = data.hook) && isDef(i = i.destroy)) i(vnode)
       for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode)
     }
+    /*递归调用*/
     if (isDef(i = vnode.children)) {
       for (j = 0; j < vnode.children.length; ++j) {
         invokeDestroyHook(vnode.children[j])
@@ -491,6 +495,7 @@ export function createPatchFunction (backend) {
   let bailed = false
   // list of modules that can skip create hook during hydration because they
   // are already rendered on the client or has no need for initialization
+  /*这些模块是不需要初始化的或者已经在客户端被渲染了*/
   const isRenderedModule = makeMap('attrs,style,class,staticClass,staticStyle,key')
 
   // Note: this is a browser-only function so we can assume elms are DOM nodes.
@@ -564,7 +569,9 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*createPatchFunction的返回值，一个patch函数*/
   return function patch (oldVnode, vnode, hydrating, removeOnly, parentElm, refElm) {
+    /*vnode不存在则直接调用销毁钩子*/
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -575,6 +582,7 @@ export function createPatchFunction (backend) {
 
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
+      /*oldVnode未定义的时候，创建一个root组件*/
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue, parentElm, refElm)
     } else {
