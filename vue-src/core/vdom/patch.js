@@ -31,6 +31,14 @@ export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
 
+/*
+  判断两个VNode节点是否是同一个节点，需要满足以下条件
+  key相同
+  tag（当前节点的标签名）相同
+  isComment（是否为注释节点）相同
+  是否data（当前节点对应的对象，包含了具体的一些数据信息，是一个VNodeData类型，可以参考VNodeData类型中的数据信息）都有定义
+  当标签是<input>的时候，type必须相同
+*/
 function sameVnode (a, b) {
   return (
     a.key === b.key &&
@@ -43,6 +51,10 @@ function sameVnode (a, b) {
 
 // Some browsers do not support dynamically changing type for <input>
 // so they need to be treated as different nodes
+/*
+  判断当标签是<input>的时候，type是否相同
+  某些浏览器不支持动态修改<input>类型，所以他们被视为不同类型
+*/
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
   let i
@@ -101,8 +113,11 @@ export function createPatchFunction (backend) {
   }
 
   let inPre = 0
+  /*创建一个节点*/
   function createElm (vnode, insertedVnodeQueue, parentElm, refElm, nested) {
+    /*insertedVnodeQueue为空数组[]的时候isRootInsert标志为true*/
     vnode.isRootInsert = !nested // for transition enter check
+    /*创建一个组件节点*/
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
@@ -173,6 +188,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*创建一个组件*/
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i = vnode.data
     if (isDef(i)) {
@@ -184,7 +200,13 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+      /*
+        在调用了init钩子以后，如果VNode是一个子组件，它应该已经创建了一个子组件实例并挂载它。
+        子组件也应该设置了一个VNode占位符，我们直接返回组件实例即可。
+        意思就是如果已经存在组件实例，则不需要重新创建一个新的，我们要做的就是初始化组件以及激活组件即可，还是用原来的组件实例。
+      */
       if (isDef(vnode.componentInstance)) {
+        /*初始化组件*/
         initComponent(vnode, insertedVnodeQueue)
         if (isTrue(isReactivated)) {
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm)
@@ -194,7 +216,9 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*初始化组件*/
   function initComponent (vnode, insertedVnodeQueue) {
+    /*把之前已经存在的VNode队列合并进去*/
     if (isDef(vnode.data.pendingInsert)) {
       insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
     }
@@ -262,7 +286,9 @@ export function createPatchFunction (backend) {
     return isDef(vnode.tag)
   }
 
+  /*调用创建的钩子函数*/
   function invokeCreateHooks (vnode, insertedVnodeQueue) {
+    /*循环调用modules中的create钩子*/
     for (let i = 0; i < cbs.create.length; ++i) {
       cbs.create[i](emptyNode, vnode)
     }
@@ -582,13 +608,15 @@ export function createPatchFunction (backend) {
 
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
-      /*oldVnode未定义的时候，创建一个root组件*/
+      /*oldVnode未定义的时候，创建一个新的节点*/
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue, parentElm, refElm)
     } else {
+      /*标记旧的VNode是否有nodeType*/
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
+        /*是同一个节点的时候直接修改现有的节点*/
         patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly)
       } else {
         if (isRealElement) {
@@ -596,6 +624,7 @@ export function createPatchFunction (backend) {
           // check if this is server-rendered content and if we can perform
           // a successful hydration.
           if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
+            /*当旧的VNode是服务端渲染的元素，hydrating写成true*/
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
