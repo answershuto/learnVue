@@ -1,3 +1,4 @@
+/*用来标记是否是服务端渲染*/
 export const SSR_ATTR = 'data-server-rendered'
 
 /*选项／资源集合*/
