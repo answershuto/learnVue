@@ -21,6 +21,8 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [Vue事件机制](./docs/Vue事件机制.MarkDown)
 
+[VNode节点](./docs/VNode节点.MarkDown)
+
 
 ### 随笔杂谈
 
