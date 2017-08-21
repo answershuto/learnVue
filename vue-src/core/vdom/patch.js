@@ -525,6 +525,7 @@ export function createPatchFunction (backend) {
   const isRenderedModule = makeMap('attrs,style,class,staticClass,staticStyle,key')
 
   // Note: this is a browser-only function so we can assume elms are DOM nodes.
+  /*合并节点到真实Dom上（因为这是一个只有在浏览器中运行的代码块，所以我们需要确认elms是真实的Dom节点）*/
   function hydrate (elm, vnode, insertedVnodeQueue) {
     if (process.env.NODE_ENV !== 'production') {
       if (!assertNodeMatch(elm, vnode)) {
@@ -545,10 +546,12 @@ export function createPatchFunction (backend) {
       if (isDef(children)) {
         // empty element, allow client to pick up and populate children
         if (!elm.hasChildNodes()) {
+          /*没有子节点的时候创建*/
           createChildren(vnode, children, insertedVnodeQueue)
         } else {
           let childrenMatch = true
           let childNode = elm.firstChild
+          /*遍历子节点进行合并真实Dom*/
           for (let i = 0; i < children.length; i++) {
             if (!childNode || !hydrate(childNode, children[i], insertedVnodeQueue)) {
               childrenMatch = false
@@ -558,6 +561,7 @@ export function createPatchFunction (backend) {
           }
           // if childNode is not null, it means the actual childNodes list is
           // longer than the virtual children list.
+          /*如果childNode不为null，意味着真实的childNode列表比virtual childNodes更长*/
           if (!childrenMatch || childNode) {
             if (process.env.NODE_ENV !== 'production' &&
                 typeof console !== 'undefined' &&
@@ -579,6 +583,7 @@ export function createPatchFunction (backend) {
         }
       }
     } else if (elm.data !== vnode.text) {
+      /*替换文本*/
       elm.data = vnode.text
     }
     return true
@@ -624,11 +629,12 @@ export function createPatchFunction (backend) {
           // check if this is server-rendered content and if we can perform
           // a successful hydration.
           if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
-            /*当旧的VNode是服务端渲染的元素，hydrating写成true*/
+            /*当旧的VNode是服务端渲染的元素，hydrating记为true*/
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
           if (isTrue(hydrating)) {
+            /*需要合并到真实Dom上*/
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true)
               return oldVnode
@@ -644,9 +650,11 @@ export function createPatchFunction (backend) {
           }
           // either not server-rendered, or hydration failed.
           // create an empty node and replace it
+          /*如果不是服务端渲染或者合并到真实Dom失败，则创建一个空的VNode节点替换它*/
           oldVnode = emptyNodeAt(oldVnode)
         }
         // replacing existing element
+        /*取代现有元素*/
         const oldElm = oldVnode.elm
         const parentElm = nodeOps.parentNode(oldElm)
         createElm(
