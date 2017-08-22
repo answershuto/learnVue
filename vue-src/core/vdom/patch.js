@@ -78,6 +78,10 @@ export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
 
+  /*
+    nodeOps  见platforms/web(weex)/runtime/node-ops.js  实际上是操作节点（分平台，比如web上是Dom节点的操作）的方法集合的一个适配层，保证不同平台使用同样的对外接口操作节点。
+    modules  见/platforms/web(weex)/runtime/modules
+  */
   const { modules, nodeOps } = backend
 
   /*构建cbs回调函数，web平台上见/platforms/web/runtime/modules*/
@@ -104,6 +108,7 @@ export function createPatchFunction (backend) {
     return remove
   }
 
+  /*将某个el节点从文档中移除*/
   function removeNode (el) {
     const parent = nodeOps.parentNode(el)
     // element may have already been removed due to v-html / v-text
@@ -279,6 +284,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*是否可patch，检测tag是否定义*/
   function isPatchable (vnode) {
     while (vnode.componentInstance) {
       vnode = vnode.componentInstance._vnode
@@ -319,6 +325,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*添加节点*/
   function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, insertedVnodeQueue) {
     for (; startIdx <= endIdx; ++startIdx) {
       createElm(vnodes[startIdx], insertedVnodeQueue, parentElm, refElm)
@@ -329,6 +336,7 @@ export function createPatchFunction (backend) {
   function invokeDestroyHook (vnode) {
     let i, j
     const data = vnode.data
+    /*调用destroy钩子*/
     if (isDef(data)) {
       if (isDef(i = data.hook) && isDef(i = i.destroy)) i(vnode)
       for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode)
@@ -341,14 +349,19 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*移除节点*/
   function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
     for (; startIdx <= endIdx; ++startIdx) {
       const ch = vnodes[startIdx]
       if (isDef(ch)) {
         if (isDef(ch.tag)) {
+          /*存在tag时*/
+          /*移除节点并调用remove钩子*/
           removeAndInvokeRemoveHook(ch)
+          /*调用destroy钩子*/
           invokeDestroyHook(ch)
         } else { // Text node
+          /*不存在代表是一个text节点，直接移除*/
           removeNode(ch.elm)
         }
       }
@@ -459,7 +472,9 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /*patch VNode节点*/
   function patchVnode (oldVnode, vnode, insertedVnodeQueue, removeOnly) {
+    /*两个VNode节点相同则直接返回*/
     if (oldVnode === vnode) {
       return
     }
@@ -467,6 +482,11 @@ export function createPatchFunction (backend) {
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
+    /*
+      如果新旧VNode都是静态的，同时它们的key相同（代表同一节点），
+      并且新的VNode是clone或者是标记了once（标记v-once属性，只渲染一次），
+      那么只需要替换elm以及componentInstance即可。
+    */
     if (isTrue(vnode.isStatic) &&
         isTrue(oldVnode.isStatic) &&
         vnode.key === oldVnode.key &&
@@ -478,29 +498,38 @@ export function createPatchFunction (backend) {
     let i
     const data = vnode.data
     if (isDef(data) && isDef(i = data.hook) && isDef(i = i.prepatch)) {
+      /*i = data.hook.prepatch，如果存在的话，见"./create-component componentVNodeHooks"。*/
       i(oldVnode, vnode)
     }
     const elm = vnode.elm = oldVnode.elm
     const oldCh = oldVnode.children
     const ch = vnode.children
     if (isDef(data) && isPatchable(vnode)) {
+      /*调用update回调以及update钩子*/
       for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
       if (isDef(i = data.hook) && isDef(i = i.update)) i(oldVnode, vnode)
     }
+    /*如果这个VNode节点没有text文本时*/
     if (isUndef(vnode.text)) {
       if (isDef(oldCh) && isDef(ch)) {
+        /*新老节点均有children子节点，则对子节点进行diff操作，调用updateChildren*/
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
       } else if (isDef(ch)) {
+        /*如果旧节点没有子节点而新节点存在子节点，先清空elm的文本内容，然后为当前节点加入子节点*/
         if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '')
         addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue)
       } else if (isDef(oldCh)) {
+        /*当新节点没有子节点而旧节点有子节点的时候，则移除所有ele的子节点*/
         removeVnodes(elm, oldCh, 0, oldCh.length - 1)
       } else if (isDef(oldVnode.text)) {
+        /*当新旧节点都无子节点的时候，只是文本的替换，因为这个逻辑中新节点text不存在，所以直接去除ele的文本*/
         nodeOps.setTextContent(elm, '')
       }
     } else if (oldVnode.text !== vnode.text) {
+      /*当新旧节点text不一样时，直接替换这段文本*/
       nodeOps.setTextContent(elm, vnode.text)
     }
+    /*调用postpatch钩子*/
     if (isDef(data)) {
       if (isDef(i = data.hook) && isDef(i = i.postpatch)) i(oldVnode, vnode)
     }

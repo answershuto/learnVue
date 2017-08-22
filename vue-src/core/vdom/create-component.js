@@ -27,6 +27,7 @@ import {
 } from '../instance/lifecycle'
 
 // hooks to be invoked on component VNodes during patch
+/*被用来在VNode组件patch期间触发的钩子函数集合*/
 const componentVNodeHooks = {
   init (
     vnode: VNodeWithData,

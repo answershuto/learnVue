@@ -1,6 +1,8 @@
 /* globals renderer */
 // renderer is injected by weex factory wrapper
 
+/*这个文件是根据平台（web或者weex）操作真实节点（如web上的Dom）的操作函数进行了一层适配，对外可以统一提供操作真实节点的接口，内部实现根据平台的变化而变化*/
+
 export const namespaceMap = {}
 
 export function createElement (tagName) {
