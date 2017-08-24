@@ -63,6 +63,11 @@ function sameInputType (a, b) {
   return typeA === typeB
 }
 
+/*
+  生成一个key与旧VNode的key对应的哈希表
+  比如childre是这样的 [{xx: xx, key: 'key0'}, {xx: xx, key: 'key1'}, {xx: xx, key: 'key2'}]  beginIdx = 0   endIdx = 2  
+  结果生成{key0: 0, key1: 1, key2: 2}
+*/
 function createKeyToOldIdx (children, beginIdx, endIdx) {
   let i, key
   const map = {}
@@ -419,6 +424,7 @@ export function createPatchFunction (backend) {
       } else if (isUndef(oldEndVnode)) {
         oldEndVnode = oldCh[--oldEndIdx]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
+        /*前四种情况其实是指定key的时候，判定为同一个VNode，则直接patchVnode即可，分别比较oldCh以及newCh的两头节点2*2=4种情况*/
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
@@ -437,21 +443,31 @@ export function createPatchFunction (backend) {
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
       } else {
+        /*
+          生成一个key与旧VNode的key对应的哈希表（只有第一次进来undefined的时候会生成，也为后面检测重复的key值做铺垫）
+          比如childre是这样的 [{xx: xx, key: 'key0'}, {xx: xx, key: 'key1'}, {xx: xx, key: 'key2'}]  beginIdx = 0   endIdx = 2  
+          结果生成{key0: 0, key1: 1, key2: 2}
+        */
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
+        /*如果newStartVnode新的VNode节点存在key并且这个key在oldVnode中能找到则返回这个节点的idxInOld（即第几个节点，下标）*/
         idxInOld = isDef(newStartVnode.key) ? oldKeyToIdx[newStartVnode.key] : null
         if (isUndef(idxInOld)) { // New element
+          /*newStartVnode没有key或者是该key没有在旧节点中找到则创建一个新的节点*/
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm)
           newStartVnode = newCh[++newStartIdx]
         } else {
+          /*获取同key的旧节点*/
           elmToMove = oldCh[idxInOld]
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !elmToMove) {
+            /*如果elmToMove不存在说明之前已经有新节点放入过这个key的Dom中，提示可能存在重复的key，确保v-for的时候item有唯一的key值*/
             warn(
               'It seems there are duplicate keys that is causing an update error. ' +
               'Make sure each v-for item has a unique key.'
             )
           }
           if (sameVnode(elmToMove, newStartVnode)) {
+            /*如果新VNode与得到的有相同key的节点是同一个VNode则进行patchVnode*/
             patchVnode(elmToMove, newStartVnode, insertedVnodeQueue)
             oldCh[idxInOld] = undefined
             canMove && nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)
