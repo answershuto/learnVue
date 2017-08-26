@@ -668,7 +668,7 @@ export function createPatchFunction (backend) {
 
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
-      /*oldVnode未定义的时候，创建一个新的节点*/
+      /*oldVnode未定义的时候，其实也就是root节点，创建一个新的节点*/
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue, parentElm, refElm)
     } else {
@@ -726,12 +726,14 @@ export function createPatchFunction (backend) {
         if (isDef(vnode.parent)) {
           // component root element replaced.
           // update parent placeholder node element, recursively
+          /*组件根节点被替换，遍历更新父节点element*/
           let ancestor = vnode.parent
           while (ancestor) {
             ancestor.elm = vnode.elm
             ancestor = ancestor.parent
           }
           if (isPatchable(vnode)) {
+            /*调用create回调*/
             for (let i = 0; i < cbs.create.length; ++i) {
               cbs.create[i](emptyNode, vnode.parent)
             }
@@ -739,13 +741,16 @@ export function createPatchFunction (backend) {
         }
 
         if (isDef(parentElm)) {
+          /*移除老节点*/
           removeVnodes(parentElm, [oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
+          /*调用destroy钩子*/
           invokeDestroyHook(oldVnode)
         }
       }
     }
 
+    /*调用insert钩子*/
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
     return vnode.elm
   }
