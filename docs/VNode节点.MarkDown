@@ -136,10 +136,12 @@ isOnce: 是否有v-once指令
     data: {
         class: 'test'
     },
-    childre: [
+    children: [
         {
             tag: 'span',
-            class: 'demo'
+            data: {
+                class: 'demo'
+            }
             text: 'hello,VNode'
         }
     ]
