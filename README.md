@@ -23,6 +23,9 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [VNode节点](./docs/VNode节点.MarkDown)
 
+[Virtual DOM与diff(Vue实现)](./docs/VirtualDOM与diff(Vue实现).MarkDown)
+
+[]()
 
 ### 随笔杂谈
 

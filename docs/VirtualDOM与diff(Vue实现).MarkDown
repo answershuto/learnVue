@@ -1,12 +1,12 @@
 ## VNode
 
-在刀耕火种的年代，我们需要在各个事件方法中直接操作Dom来达到修改视图的目的。但是当应用一大就会变得难以维护。
+在刀耕火种的年代，我们需要在各个事件方法中直接操作DOM来达到修改视图的目的。但是当应用一大就会变得难以维护。
 
-那我们是不是可以把真实Dom树抽象成一棵以javascript对象构成的抽象树，在修改抽象树数据后将抽象树转化成真实Dom重绘到页面上呢？于是虚拟Dom出现了，它是真实Dom的一层抽象，用属性描述真实Dom的各个特性。当它发生变化的时候，就会去修改视图。
+那我们是不是可以把真实DOM树抽象成一棵以JavaScript对象构成的抽象树，在修改抽象树数据后将抽象树转化成真实DOM重绘到页面上呢？于是虚拟DOM出现了，它是真实DOM的一层抽象，用属性描述真实DOM的各个特性。当它发生变化的时候，就会去修改视图。
 
-但是这样的javascript操作Dom进行重绘整个视图层是相当消耗性能的，我们是不是可以每次只更新它的修改呢？所以Vue.js将Dom抽象成一个以javascript对象为节点的虚拟Dom树，以VNode节点模拟真实Dom，可以对这颗抽象树进行创建节点、删除节点以及修改节点等操作，在这过程中都不需要操作真实Dom，只需要操作javascript对象，大大提升了性能。修改以后经过diff算法得出一些需要修改的最小单位，再将这些小单位的视图进行更新。这样做减少了很多不需要的Dom操作，大大提高了性能。
+但是这样的JavaScript操作DOM进行重绘整个视图层是相当消耗性能的，我们是不是可以每次只更新它的修改呢？所以Vue.js将DOM抽象成一个以JavaScript对象为节点的虚拟DOM树，以VNode节点模拟真实DOM，可以对这颗抽象树进行创建节点、删除节点以及修改节点等操作，在这过程中都不需要操作真实DOM，只需要操作JavaScript对象，大大提升了性能。修改以后经过diff算法得出一些需要修改的最小单位，再将这些小单位的视图进行更新。这样做减少了很多不需要的DOM操作，大大提高了性能。
 
-Vue就使用了这样的抽象节点VNode，它是基于[snabbdom算法](https://github.com/snabbdom/snabbdom)进行了修改。这样的Dom树是真实Dom的一层抽象，而不依赖某个平台，它可以是浏览器平台，也可以是weex，甚至是node平台也可以对这样一棵抽象Dom树进行创建删除修改等操作，这也为前后端同构提供了可能。
+Vue就使用了这样的抽象节点VNode，它是基于[snabbdom算法](https://github.com/snabbdom/snabbdom)进行了修改。这样的DOM树是真实DOM的一层抽象，而不依赖某个平台，它可以是浏览器平台，也可以是weex，甚至是node平台也可以对这样一棵抽象DOM树进行创建删除修改等操作，这也为前后端同构提供了可能。
 
 具体VNode的细节可以看[VNode节点](https://github.com/answershuto/learnVue/blob/master/docs/VNode%E8%8A%82%E7%82%B9.MarkDown)。
 
@@ -16,7 +16,7 @@ Vue就使用了这样的抽象节点VNode，它是基于[snabbdom算法](https:/
 
 这里看一下_update方法
 
-```javascript
+```JavaScript
 Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     /*如果已经该组件已经挂载过了则代表进入这个步骤是个更新的过程，触发beforeUpdate钩子*/
@@ -80,7 +80,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
 
 让我们看一下patch的代码。
 
-```javascript
+```JavaScript
   /*createPatchFunction的返回值，一个patch函数*/
   return function patch (oldVnode, vnode, hydrating, removeOnly, parentElm, refElm) {
     /*vnode不存在则直接调用销毁钩子*/
@@ -115,7 +115,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
             hydrating = true
           }
           if (isTrue(hydrating)) {
-            /*需要合并到真实Dom上*/
+            /*需要合并到真实DOM上*/
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               /*调用insert钩子*/
               invokeInsertHook(vnode, insertedVnodeQueue, true)
@@ -132,7 +132,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
           }
           // either not server-rendered, or hydration failed.
           // create an empty node and replace it
-          /*如果不是服务端渲染或者合并到真实Dom失败，则创建一个空的VNode节点替换它*/
+          /*如果不是服务端渲染或者合并到真实DOM失败，则创建一个空的VNode节点替换它*/
           oldVnode = emptyNodeAt(oldVnode)
         }
         // replacing existing element
@@ -182,7 +182,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
   }
 ```
 
-从代码中不难发现，当oldVnode与vnode在sameVnode的时候才会进行patchVnode，也就是新旧VNode节点判定为同一节点的时候才会进行patchVnode这个过程，否则就是创建新的Dom，移除旧的Dom。
+从代码中不难发现，当oldVnode与vnode在sameVnode的时候才会进行patchVnode，也就是新旧VNode节点判定为同一节点的时候才会进行patchVnode这个过程，否则就是创建新的DOM，移除旧的DOM。
 
 怎么样的节点算sameVnode呢？
 
@@ -190,7 +190,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
 
 我们来看一下sameVnode的实现。
 
-```javascript
+```JavaScript
 /*
   判断两个VNode节点是否是同一个节点，需要满足以下条件
   key相同
@@ -230,7 +230,7 @@ function sameInputType (a, b) {
 
 还是先来看一下patchVnode的代码。
 
-```javascript
+```JavaScript
   /*patch VNode节点*/
   function patchVnode (oldVnode, vnode, insertedVnodeQueue, removeOnly) {
     /*两个VNode节点相同则直接返回*/
@@ -301,15 +301,15 @@ patchVnode的规则是这样的：
 
 2.新老节点均有children子节点，则对子节点进行diff操作，调用updateChildren，这个updateChildren也是diff的核心。
 
-3.如果老节点没有子节点而新节点存在子节点，先清空老节点Dom的文本内容，然后为当前Dom节点加入子节点。
+3.如果老节点没有子节点而新节点存在子节点，先清空老节点DOM的文本内容，然后为当前DOM节点加入子节点。
 
-4.当新节点没有子节点而老节点有子节点的时候，则移除该Dom节点的所有子节点。
+4.当新节点没有子节点而老节点有子节点的时候，则移除该DOM节点的所有子节点。
 
 5.当新老节点都无子节点的时候，只是文本的替换。
 
 ## updateChildren
 
-```javascript
+```JavaScript
   function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
     let oldStartIdx = 0
     let newStartIdx = 0
@@ -368,7 +368,7 @@ patchVnode的规则是这样的：
           elmToMove = oldCh[idxInOld]
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !elmToMove) {
-            /*如果elmToMove不存在说明之前已经有新节点放入过这个key的Dom中，提示可能存在重复的key，确保v-for的时候item有唯一的key值*/
+            /*如果elmToMove不存在说明之前已经有新节点放入过这个key的DOM中，提示可能存在重复的key，确保v-for的时候item有唯一的key值*/
             warn(
               'It seems there are duplicate keys that is causing an update error. ' +
               'Make sure each v-for item has a unique key.'
@@ -379,7 +379,7 @@ patchVnode的规则是这样的：
             patchVnode(elmToMove, newStartVnode, insertedVnodeQueue)
             /*因为已经patchVnode进去了，所以将这个老节点赋值undefined，之后如果还有新节点与该节点key相同可以检测出来提示已有重复的key*/
             oldCh[idxInOld] = undefined
-            /*当有标识位canMove实可以直接插入oldStartVnode对应的真实Dom节点前面*/
+            /*当有标识位canMove实可以直接插入oldStartVnode对应的真实DOM节点前面*/
             canMove && nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)
             newStartVnode = newCh[++newStartIdx]
           } else {
@@ -392,11 +392,11 @@ patchVnode的规则是这样的：
       }
     }
     if (oldStartIdx > oldEndIdx) {
-      /*全部比较完成以后，发现oldStartIdx > oldEndIdx的话，说明老节点已经遍历完了，新节点比老节点多，所以这时候多出来的新节点需要一个一个创建出来加入到真实Dom中*/
+      /*全部比较完成以后，发现oldStartIdx > oldEndIdx的话，说明老节点已经遍历完了，新节点比老节点多，所以这时候多出来的新节点需要一个一个创建出来加入到真实DOM中*/
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
-      /*如果全部比较完成以后发现newStartIdx > newEndIdx，则说明新节点已经遍历完了，老节点多余新节点，这个时候需要将多余的老节点从真实Dom中移除*/
+      /*如果全部比较完成以后发现newStartIdx > newEndIdx，则说明新节点已经遍历完了，老节点多余新节点，这个时候需要将多余的老节点从真实DOM中移除*/
       removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
     }
   }
@@ -408,7 +408,13 @@ patchVnode的规则是这样的：
 
 首先，在新老两个VNode节点的左右头尾两侧都有一个变量标记，在遍历过程中这几个变量都会向中间靠拢。当oldStartIdx <= oldEndIdx或者newStartIdx <= newEndIdx时结束循环。
 
-在遍历中，如果存在key，并且满足sameVnode，会将该Dom节点进行复用，否则则会创建一个新的Dom节点。
+索引与VNode节点的对应关系：
+oldStartIdx => oldStartVnode
+oldEndIdx => oldEndVnode
+newStartIdx => newStartVnode
+newEndIdx => newEndVnode
+
+在遍历中，如果存在key，并且满足sameVnode，会将该DOM节点进行复用，否则则会创建一个新的DOM节点。
 
 首先，oldStartVnode、oldEndVnode与newStartVnode、newEndVnode两两比较一共有2*2=4种比较方法。
 
@@ -418,4 +424,157 @@ patchVnode的规则是这样的：
 
 如果oldStartVnode与newEndVnode满足sameVnode，即sameVnode(oldStartVnode, newEndVnode)。
 
-这时候说明oldStartVnode已经跑到了oldEndVnode后面去了，进行patchVnode的同时还需要将真实Dom节点移动到oldEndVnode的后面。
+这时候说明oldStartVnode已经跑到了oldEndVnode后面去了，进行patchVnode的同时还需要将真实DOM节点移动到oldEndVnode的后面。
+
+![img](https://ooo.0o0.ooo/2017/08/28/59a4214784979.png)
+
+如果oldEndVnode与newStartVnode满足sameVnode，即sameVnode(oldEndVnode, newStartVnode)。
+
+这说明oldEndVnode跑到了oldStartVnode的前面，进行patchVnode的同时真实的DOM节点移动到了oldStartVnode的前面。
+
+![img](https://i.loli.net/2017/08/29/59a4c70685d12.png)
+
+如果以上情况均不符合，则通过createKeyToOldIdx会得到一个oldKeyToIdx，里面存放了一个key为旧的VNode，value为对应index序列的哈希表。从这个哈希表中可以找到是否有与newStartVnode一致key的旧的VNode节点，如果同时满足sameVnode，patchVnode的同时会将这个真实DOM（elmToMove）移动到oldStartVnode对应的真实DOM的前面。
+
+![img](https://i.loli.net/2017/08/29/59a4d7552d299.png)
+
+当然也有可能newStartVnode在旧的VNode节点找不到一致的key，或者是即便key相同却不是sameVnode，这个时候会调用createElm创建一个新的DOM节点。
+
+![img](https://i.loli.net/2017/08/29/59a4de0fa4dba.png)
+
+到这里循环已经结束了，那么剩下我们还需要处理多余或者不够的真实DOM节点。
+
+1.当结束时oldStartIdx > oldEndIdx，这个时候老的VNode节点已经遍历完了，但是新的节点还没有。说明了新的VNode节点实际上比老的VNode节点多，也就是比真实DOM多，需要将剩下的（也就是新增的）VNode节点插入到真实DOM节点中去，此时调用addVnodes（批量调用createElm的接口将这些节点加入到真实DOM中去）。
+
+![img](https://i.loli.net/2017/08/29/59a509f0d1788.png)
+
+2。同理，当newStartIdx > newEndIdx时，新的VNode节点已经遍历完了，但是老的节点还有剩余，说明真实DOM节点多余了，需要从文档中删除，这时候调用removeVnodes将这些多余的真实DOM删除。
+
+![img](https://i.loli.net/2017/08/29/59a4f389b98cb.png)
+
+## DOM操作
+
+由于Vue使用了虚拟DOM，所以虚拟DOM可以在任何支持JavaScript语言的平台上操作，譬如说目前Vue支持的浏览器平台或是weex，在虚拟DOM的实现上是一致的。那么最后虚拟DOM如何映射到真实的DOM节点上呢？
+
+Vue为平台做了一层适配层，浏览器平台见[/platforms/web/runtime/node-ops.js](https://github.com/answershuto/learnVue/blob/master/vue-src/platforms/web/runtime/node-ops.js)以及weex平台见[/platforms/weex/runtime/node-ops.js](https://github.com/answershuto/learnVue/blob/master/vue-src/platforms/weex/runtime/node-ops.js)。不同平台之间通过适配层对外提供相同的接口，虚拟DOM进行操作真实DOM节点的时候，只需要调用这些适配层的接口即可，而内部实现则不需要关心，它会根据平台的改变而改变。
+
+现在又出现了一个问题，我们只是将虚拟DOM映射成了真实的DOM。那如何给这些DOM加入attr、class、style等DOM属性呢？
+
+这要依赖于虚拟DOM的生命钩子。虚拟DOM提供了如下的钩子函数，分别在不同的时期会进行调用。
+
+```JavaScript
+const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
+
+/*构建cbs回调函数，web平台上见/platforms/web/runtime/modules*/
+  for (i = 0; i < hooks.length; ++i) {
+    cbs[hooks[i]] = []
+    for (j = 0; j < modules.length; ++j) {
+      if (isDef(modules[j][hooks[i]])) {
+        cbs[hooks[i]].push(modules[j][hooks[i]])
+      }
+    }
+  }
+```
+
+同理，也会根据不同平台有自己不同的实现，我们这里以Web平台为例。Web平台的钩子函数见[/platforms/web/runtime/modules](https://github.com/answershuto/learnVue/tree/master/vue-src/platforms/web/runtime/modules)。里面有对attr、class、props、events、style以及transition（过渡状态）的DOM属性进行操作。
+
+以attr为例，代码很简单。
+
+```JavaScript
+/* @flow */
+
+import { isIE9 } from 'core/util/env'
+
+import {
+  extend,
+  isDef,
+  isUndef
+} from 'shared/util'
+
+import {
+  isXlink,
+  xlinkNS,
+  getXlinkProp,
+  isBooleanAttr,
+  isEnumeratedAttr,
+  isFalsyAttrValue
+} from 'web/util/index'
+
+/*更新attr*/
+function updateAttrs (oldVnode: VNodeWithData, vnode: VNodeWithData) {
+  /*如果旧的以及新的VNode节点均没有attr属性，则直接返回*/
+  if (isUndef(oldVnode.data.attrs) && isUndef(vnode.data.attrs)) {
+    return
+  }
+  let key, cur, old
+  /*VNode节点对应的Dom实例*/
+  const elm = vnode.elm
+  /*旧VNode节点的attr*/
+  const oldAttrs = oldVnode.data.attrs || {}
+  /*新VNode节点的attr*/
+  let attrs: any = vnode.data.attrs || {}
+  // clone observed objects, as the user probably wants to mutate it
+  /*如果新的VNode的attr已经有__ob__（代表已经被Observe处理过了）， 进行深拷贝*/
+  if (isDef(attrs.__ob__)) {
+    attrs = vnode.data.attrs = extend({}, attrs)
+  }
+
+  /*遍历attr，不一致则替换*/
+  for (key in attrs) {
+    cur = attrs[key]
+    old = oldAttrs[key]
+    if (old !== cur) {
+      setAttr(elm, key, cur)
+    }
+  }
+  // #4391: in IE9, setting type can reset value for input[type=radio]
+  /* istanbul ignore if */
+  if (isIE9 && attrs.value !== oldAttrs.value) {
+    setAttr(elm, 'value', attrs.value)
+  }
+  for (key in oldAttrs) {
+    if (isUndef(attrs[key])) {
+      if (isXlink(key)) {
+        elm.removeAttributeNS(xlinkNS, getXlinkProp(key))
+      } else if (!isEnumeratedAttr(key)) {
+        elm.removeAttribute(key)
+      }
+    }
+  }
+}
+
+/*设置attr*/
+function setAttr (el: Element, key: string, value: any) {
+  if (isBooleanAttr(key)) {
+    // set attribute for blank value
+    // e.g. <option disabled>Select one</option>
+    if (isFalsyAttrValue(value)) {
+      el.removeAttribute(key)
+    } else {
+      el.setAttribute(key, key)
+    }
+  } else if (isEnumeratedAttr(key)) {
+    el.setAttribute(key, isFalsyAttrValue(value) || value === 'false' ? 'false' : 'true')
+  } else if (isXlink(key)) {
+    if (isFalsyAttrValue(value)) {
+      el.removeAttributeNS(xlinkNS, getXlinkProp(key))
+    } else {
+      el.setAttributeNS(xlinkNS, key, value)
+    }
+  } else {
+    if (isFalsyAttrValue(value)) {
+      el.removeAttribute(key)
+    } else {
+      el.setAttribute(key, value)
+    }
+  }
+}
+
+export default {
+  create: updateAttrs,
+  update: updateAttrs
+}
+
+```
+
+attr只需要在create以及update钩子被调用时更新DOM的attr属性即可。
