@@ -11,6 +11,7 @@ function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
+  /*parse解析得到ast树*/
   const ast = parse(template.trim(), options)
   optimize(ast, options)
   const code = generate(ast, options)
