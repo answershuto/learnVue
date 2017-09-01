@@ -17,7 +17,9 @@ const warnOnce = msg => {
   }
 }
 
+/*从来存放模板template与template的编译结果的缓存器，避免重复编译*/
 const compilationCache = Object.create(null)
+/*将template模板编译成render函数*/
 const normalizeRender = vm => {
   const { render, template } = vm.$options
   if (isUndef(render)) {

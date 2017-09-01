@@ -22,6 +22,7 @@ function baseCompile (
   }
 }
 
+/*新建成Funtion对象*/
 function makeFunction (code, errors) {
   try {
     return new Function(code)
@@ -31,7 +32,9 @@ function makeFunction (code, errors) {
   }
 }
 
+/*提供一个方法，根据传递的baseOptions（不同平台可以有不同的实现）创建相应的编译器*/
 export function createCompiler (baseOptions: CompilerOptions) {
+  /*作为缓存，防止每次都重新编译*/
   const functionCompileCache: {
     [key: string]: CompiledFunctionResult;
   } = Object.create(null)
@@ -49,11 +52,13 @@ export function createCompiler (baseOptions: CompilerOptions) {
 
     if (options) {
       // merge custom modules
+      /*合并modules*/
       if (options.modules) {
         finalOptions.modules = (baseOptions.modules || []).concat(options.modules)
       }
       // merge custom directives
       if (options.directives) {
+        /*合并directives*/
         finalOptions.directives = extend(
           Object.create(baseOptions.directives),
           options.directives
@@ -61,6 +66,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
       }
       // copy other options
       for (const key in options) {
+        /*合并其余的options，modules与directives已经在上面做了特殊处理了*/
         if (key !== 'modules' && key !== 'directives') {
           finalOptions[key] = options[key]
         }
@@ -102,6 +108,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
     }
 
     // check cache
+    /*有缓存的时候直接取出缓存中的结果即可*/
     const key = options.delimiters
       ? String(options.delimiters) + template
       : template
@@ -110,6 +117,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
     }
 
     // compile
+    /*编译*/
     const compiled = compile(template, options)
 
     // check compilation errors/tips
@@ -129,7 +137,9 @@ export function createCompiler (baseOptions: CompilerOptions) {
     // turn code into functions
     const res = {}
     const fnGenErrors = []
+    /*将render转换成Funtion对象*/
     res.render = makeFunction(compiled.render, fnGenErrors)
+    /*将staticRenderFns全部转化成Funtion对象 */
     const l = compiled.staticRenderFns.length
     res.staticRenderFns = new Array(l)
     for (let i = 0; i < l; i++) {
@@ -150,7 +160,8 @@ export function createCompiler (baseOptions: CompilerOptions) {
       }
     }
 
-    return (functionCompileCache[key] = res)
+    /*存放在缓存中，以免每次都重新编译*/
+    return (functionCompileCache[key] = res) 
   }
 
   return {
