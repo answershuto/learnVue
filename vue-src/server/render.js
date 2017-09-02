@@ -261,6 +261,7 @@ function renderStartingTag (node: VNode, context) {
   return markup + '>'
 }
 
+/*创建render函数*/
 export function createRenderFunction (
   modules: Array<Function>,
   directives: Object,
@@ -281,6 +282,7 @@ export function createRenderFunction (
       isUnaryTag, modules, directives,
       cache
     })
+    /*将template模板编译成render函数*/
     normalizeRender(component)
     renderNode(component._render(), true, context)
   }

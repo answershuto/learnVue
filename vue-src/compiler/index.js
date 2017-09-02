@@ -50,6 +50,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
       (tip ? tips : errors).push(msg)
     }
 
+    /*做下面这些merge的目的因为不同平台可以提供自己本身平台的一个baseOptions，内部封装了平台自己的实现，然后把共同的部分抽离开来放在这层compiler中，所以在这里需要merge一下*/
     if (options) {
       // merge custom modules
       /*合并modules*/
