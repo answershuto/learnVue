@@ -10,7 +10,7 @@ Vue在初始化组件数据时，在生命周期的[beforeCreate](https://github
 
 ## initData
 
-这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是由大大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
+这里来讲一下[initData](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L107)，可以参考源码instance下的state.js文件，下面所有的中文注释都是我加的，英文注释是尤大加的，请不要忽略英文注释，英文注释都讲到了比较关键或者晦涩难懂的点。
 
 加注释版的vue源码也可以直接通过[传送门](https://github.com/answershuto/learnVue/tree/master/vue-src)查看，这些是我在阅读Vue源码过程中加的注释，持续更新中。
 
