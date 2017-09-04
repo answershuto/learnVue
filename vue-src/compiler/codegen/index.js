@@ -46,21 +46,29 @@ export function generate (
   }
 }
 
+/*分别处理静态节点、v-once、v-for、v-if、template、slot以及组件或元素*/
 function genElement (el: ASTElement): string {
   if (el.staticRoot && !el.staticProcessed) {
+    /*处理static静态节点*/
     return genStatic(el)
   } else if (el.once && !el.onceProcessed) {
+    /*处理v-once*/
     return genOnce(el)
   } else if (el.for && !el.forProcessed) {
+    /*处理v-for*/
     return genFor(el)
   } else if (el.if && !el.ifProcessed) {
+    /*处理v-if*/
     return genIf(el)
   } else if (el.tag === 'template' && !el.slotTarget) {
+    /*处理template*/
     return genChildren(el) || 'void 0'
   } else if (el.tag === 'slot') {
+    /*处理slot*/
     return genSlot(el)
   } else {
     // component or element
+    /*处理组件或元素*/
     let code
     if (el.component) {
       code = genComponent(el.component, el)
@@ -83,20 +91,30 @@ function genElement (el: ASTElement): string {
 }
 
 // hoist static sub-trees out
+/*处理static静态节点*/
 function genStatic (el: ASTElement): string {
+  /*处理过的标记位*/
   el.staticProcessed = true
   staticRenderFns.push(`with(this){return ${genElement(el)}}`)
   return `_m(${staticRenderFns.length - 1}${el.staticInFor ? ',true' : ''})`
 }
 
 // v-once
+/*处理v-once*/
 function genOnce (el: ASTElement): string {
+  /*处理过的标记位*/
   el.onceProcessed = true
   if (el.if && !el.ifProcessed) {
+    /*同时还存在v-if的时候需要处理v-if*/
     return genIf(el)
   } else if (el.staticInFor) {
+    /*
+      staticInFor标记static的或者有v-once指令同时处于for循环中的节点。
+      此时表示同时存在于for循环中
+      */
     let key = ''
     let parent = el.parent
+    /*向上逐级寻找所处的for循环*/
     while (parent) {
       if (parent.for) {
         key = parent.key
@@ -105,6 +123,7 @@ function genOnce (el: ASTElement): string {
       parent = parent.parent
     }
     if (!key) {
+      /*如果v-once出现在for循环中，那必须要给设置v-for的element设置key*/
       process.env.NODE_ENV !== 'production' && warn(
         `v-once can only be used inside v-for that is keyed. `
       )
@@ -116,12 +135,15 @@ function genOnce (el: ASTElement): string {
   }
 }
 
+/*处理v-if*/
 function genIf (el: any): string {
+  /*标记位*/
   el.ifProcessed = true // avoid recursion
   return genIfConditions(el.ifConditions.slice())
 }
 
 function genIfConditions (conditions: ASTIfConditions): string {
+  /*表达式不存在*/
   if (!conditions.length) {
     return '_e()'
   }
@@ -139,6 +161,7 @@ function genIfConditions (conditions: ASTIfConditions): string {
   }
 }
 
+/*处理v-for循环*/
 function genFor (el: any): string {
   const exp = el.for
   const alias = el.alias
@@ -157,6 +180,7 @@ function genFor (el: any): string {
     )
   }
 
+  /*标记位，避免递归*/
   el.forProcessed = true // avoid recursion
   return `_l((${exp}),` +
     `function(${alias}${iterator1}${iterator2}){` +

@@ -13,6 +13,13 @@ function baseCompile (
 ): CompiledResult {
   /*parse解析得到ast树*/
   const ast = parse(template.trim(), options)
+  /*
+    将AST树进行优化
+    优化的目标：生成模板AST树，检测不需要进行DOM改变的静态子树。
+    一旦检测到这些静态树，我们就能做以下这些事情：
+    1.把它们变成常数，这样我们就再也不需要每次重新渲染时创建新的节点了。
+    2.在patch的过程中直接跳过。
+ */
   optimize(ast, options)
   const code = generate(ast, options)
   return {
