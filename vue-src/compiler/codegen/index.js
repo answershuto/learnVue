@@ -46,7 +46,7 @@ export function generate (
   }
 }
 
-/*分别处理静态节点、v-once、v-for、v-if、template、slot以及组件或元素*/
+/*处理element，分别处理static静态节点、v-once、v-for、v-if、template、slot以及组件或元素*/
 function genElement (el: ASTElement): string {
   if (el.staticRoot && !el.staticProcessed) {
     /*处理static静态节点*/
@@ -142,6 +142,7 @@ function genIf (el: any): string {
   return genIfConditions(el.ifConditions.slice())
 }
 
+/*处理if条件*/
 function genIfConditions (conditions: ASTIfConditions): string {
   /*表达式不存在*/
   if (!conditions.length) {
@@ -156,6 +157,7 @@ function genIfConditions (conditions: ASTIfConditions): string {
   }
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
+  /*v-if与v-once同时存在的时候应该使用三元运算符，譬如说(a)?_m(0):_m(1)*/
   function genTernaryExp (el) {
     return el.once ? genOnce(el) : genElement(el)
   }
@@ -329,11 +331,13 @@ function genScopedSlot (key: string, el: ASTElement) {
   }}]`
 }
 
+/*处理chidren*/
 function genChildren (el: ASTElement, checkSkip?: boolean): string | void {
   const children = el.children
   if (children.length) {
     const el: any = children[0]
     // optimize single v-for
+    /*优化单个v-for*/
     if (children.length === 1 &&
         el.for &&
         el.tag !== 'template' &&
@@ -341,6 +345,7 @@ function genChildren (el: ASTElement, checkSkip?: boolean): string | void {
       return genElement(el)
     }
     const normalizationType = checkSkip ? getNormalizationType(children) : 0
+    /*用genNode处理children，内部有子节点也会继续遍历*/
     return `[${children.map(genNode).join(',')}]${
       normalizationType ? `,${normalizationType}` : ''
     }`
@@ -351,18 +356,27 @@ function genChildren (el: ASTElement, checkSkip?: boolean): string | void {
 // 0: no normalization needed
 // 1: simple normalization needed (possible 1-level deep nested array)
 // 2: full normalization needed
+/*
+  得到子数组所需的序列化类型
+  0:不需要序列化
+  1:需要做简单的序列化（可能是一级深层嵌套数组）
+  2:需要完全序列化
+*/
 function getNormalizationType (children: Array<ASTNode>): number {
   let res = 0
   for (let i = 0; i < children.length; i++) {
     const el: ASTNode = children[i]
+    /*当不是元素节点的时候直接continue*/
     if (el.type !== 1) {
       continue
     }
+    /*if条件中是存在满足needsNormalization条件的*/
     if (needsNormalization(el) ||
         (el.ifConditions && el.ifConditions.some(c => needsNormalization(c.block)))) {
       res = 2
       break
     }
+    /*if条件中有满足有可能是组件的返回1*/
     if (maybeComponent(el) ||
         (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))) {
       res = 1
@@ -371,14 +385,17 @@ function getNormalizationType (children: Array<ASTNode>): number {
   return res
 }
 
+/*是否需要序列化（元素不是slot标签或者templete，同时不存在于v-for循环中）*/
 function needsNormalization (el: ASTElement): boolean {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
 
+/*有可能是组件（判断不是平台保留标签，就是组件，当然也有可能是一个乱七八糟的标签并不在compoments中，这个后面在compoments中寻找组件的地方会处理）*/
 function maybeComponent (el: ASTElement): boolean {
   return !isPlatformReservedTag(el.tag)
 }
 
+/*处理节点*/
 function genNode (node: ASTNode): string {
   if (node.type === 1) {
     return genElement(node)
@@ -387,6 +404,7 @@ function genNode (node: ASTNode): string {
   }
 }
 
+/*处理文本*/
 function genText (text: ASTText | ASTExpression): string {
   return `_v(${text.type === 2
     ? text.expression // no need for () because already wrapped in _s()
@@ -395,6 +413,7 @@ function genText (text: ASTText | ASTExpression): string {
 }
 
 function genSlot (el: ASTElement): string {
+  /*不存在slotName的时候改slot的name为default*/
   const slotName = el.slotName || '"default"'
   const children = genChildren(el)
   let res = `_t(${slotName}${children ? `,${children}` : ''}`
@@ -413,6 +432,7 @@ function genSlot (el: ASTElement): string {
 }
 
 // componentName is el.component, take it as argument to shun flow's pessimistic refinement
+/*处理compoment*/
 function genComponent (componentName: string, el: ASTElement): string {
   const children = el.inlineTemplate ? null : genChildren(el, true)
   return `_c(${componentName},${genData(el)}${

@@ -9,13 +9,15 @@ import { query } from './util/index'
 import { shouldDecodeNewlines } from './util/compat'
 import { compileToFunctions } from './compiler/index'
 
+/*根据id获取templete，即获取id对应的DOM，然后访问其innerHTML*/
 const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
 
+/*把原本不带编译的$mount方法保存下来，在最后会调用。*/
 const mount = Vue.prototype.$mount
-/*挂载组件*/
+/*挂载组件，带模板编译*/
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -32,9 +34,12 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  /*处理模板templete，编译成render函数*/
   if (!options.render) {
     let template = options.template
+    /*template存在的时候取template，不存在的时候取el的outerHTML*/
     if (template) {
+      /*当template是字符串的时候*/
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {
           template = idToTemplate(template)
@@ -47,14 +52,17 @@ Vue.prototype.$mount = function (
           }
         }
       } else if (template.nodeType) {
+        /*当template为DOM节点的时候*/
         template = template.innerHTML
       } else {
+        /*报错*/
         if (process.env.NODE_ENV !== 'production') {
           warn('invalid template option:' + template, this)
         }
         return this
       }
     } else if (el) {
+      /*获取element的outerHTML*/
       template = getOuterHTML(el)
     }
     if (template) {
@@ -63,6 +71,7 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      /*将template编译成render函数，这里会有render以及staticRenderFns两个返回，这是vue的编译时优化，static静态不需要在VNode更新时进行patch，优化性能*/
       const { render, staticRenderFns } = compileToFunctions(template, {
         shouldDecodeNewlines,
         delimiters: options.delimiters
@@ -84,6 +93,7 @@ Vue.prototype.$mount = function (
  * Get outerHTML of elements, taking care
  * of SVG elements in IE as well.
  */
+ /*获取element的outerHTML*/
 function getOuterHTML (el: Element): string {
   if (el.outerHTML) {
     return el.outerHTML

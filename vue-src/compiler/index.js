@@ -21,6 +21,7 @@ function baseCompile (
     2.在patch的过程中直接跳过。
  */
   optimize(ast, options)
+  /*根据ast树生成所需的code（内部包含render与staticRenderFns）*/
   const code = generate(ast, options)
   return {
     ast,
@@ -81,6 +82,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
       }
     }
 
+    /*基础模板编译，得到编译结果*/
     const compiled = baseCompile(template, finalOptions)
     if (process.env.NODE_ENV !== 'production') {
       errors.push.apply(errors, detectErrors(compiled.ast))
