@@ -42,11 +42,15 @@ function makeFunction (code, errors) {
 
 /*提供一个方法，根据传递的baseOptions（不同平台可以有不同的实现）创建相应的编译器*/
 export function createCompiler (baseOptions: CompilerOptions) {
-  /*作为缓存，防止每次都重新编译*/
+  /*
+    作为缓存，防止每次都重新编译。
+    模板的key为delimiters(https://cn.vuejs.org/v2/api/#delimiters)+template，value为编译结果
+  */
   const functionCompileCache: {
     [key: string]: CompiledFunctionResult;
   } = Object.create(null)
 
+  /*编译，将模板template编译成AST树、render函数以及staticRenderFns函数*/
   function compile (
     template: string,
     options?: CompilerOptions
@@ -92,6 +96,7 @@ export function createCompiler (baseOptions: CompilerOptions) {
     return compiled
   }
 
+  /*带缓存的编译器，同时staticRenderFns以及render函数会被转换成Funtion对象*/
   function compileToFunctions (
     template: string,
     options?: CompilerOptions,
@@ -179,3 +184,4 @@ export function createCompiler (baseOptions: CompilerOptions) {
     compileToFunctions
   }
 }
+/*Github:https://github.com/answershuto*/

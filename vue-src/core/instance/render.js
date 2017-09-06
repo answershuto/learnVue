@@ -16,7 +16,7 @@ import VNode, {
   createTextVNode,
   createEmptyVNode
 } from '../vdom/vnode'
-
+/*Github:https://github.com/answershuto*/
 import { createElement } from '../vdom/create-element'
 import { renderList } from './render-helpers/render-list'
 import { renderSlot } from './render-helpers/render-slot'
@@ -116,8 +116,15 @@ export function renderMixin (Vue: Class<Component>) {
   // internal render helpers.
   // these are exposed on the instance prototype to reduce generated render
   // code size.
+  /*
+    内部渲染函数
+    这些函数会暴露在Vue原型上以减小渲染函数大小
+  */
+  /*处理v-once的渲染函数*/
   Vue.prototype._o = markOnce
+  /*将字符串转化为数字，如果转换失败会返回原字符串*/
   Vue.prototype._n = toNumber
+  /*将val转化成字符串*/
   Vue.prototype._s = toString
   Vue.prototype._l = renderList
   Vue.prototype._t = renderSlot

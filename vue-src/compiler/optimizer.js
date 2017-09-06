@@ -150,3 +150,4 @@ function isDirectChildOfTemplateFor (node: ASTElement): boolean {
   }
   return false
 }
+/*Github:https://github.com/answershuto*/

@@ -125,7 +125,7 @@ export function _createElement (
     return createEmptyVNode()
   }
 }
-
+/*Github:https://github.com/answershuto*/
 function applyNS (vnode, ns) {
   vnode.ns = ns
   if (vnode.tag === 'foreignObject') {

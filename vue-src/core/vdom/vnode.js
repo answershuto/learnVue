@@ -108,7 +108,7 @@ export function cloneVNode (vnode: VNode): VNode {
   cloned.isCloned = true
   return cloned
 }
-
+/*Github:https://github.com/answershuto*/
 /*对一个节点数组依次进行clone*/
 export function cloneVNodes (vnodes: Array<VNode>): Array<VNode> {
   const len = vnodes.length

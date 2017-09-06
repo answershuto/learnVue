@@ -26,7 +26,7 @@ import {
   makeMap,
   isPrimitive
 } from '../util/index'
-
+/*Github:https://github.com/answershuto*/
 export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']

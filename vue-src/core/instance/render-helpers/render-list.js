@@ -5,6 +5,7 @@ import { isObject } from 'core/util/index'
 /**
  * Runtime helper for rendering v-for lists.
  */
+ /*处理v-for列表渲染*/
 export function renderList (
   val: any,
   render: () => VNode

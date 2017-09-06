@@ -42,7 +42,7 @@ export function updateComponentListeners (
   target = vm
   updateListeners(listeners, oldListeners || {}, add, remove, vm)
 }
-
+/*Github:https://github.com/answershuto*/
 /*为Vue原型加入操作事件的方法*/
 export function eventsMixin (Vue: Class<Component>) {
   const hookRE = /^hook:/

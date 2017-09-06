@@ -38,7 +38,7 @@ class Dep () {
     removeSub (sub: Watcher) {
         remove(this.subs, sub)
     }
-
+    /*Github:https://github.com/answershuto*/
     notify () {
         // stabilize the subscriber list first
         const subs = this.subs.slice()
@@ -61,7 +61,7 @@ class Watcher () {
 
         /*在这里将观察者本身赋值给全局的target，只有被target标记过的才会进行依赖收集*/
         Dep.target = this;
-
+        /*Github:https://github.com/answershuto*/
         /*触发渲染操作进行依赖收集*/
         this.cb.call(this.vm);
     }

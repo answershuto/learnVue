@@ -11,7 +11,7 @@ const buildRegex = cached(delimiters => {
   const close = delimiters[1].replace(regexEscapeRE, '\\$&')
   return new RegExp(open + '((?:.|\\n)+?)' + close, 'g')
 })
-
+/*Github:https://github.com/answershuto*/
 export function parseText (
   text: string,
   delimiters?: [string, string]

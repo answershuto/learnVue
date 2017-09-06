@@ -48,6 +48,7 @@ export function isRegExp (v: any): boolean {
 /**
  * Convert a value to a string that is actually rendered.
  */
+ /*将val转化成字符串*/
 export function toString (val: any): string {
   return val == null
     ? ''
@@ -60,6 +61,7 @@ export function toString (val: any): string {
  * Convert a input value to a number for persistence.
  * If the conversion fails, return original string.
  */
+ /*将字符串转化为数字，如果转换失败会返回原字符串*/
 export function toNumber (val: string): number | string {
   const n = parseFloat(val)
   return isNaN(n) ? val : n

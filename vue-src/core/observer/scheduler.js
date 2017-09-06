@@ -31,7 +31,7 @@ function resetSchedulerState () {
   }
   waiting = flushing = false
 }
-
+/*Github:https://github.com/answershuto*/
 /**
  * Flush both queues and run the watchers.
  */

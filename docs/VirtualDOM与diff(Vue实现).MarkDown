@@ -99,6 +99,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
       createElm(vnode, insertedVnodeQueue, parentElm, refElm)
     } else {
       /*标记旧的VNode是否有nodeType*/
+      /*Github:https://github.com/answershuto*/
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
@@ -170,6 +171,7 @@ patch将新老VNode节点进行比对，然后将根据两者的比较结果进�
           /*移除老节点*/
           removeVnodes(parentElm, [oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
+          /*Github:https://github.com/answershuto*/
           /*调用destroy钩子*/
           invokeDestroyHook(oldVnode)
         }
@@ -375,6 +377,7 @@ patchVnode的规则是这样的：
             )
           }
           if (sameVnode(elmToMove, newStartVnode)) {
+            /*Github:https://github.com/answershuto*/
             /*如果新VNode与得到的有相同key的节点是同一个VNode则进行patchVnode*/
             patchVnode(elmToMove, newStartVnode, insertedVnodeQueue)
             /*因为已经patchVnode进去了，所以将这个老节点赋值undefined，之后如果还有新节点与该节点key相同可以检测出来提示已有重复的key*/

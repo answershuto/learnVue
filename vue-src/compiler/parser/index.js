@@ -27,7 +27,7 @@ export const dirRE = /^v-|^@|^:/
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 /*v-for参数中带括号的情况匹配，比如(item, index)这样的参数*/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
-
+/*Github:https://github.com/answershuto*/
 const argRE = /:(.*)$/
 /*匹配v-bind以及:*/
 const bindRE = /^:|^v-bind:/

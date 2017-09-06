@@ -29,7 +29,7 @@ export function genComponentModel (
     callback: `function (${baseValueExpression}) {${assignment}}`
   }
 }
-
+/*Github:https://github.com/answershuto*/
 /**
  * Cross-platform codegen helper for generating v-model value assignment code.
  */

@@ -25,7 +25,7 @@ export const observerState = {
   shouldConvert: true,
   isSettingProps: false
 }
-
+/*Github:https://github.com/answershuto*/
 /**
  * Observer class that are attached to each observed
  * object. Once attached, the observer converts target

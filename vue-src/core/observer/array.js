@@ -2,7 +2,7 @@
  * not type checking this file because flow doesn't play well with
  * dynamically accessing methods on Array prototype
  */
-
+/*Github:https://github.com/answershuto*/
 import { def } from '../util/index'
 
 /*取得原生数组的原型*/

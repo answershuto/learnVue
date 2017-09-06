@@ -411,7 +411,7 @@ function genText (text: ASTText | ASTExpression): string {
     : transformSpecialNewlines(JSON.stringify(text.text))
   })`
 }
-
+/*Github:https://github.com/answershuto*/
 function genSlot (el: ASTElement): string {
   /*不存在slotName的时候改slot的name为default*/
   const slotName = el.slotName || '"default"'

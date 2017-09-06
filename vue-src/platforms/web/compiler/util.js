@@ -1,7 +1,7 @@
 /* @flow */
 
 import { makeMap } from 'shared/util'
-
+/*Github:https://github.com/answershuto*/
 export const isUnaryTag = makeMap(
   'area,base,br,col,embed,frame,hr,img,input,isindex,keygen,' +
   'link,meta,param,source,track,wbr'
@@ -12,7 +12,7 @@ export const isUnaryTag = makeMap(
 export const canBeLeftOpenTag = makeMap(
   'colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr,source'
 )
-
+/*Github:https://github.com/answershuto*/
 // HTML5 tags https://html.spec.whatwg.org/multipage/indices.html#elements-3
 // Phrasing Content https://html.spec.whatwg.org/multipage/dom.html#phrasing-content
 export const isNonPhrasingTag = makeMap(

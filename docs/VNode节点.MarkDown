@@ -191,6 +191,7 @@ export function createTextVNode (val: string | number) {
 
   // if at this stage it's not a constructor or an async component factory,
   // reject.
+  /*Github:https://github.com/answershuto*/
   /*如果在该阶段Ctor依然不是一个构造函数或者是一个异步组件工厂则直接返回*/
   if (typeof Ctor !== 'function') {
     if (process.env.NODE_ENV !== 'production') {
@@ -301,6 +302,7 @@ export function createElement (
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE
   }
+  /*Github:https://github.com/answershuto*/
   /*创建虚拟节点*/
   return _createElement(context, tag, data, children, normalizationType)
 }

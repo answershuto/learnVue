@@ -28,7 +28,7 @@ const attribute = new RegExp(
   '(?:\\s*(' + singleAttrAssign.source + ')' +
   '\\s*(?:' + singleAttrValues.join('|') + '))?'
 )
-
+/*Github:https://github.com/answershuto*/
 // could use https://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-QName
 // but for Vue templates we can enforce a simple charset
 const ncname = '[a-zA-Z_][\\w\\-\\.]*'

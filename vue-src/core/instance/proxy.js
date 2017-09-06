@@ -1,8 +1,8 @@
 /* not type checking this file because flow doesn't play well with Proxy */
-
+/*Github:https://github.com/answershuto*/
 import config from 'core/config'
 import { warn, makeMap } from '../util/index'
-
+/*Github:https://github.com/answershuto*/
 let initProxy
 
 if (process.env.NODE_ENV !== 'production') {

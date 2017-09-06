@@ -1,9 +1,9 @@
 /* @flow */
-
+/*Github:https://github.com/answershuto*/
 import { hasSymbol } from 'core/util/env'
 import { warn } from '../util/index'
 import { defineReactive } from '../observer/index'
-
+/*Github:https://github.com/answershuto*/
 export function initProvide (vm: Component) {
   const provide = vm.$options.provide
   if (provide) {

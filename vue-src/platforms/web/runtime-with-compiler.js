@@ -34,7 +34,7 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
-  /*处理模板templete，编译成render函数*/
+  /*处理模板templete，编译成render函数，render不存在的时候才会编译template，否则优先使用render*/
   if (!options.render) {
     let template = options.template
     /*template存在的时候取template，不存在的时候取el的outerHTML*/
@@ -86,6 +86,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  /*调用const mount = Vue.prototype.$mount保存下来的不带编译的mount*/
   return mount.call(this, el, hydrating)
 }
 
@@ -105,5 +106,5 @@ function getOuterHTML (el: Element): string {
 }
 
 Vue.compile = compileToFunctions
-
+/*Github:https://github.com/answershuto*/
 export default Vue

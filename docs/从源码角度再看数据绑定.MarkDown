@@ -59,7 +59,7 @@ function initData (vm: Component) {
       proxy(vm, `_data`, keys[i])
     }
   }
-
+  /*Github:https://github.com/answershuto*/
   // observe data
   /*从这里开始我们要observe了，开始对数据进行绑定，这里有尤大大的注释asRootData，这步作为根数据，下面会进行递归observe进行对深层对象的绑定。*/
   observe(data, true /* asRootData */)
@@ -168,7 +168,7 @@ export class  {
         ? protoAugment  /*直接覆盖原型的方法来修改目标对象*/
         : copyAugment   /*定义（覆盖）目标对象或数组的某一个方法*/
       augment(value, arrayMethods, arrayKeys)
-
+      /*Github:https://github.com/answershuto*/
       /*如果是数组则需要遍历数组的每一个成员进行observe*/
       this.observeArray(value)
     } else {

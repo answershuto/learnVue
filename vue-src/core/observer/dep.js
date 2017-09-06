@@ -4,7 +4,7 @@ import type Watcher from './watcher'
 import { remove } from '../util/index'
 
 let uid = 0
-
+/*Github:https://github.com/answershuto*/
 /**
  * A dep is an observable that can have multiple
  * directives subscribing to it.

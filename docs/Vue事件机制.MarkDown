@@ -97,6 +97,7 @@ Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): C
     }
     // specific event
     const cbs = vm._events[event]
+    /*Github:https://github.com/answershuto*/
     /*本身不存在该事件则直接返回*/
     if (!cbs) {
       return vm
