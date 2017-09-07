@@ -10,6 +10,7 @@ export function renderList (
   val: any,
   render: () => VNode
 ): ?Array<VNode> {
+  /*根据类型循环render*/
   let ret: ?Array<VNode>, i, l, keys, key
   if (Array.isArray(val) || typeof val === 'string') {
     ret = new Array(val.length)

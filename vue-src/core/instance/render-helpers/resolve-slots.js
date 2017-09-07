@@ -40,6 +40,7 @@ function isWhitespace (node: VNode): boolean {
   return node.isComment || node.text === ' '
 }
 
+/*处理ScopedSlots*/
 export function resolveScopedSlots (
   fns: Array<[string, Function]>
 ): { [key: string]: Function } {

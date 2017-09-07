@@ -72,6 +72,7 @@ export function renderMixin (Vue: Class<Component>) {
     vm.$scopedSlots = (_parentVnode && _parentVnode.data.scopedSlots) || emptyObject
 
     if (staticRenderFns && !vm._staticTrees) {
+      /*用来存放static节点，已经被渲染的并且不存在v-for中的static节点不需要重新渲染，只需要进行浅拷贝*/
       vm._staticTrees = []
     }
     // set parent vnode. this allows render functions to have access
@@ -117,7 +118,7 @@ export function renderMixin (Vue: Class<Component>) {
   // these are exposed on the instance prototype to reduce generated render
   // code size.
   /*
-    内部渲染函数
+    内部处理render的函数
     这些函数会暴露在Vue原型上以减小渲染函数大小
   */
   /*处理v-once的渲染函数*/
@@ -126,15 +127,26 @@ export function renderMixin (Vue: Class<Component>) {
   Vue.prototype._n = toNumber
   /*将val转化成字符串*/
   Vue.prototype._s = toString
+  /*处理v-for列表渲染*/
   Vue.prototype._l = renderList
+  /*处理slot的渲染*/
   Vue.prototype._t = renderSlot
+  /*检测两个变量是否相等*/
   Vue.prototype._q = looseEqual
+  /*检测arr数组中是否包含与val变量相等的项*/
   Vue.prototype._i = looseIndexOf
+  /*处理static树的渲染*/
   Vue.prototype._m = renderStatic
+  /*处理filters*/
   Vue.prototype._f = resolveFilter
+  /*从config配置中检查eventKeyCode是否存在*/
   Vue.prototype._k = checkKeyCodes
+  /*合并v-bind指令到VNode中*/
   Vue.prototype._b = bindObjectProps
+  /*创建一个文本节点*/
   Vue.prototype._v = createTextVNode
+  /*创建一个空VNode节点*/
   Vue.prototype._e = createEmptyVNode
+  /*处理ScopedSlots*/
   Vue.prototype._u = resolveScopedSlots
 }

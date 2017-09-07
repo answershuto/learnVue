@@ -5,6 +5,7 @@ import { extend, warn } from 'core/util/index'
 /**
  * Runtime helper for rendering <slot>
  */
+ /*处理slot的渲染*/
 export function renderSlot (
   name: string,
   fallback: ?Array<VNode>,

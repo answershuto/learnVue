@@ -5,6 +5,7 @@ import config from 'core/config'
 /**
  * Runtime helper for checking keyCodes from config.
  */
+ /*从config配置中检查eventKeyCode是否存在*/
 export function checkKeyCodes (
   eventKeyCode: number,
   key: string,
