@@ -19,6 +19,7 @@ let staticRenderFns
 let onceCount
 let currentOptions
 
+/*将AST语法树转化成render以及staticRenderFns的字符串*/
 export function generate (
   ast: ASTElement | void,
   options: CompilerOptions

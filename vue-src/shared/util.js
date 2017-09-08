@@ -211,6 +211,7 @@ export function extend (to: Object, _from: ?Object): Object {
 /**
  * Merge an Array of Objects into a single Object.
  */
+ /*合并Array数组中的每一个对象到一个新的Object中*/
 export function toObject (arr: Array<any>): Object {
   const res = {}
   for (let i = 0; i < arr.length; i++) {
@@ -249,6 +250,7 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
  */
+ /*检测两个变量是否相等*/
 export function looseEqual (a: mixed, b: mixed): boolean {
   const isObjectA = isObject(a)
   const isObjectB = isObject(b)
@@ -266,6 +268,7 @@ export function looseEqual (a: mixed, b: mixed): boolean {
   }
 }
 
+/*检测arr数组中是否包含与val变量相等的项*/
 export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
   for (let i = 0; i < arr.length; i++) {
     if (looseEqual(arr[i], val)) return i
