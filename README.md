@@ -13,19 +13,19 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 ### Vue源码相关
 
-[响应式原理](./docs/响应式原理.MarkDown)
+[Vue.js响应式原理](./docs/响应式原理.MarkDown)
 
-[依赖收集](./docs/依赖收集.MarkDown)
+[Vue.js依赖收集](./docs/依赖收集.MarkDown)
 
-[从源码角度再看数据绑定](./docs/从源码角度再看数据绑定.MarkDown)
+[从Vue.js源码角度再看数据绑定](./docs/从源码角度再看数据绑定.MarkDown)
 
-[Vue事件机制](./docs/Vue事件机制.MarkDown)
+[Vue.js事件机制](./docs/Vue事件机制.MarkDown)
 
 [VNode节点](./docs/VNode节点.MarkDown)
 
 [Virtual DOM与diff(Vue实现)](./docs/VirtualDOM与diff(Vue实现).MarkDown)
 
-[]()
+[聊聊Vue.js的template编译](./docs/聊聊Vue的template编译.MarkDown)
 
 ### 随笔杂谈
 
