@@ -14,6 +14,7 @@ export const MAX_UPDATE_COUNT = 100
 
 const queue: Array<Watcher> = []
 const activatedChildren: Array<Component> = []
+/*一个哈希表，用来存放watcher对象的id，防止重复的watcher对象多次加入*/
 let has: { [key: number]: ?true } = {}
 let circular: { [key: number]: number } = {}
 let waiting = false
@@ -124,8 +125,11 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+ /*将一个观察者对象push进观察者队列，在队列中已经存在相同的id则该观察者对象将被跳过，除非它是在队列被刷新时推送*/
 export function queueWatcher (watcher: Watcher) {
+  /*获取watcher的id*/
   const id = watcher.id
+  /*检验id是否存在，已经存在则直接跳过，不存在则标记哈希表has，用于下次检验*/
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {
