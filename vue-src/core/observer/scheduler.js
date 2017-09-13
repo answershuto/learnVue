@@ -36,6 +36,7 @@ function resetSchedulerState () {
 /**
  * Flush both queues and run the watchers.
  */
+ /*nextTick的回调函数，在下一个tick时flush掉两个队列同时运行watchers*/
 function flushSchedulerQueue () {
   flushing = true
   let watcher, id
@@ -48,10 +49,17 @@ function flushSchedulerQueue () {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
+  /*
+    给queue排序，这样做可以保证：
+    1.组件更新的顺序是从父组件到子组件的顺序，因为父组件总是比子组件先创建。
+    2.一个组件的user watchers比render watcher先运行，因为user watchers往往比render watcher更早创建
+    3.如果一个组件在父组件watcher运行期间被销毁，它的watcher执行将被跳过。
+  */
   queue.sort((a, b) => a.id - b.id)
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
+  /*这里不用index = queue.length;index > 0; index--的方式写是因为不要将length进行缓存，因为在执行处理现有watcher对象期间，更多的watcher对象可能会被push进queue*/
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
     id = watcher.id
@@ -133,6 +141,7 @@ export function queueWatcher (watcher: Watcher) {
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {
+      /*如果没有flush掉，直接push到队列中即可*/
       queue.push(watcher)
     } else {
       // if already flushing, splice the watcher based on its id

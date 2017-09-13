@@ -186,7 +186,7 @@ export default class Watcher {
       /*同步则执行run直接渲染视图*/
       this.run()
     } else {
-      /*异步推送到观察者队列中，由调度者调用。*/
+      /*异步推送到观察者队列中，下一个tick时调用。*/
       queueWatcher(this)
     }
   }
