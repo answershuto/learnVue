@@ -213,9 +213,83 @@ timerFunc是什么？
 
 看了源码发现timerFunc会检测当前环境而不同实现，其实就是按照Promise，MutationObserver，setTimeout优先级，哪个存在使用哪个，最不济的环境下使用setTimeout。
 
+这里解释一下，一共有Promise、MutationObserver以及setTimeout三种尝试得到timerFunc的方法。
+优先使用Promise，在Promise不存在的情况下使用MutationObserver，这两个方法的回调函数都会在microtask中执行，它们会比setTimeout更早执行，所以优先使用。
+如果上述两种方法都不支持的环境则会使用setTimeout，在task尾部推入这个函数，等待调用执行。
+为啥要用 microtask？我在顾轶灵在知乎的回答中学习到：
+根据 HTML Standard，在每个 task 运行完以后，UI 都会重渲染，那么在 microtask 中就完成数据更新，
+当前 task 结束就可以得到最新的 UI 了。反之如果新建一个 task 来做数据更新，那么渲染就会进行两次。
+参考顾轶灵知乎的回答：https://www.zhihu.com/question/55364497/answer/144215284
 
+首先是Promise，(Promise.resolve()).then()可以在microtask中加入它的回调，
 
+MutationObserver新建一个textNode的DOM对象，用MutationObserver绑定该DOM并指定回调函数，在DOM变化的时候则会触发回调,该回调会进入microtask，即textNode.data = String(counter)时便会加入该回调。
 
+setTimeout是最后的一种备选方案，它会将回调函数加入task中，等到执行。
 
+综上，nextTick的目的就是产生一个回调函数加入task或者microtask中，当前栈执行完以后（可能中间还有别的排在前面的函数）调用该回调函数，起到了异步触发（即下一个tick时触发）的目的。
 
 ## 为什么要异步更新视图
+
+来看一下下面这一段代码
+
+```html
+<template>
+  <div>
+    <div>{{test}}</div>
+  </div>
+</template>
+
+```
+
+```javascript
+export default {
+    data () {
+        return {
+            test: 0
+        };
+    },
+    created () {
+      for(let i = 0; i < 1000; i++) {
+        this.test++;
+      }
+    }
+}
+```
+
+现在有这样的一种情况，created的时候test的值会被++循环执行1000次。
+每次++时，都会根据响应式触发setter->Dep->Watcher->update。
+如果这时候没有异步更新视图，那么每次++都会直接操作DOM更新视图，这是非常消耗性能的。
+所以Vue.js实现了一个queue队列，在下一个tick的时候会统一执行queue中Watcher的run，更新视图。
+保证更新视图操作DOM的动作是在当前栈执行完以后下一个tick的时候调用，大大优化了性能。
+
+所以我们需要在修改date中的数据后访问真实的DOM节点，只需要这样，我们把文章第一个例子进行修改。
+
+```html
+<template>
+  <div>
+    <div ref="test">{{test}}</div>
+    <button @click="handleClick">tet</button>
+  </div>
+</template>
+
+```
+
+```javascript
+export default {
+    data () {
+        return {
+            test: 'begin'
+        };
+    },
+    methods () {
+        handleClick () {
+            this.test = 'end';
+            this.$nextTick(() => {
+                console.log(this.$refs.test.innerText);//打印"end"
+            });
+            console.log(this.$refs.test.innerText);//打印“begin”
+        }
+    }
+}
+```
