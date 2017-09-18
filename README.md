@@ -23,11 +23,13 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [Vue.js事件机制](./docs/Vue事件机制.MarkDown)
 
-[VNode节点](./docs/VNode节点.MarkDown)
+[VNode节点(Vue.js实现)](./docs/VNode节点.MarkDown)
 
-[Virtual DOM与diff(Vue实现)](./docs/VirtualDOM与diff(Vue实现).MarkDown)
+[Virtual DOM与diff(Vue.js实现)](./docs/VirtualDOM与diff(Vue实现).MarkDown)
 
 [聊聊Vue.js的template编译](./docs/聊聊Vue的template编译.MarkDown)
+
+[Vue.js异步更新DOM策略及nextTick](./docs/Vue.js异步更新DOM策略及nextTick,MarkDown)
 
 ### 随笔杂谈
 
