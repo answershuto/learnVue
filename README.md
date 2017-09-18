@@ -29,7 +29,7 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [聊聊Vue.js的template编译](./docs/聊聊Vue的template编译.MarkDown)
 
-[Vue.js异步更新DOM策略及nextTick](./docs/Vue.js异步更新DOM策略及nextTick,MarkDown)
+[Vue.js异步更新DOM策略及nextTick](./docs/Vue.js异步更新DOM策略及nextTick.MarkDown)
 
 ### 随笔杂谈
 
