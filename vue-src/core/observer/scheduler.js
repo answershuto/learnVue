@@ -24,6 +24,7 @@ let index = 0
 /**
  * Reset the scheduler's state.
  */
+ /*重置调度者的状态*/
 function resetSchedulerState () {
   queue.length = activatedChildren.length = 0
   has = {}
@@ -63,9 +64,21 @@ function flushSchedulerQueue () {
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
     id = watcher.id
+    /*将has的标记删除*/
     has[id] = null
+    /*执行watcher*/
     watcher.run()
     // in dev build, check and stop circular updates.
+    /*
+      在测试环境中，检测watch是否在死循环中
+      比如这样一种情况
+      watch: {
+        test () {
+          this.test++;
+        }
+      }
+      持续执行了一百次watch代表可能存在死循环
+    */
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1
       if (circular[id] > MAX_UPDATE_COUNT) {
@@ -83,13 +96,18 @@ function flushSchedulerQueue () {
   }
 
   // keep copies of post queues before resetting state
+  /**/
+  /*得到队列的拷贝*/
   const activatedQueue = activatedChildren.slice()
   const updatedQueue = queue.slice()
 
+  /*重置调度者的状态*/
   resetSchedulerState()
 
   // call component updated and activated hooks
+  /*使子组件状态都改编成active同时调用activated钩子*/
   callActivatedHooks(activatedQueue)
+  /*调用updated钩子*/
   callUpdateHooks(updatedQueue)
 
   // devtool hook
@@ -99,6 +117,7 @@ function flushSchedulerQueue () {
   }
 }
 
+/*调用updated钩子*/
 function callUpdateHooks (queue) {
   let i = queue.length
   while (i--) {
@@ -114,6 +133,10 @@ function callUpdateHooks (queue) {
  * Queue a kept-alive component that was activated during patch.
  * The queue will be processed after the entire tree has been patched.
  */
+ /*
+  在patch期间被激活（activated）的keep-alive组件保存在队列中，
+  是到patch结束以后该队列会被处理
+ */
 export function queueActivatedComponent (vm: Component) {
   // setting _inactive to false here so that a render function can
   // rely on checking whether it's in an inactive tree (e.g. router-view)
@@ -121,6 +144,7 @@ export function queueActivatedComponent (vm: Component) {
   activatedChildren.push(vm)
 }
 
+/*使子组件状态都改编成active同时调用activated钩子*/
 function callActivatedHooks (queue) {
   for (let i = 0; i < queue.length; i++) {
     queue[i]._inactive = true

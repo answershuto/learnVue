@@ -266,6 +266,7 @@ export function updateChildComponent (
   }
 }
 
+/*判断组件是否已经是active的*/
 function isInInactiveTree (vm) {
   while (vm && (vm = vm.$parent)) {
     if (vm._inactive) return true
@@ -273,6 +274,7 @@ function isInInactiveTree (vm) {
   return false
 }
 
+/*使子组件状态都改编成active同时调用activated钩子*/
 export function activateChildComponent (vm: Component, direct?: boolean) {
   if (direct) {
     vm._directInactive = false
@@ -284,9 +286,11 @@ export function activateChildComponent (vm: Component, direct?: boolean) {
   }
   if (vm._inactive || vm._inactive === null) {
     vm._inactive = false
+    /*递归*/
     for (let i = 0; i < vm.$children.length; i++) {
       activateChildComponent(vm.$children[i])
     }
+    /*触发actived钩子*/
     callHook(vm, 'activated')
   }
 }

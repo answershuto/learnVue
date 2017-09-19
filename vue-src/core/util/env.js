@@ -98,10 +98,13 @@ export const nextTick = (function () {
   /* istanbul ignore if */
 
   /*
-    这里解释一下，一共有Promise、MutationObserver以及setTimeout三种尝试得到timerFunc的方法
-    优先使用Promise，在Promise不存在的情况下使用MutationObserver，这两个方法都会在microtask中执行，会比setTimeout更早执行，所以优先使用。
+    这里解释一下，一共有Promise、MutationObserver以及setTimeout三种尝试得到timerFunc的方法。
+    优先使用Promise，在Promise不存在的情况下使用MutationObserver，这两个方法的回调函数都会在microtask中执行，它们会比setTimeout更早执行，所以优先使用。
     如果上述两种方法都不支持的环境则会使用setTimeout，在task尾部推入这个函数，等待调用执行。
-    参考：https://www.zhihu.com/question/55364497
+    为啥要用 microtask？我在顾轶灵在知乎的回答中学习到：
+    根据 HTML Standard，在每个 task 运行完以后，UI 都会重渲染，那么在 microtask 中就完成数据更新，
+    当前 task 结束就可以得到最新的 UI 了。反之如果新建一个 task 来做数据更新，那么渲染就会进行两次。
+    参考：https://www.zhihu.com/question/55364497/answer/144215284
   */
   if (typeof Promise !== 'undefined' && isNative(Promise)) {
     /*使用Promise*/
@@ -123,7 +126,7 @@ export const nextTick = (function () {
   )) {
     // use MutationObserver where native Promise is not available,
     // e.g. PhantomJS IE11, iOS7, Android 4.4
-    /*新建一个textNode的DOM对象，用MutationObserver绑定该DOM并指定回调函数，在DOM变化的时候则会触发回调,该回调会进入主线程（比任务队列优先执行），即textNode.data = String(counter)时便会触发回调*/
+    /*新建一个textNode的DOM对象，用MutationObserver绑定该DOM并指定回调函数，在DOM变化的时候则会触发回调,该回调会进入主线程（比任务队列优先执行），即textNode.data = String(counter)时便会加入该回调*/
     var counter = 1
     var observer = new MutationObserver(nextTickHandler)
     var textNode = document.createTextNode(String(counter))
