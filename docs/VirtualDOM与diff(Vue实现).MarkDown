@@ -12,7 +12,7 @@ Vue就使用了这样的抽象节点VNode，它是对真实Dom的一层抽象，
 
 ## 修改视图
 
-周所周知，Vue通过数据绑定来修改视图，当某个数据被修改的时候，set方法会让闭包中的Dep调用notify通知所有订阅者Watcher，Watcher通过get方法执行vm._update(vm._render(), hydrating)。
+众所周知，Vue通过数据绑定来修改视图，当某个数据被修改的时候，set方法会让闭包中的Dep调用notify通知所有订阅者Watcher，Watcher通过get方法执行vm._update(vm._render(), hydrating)。
 
 这里看一下_update方法
 

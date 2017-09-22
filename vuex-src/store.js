@@ -458,8 +458,10 @@ function unifyObjectStyle (type, payload, options) {
   return { type, payload, options }
 }
 
+/*暴露给外部的插件install方法，供Vue.use调用安装插件*/
 export function install (_Vue) {
   if (Vue) {
+    /*避免重复安装（Vue.use内部也会检测一次是否重复安装同一个插件）*/
     if (process.env.NODE_ENV !== 'production') {
       console.error(
         '[vuex] already installed. Vue.use(Vuex) should be called only once.'
@@ -467,6 +469,7 @@ export function install (_Vue) {
     }
     return
   }
+  /*保存Vue*/
   Vue = _Vue
   applyMixin(Vue)
 }
