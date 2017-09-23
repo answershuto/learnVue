@@ -5,11 +5,16 @@ import { forEachValue, isObject, isPromise, assert } from './util'
 
 let Vue // bind on install
 
+/*Store构造类*/
 export class Store {
   constructor (options = {}) {
     // Auto install if it is not done yet and `window` has `Vue`.
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
+    /*
+      如果插件还未安装（!Vue即判断是否未安装），则它会自动安装。
+      它允许用户在某些情况下避免自动安装。
+    */
     if (!Vue && typeof window !== 'undefined' && window.Vue) {
       install(window.Vue)
     }
@@ -21,10 +26,13 @@ export class Store {
     }
 
     const {
+      /*一个数组，包含应用在 store 上的插件方法。这些插件直接接收 store 作为唯一参数，可以监听 mutation（用于外部地数据持久化、记录或调试）或者提交 mutation （用于内部数据，例如 websocket 或 某些观察者）*/
       plugins = [],
+      /*使 Vuex store 进入严格模式，在严格模式下，任何 mutation 处理函数以外修改 Vuex state 都会抛出错误。*/
       strict = false
     } = options
 
+    /*从option中取出state，如果state是function则执行，最终得到一个对象*/
     let {
       state = {}
     } = options
@@ -43,6 +51,7 @@ export class Store {
     this._watcherVM = new Vue()
 
     // bind commit and dispatch to self
+    /*将dispatch与commit调用的this绑定为store对象本身，否则在组件内部this.dispatch时的this会指向组件的vm*/
     const store = this
     const { dispatch, commit } = this
     this.dispatch = function boundDispatch (type, payload) {
@@ -53,11 +62,13 @@ export class Store {
     }
 
     // strict mode
+    /*严格模式(使 Vuex store 进入严格模式，在严格模式下，任何 mutation 处理函数以外修改 Vuex state 都会抛出错误)*/
     this.strict = strict
 
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
+    /*初始化根module，这也同时递归注册了所有子modle，收集所有module的getter到_wrappedGetters中去*/
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
@@ -261,6 +272,7 @@ function resetStoreVM (store, state, hot) {
   }
 }
 
+/*初始化module*/
 function installModule (store, rootState, path, module, hot) {
   const isRoot = !path.length
   const namespace = store._modules.getNamespace(path)
@@ -471,5 +483,6 @@ export function install (_Vue) {
   }
   /*保存Vue*/
   Vue = _Vue
+  /*将vuexInit混淆进Vue的beforeCreate(Vue2.0)或_init方法(Vue1.0)*/
   applyMixin(Vue)
 }
