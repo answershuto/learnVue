@@ -4,17 +4,19 @@
 
 Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心得以及收获。以及对于Vue框架，周边库的一些学习心得以及个人见解。
 
-[vue-src](./vue-src)是我在学习的过程中为Vue.js源码加上一些注释，希望可以帮助有需要的同学更好地学习理解Vue.js源码。
+[vue-src](./vue-src)是我在学习的过程中为Vue.js源码加上一些注释，[vuex-src](./vuex-src)则是我为Vuex源码加上了一些注释，希望可以帮助有需要的同学更好地学习理解Vue.js源码。
 
-当前Vue.js源码版本2.3.0，感谢尤大提高生产力。
-Vuex版本为2.4.0。
+感谢尤大提高生产力。
+
+当前Vue.js源码版本2.3.0，Vuex版本为2.4.0。
+
 本项目希望对Vue.js做更进一步的探索与学习，Vue.js基础内容请参考Vue.js官网，[https://cn.vuejs.org/v2/guide/](https://cn.vuejs.org/v2/guide/)。
 可能会有理解存在偏差的地方，欢迎提issue指出，共同学习，共同进步。
 
 
 ## 目录
 
-### Vue源码相关
+### 源码相关
 
 [Vue.js响应式原理](./docs/响应式原理.MarkDown)
 
