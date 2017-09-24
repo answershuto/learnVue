@@ -12,6 +12,7 @@ export default class Module {
     this.state = (typeof rawState === 'function' ? rawState() : rawState) || {}
   }
 
+  /*获取namespace*/ */
   get namespaced () {
     return !!this._rawModule.namespaced
   }

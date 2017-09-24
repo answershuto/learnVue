@@ -12,7 +12,7 @@ export class Store {
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
     /*
-      如果插件还未安装（!Vue即判断是否未安装），则它会自动安装。
+      在浏览器环境下，如果插件还未安装（!Vue即判断是否未安装），则它会自动安装。
       它允许用户在某些情况下避免自动安装。
     */
     if (!Vue && typeof window !== 'undefined' && window.Vue) {
