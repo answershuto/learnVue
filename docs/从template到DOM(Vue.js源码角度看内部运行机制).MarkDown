@@ -8,9 +8,13 @@ let vm = new Vue({
 ```
 
 很多同学好奇，在new一个Vue对象的时候，内部究竟发生了什么？
+
 究竟Vue.js是如何将data中的数据渲染到真实的宿主环境环境中的？
+
 又是如何通过“响应式”修改数据的？
+
 template是如何被编译成真实环境中可用的HTML的？
+
 Vue指令又是执行的？
 
 带着这些疑问，我们从Vue的构造类开始看起。
@@ -309,7 +313,7 @@ optimize的主要作用是标记static静态节点，这是Vue在编译过程中
 
 generate是将AST语法树转化成render funtion字符串的过程，得到结果是render的字符串以及staticRenderFns字符串。
 
-具体的template编译实现请参考[聊聊Vue.js的template编译](https://github.com/answershuto/learnVue/blob/master/docs/%E8%81%8A%E8%81%8AVue%E7%9A%84template%E7%BC%96%E8%AF%91.MarkDown)。
+具体的template编译实现请参考[《聊聊Vue.js的template编译》](https://github.com/answershuto/learnVue/blob/master/docs/%E8%81%8A%E8%81%8AVue%E7%9A%84template%E7%BC%96%E8%AF%91.MarkDown)。
 
 
 ## Watcher到视图
@@ -828,3 +832,5 @@ attr只需要在create以及update钩子被调用时更新DOM的attr属性即可
 ## 最后
 
 至此，我们已经从template到真实DOM的整个过程梳理完了。现在再去看这张图，是不是更清晰了呢？
+
+![](https://cn.vuejs.org/images/data.png)
