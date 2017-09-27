@@ -45,6 +45,7 @@ export class Store {
     this._actions = Object.create(null)
     this._mutations = Object.create(null)
     this._wrappedGetters = Object.create(null)
+    /* module收集器 */
     this._modules = new ModuleCollection(options)
     this._modulesNamespaceMap = Object.create(null)
     this._subscribers = []
@@ -54,6 +55,7 @@ export class Store {
     /*将dispatch与commit调用的this绑定为store对象本身，否则在组件内部this.dispatch时的this会指向组件的vm*/
     const store = this
     const { dispatch, commit } = this
+    /* 为dispatch与commit绑定this（Store实例本身） */
     this.dispatch = function boundDispatch (type, payload) {
       return dispatch.call(store, type, payload)
     }
@@ -68,7 +70,7 @@ export class Store {
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
-    /*初始化根module，这也同时递归注册了所有子modle，收集所有module的getter到_wrappedGetters中去*/
+    /*初始化根module，这也同时递归注册了所有子modle，收集所有module的getter到_wrappedGetters中去，this._modules.root代表根module才独有保存的Module对象*/
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
@@ -274,10 +276,13 @@ function resetStoreVM (store, state, hot) {
 
 /*初始化module*/
 function installModule (store, rootState, path, module, hot) {
+  /* 是否是根module */
   const isRoot = !path.length
+  /* 获取module的namespace */
   const namespace = store._modules.getNamespace(path)
 
   // register in namespace map
+  /* 如果有namespace则在_modulesNamespaceMap中注册 */
   if (module.namespaced) {
     store._modulesNamespaceMap[namespace] = module
   }
