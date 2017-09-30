@@ -95,8 +95,10 @@ export class Store {
     }
   }
 
+  /* 调用mutation的commit方法 */
   commit (_type, _payload, _options) {
     // check object-style commit
+    /* 校验参数 */
     const {
       type,
       payload,
@@ -289,30 +291,37 @@ function installModule (store, rootState, path, module, hot) {
 
   // set state
   if (!isRoot && !hot) {
+    /* 获取父级的state */
     const parentState = getNestedState(rootState, path.slice(0, -1))
+    /* module的name */
     const moduleName = path[path.length - 1]
-    store._withCommit(() => {
+    store.`_withCommit`(() => {
+      /* 将子module设置称响应式的 */
       Vue.set(parentState, moduleName, module.state)
     })
   }
 
   const local = module.context = makeLocalContext(store, namespace, path)
 
+  /* 遍历注册mutation */
   module.forEachMutation((mutation, key) => {
     const namespacedType = namespace + key
     registerMutation(store, namespacedType, mutation, local)
   })
 
+  /* 遍历注册action */
   module.forEachAction((action, key) => {
     const namespacedType = namespace + key
     registerAction(store, namespacedType, action, local)
   })
 
+  /* 遍历注册getter */
   module.forEachGetter((getter, key) => {
     const namespacedType = namespace + key
     registerGetter(store, namespacedType, getter, local)
   })
 
+  /* 递归安装mudule */
   module.forEachChild((child, key) => {
     installModule(store, rootState, path.concat(key), child, hot)
   })
@@ -323,6 +332,7 @@ function installModule (store, rootState, path, module, hot) {
  * if there is no namespace, just use root ones
  */
 function makeLocalContext (store, namespace, path) {
+  /* 判断是否有名字空间 */
   const noNamespace = namespace === ''
 
   const local = {
@@ -398,13 +408,16 @@ function makeLocalGetters (store, namespace) {
   return gettersProxy
 }
 
+/* 遍历注册mutation */
 function registerMutation (store, type, handler, local) {
+  /* 所有的mutation会被push进一个数组中，这样相同的mutation就可以调用不同module中的同名的mutation了 */
   const entry = store._mutations[type] || (store._mutations[type] = [])
   entry.push(function wrappedMutationHandler (payload) {
     handler.call(store, local.state, payload)
   })
 }
 
+/* 遍历注册action */
 function registerAction (store, type, handler, local) {
   const entry = store._actions[type] || (store._actions[type] = [])
   entry.push(function wrappedActionHandler (payload, cb) {
@@ -430,6 +443,7 @@ function registerAction (store, type, handler, local) {
   })
 }
 
+/* 遍历注册getter */
 function registerGetter (store, type, rawGetter, local) {
   if (store._wrappedGetters[type]) {
     if (process.env.NODE_ENV !== 'production') {
