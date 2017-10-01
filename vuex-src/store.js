@@ -106,6 +106,7 @@ export class Store {
     } = unifyObjectStyle(_type, _payload, _options)
 
     const mutation = { type, payload }
+    /* 取出type对应的mutation的方法 */
     const entry = this._mutations[type]
     if (!entry) {
       if (process.env.NODE_ENV !== 'production') {
@@ -113,11 +114,13 @@ export class Store {
       }
       return
     }
+    /* 执行mutation中的所有方法 */
     this._withCommit(() => {
       entry.forEach(function commitIterator (handler) {
         handler(payload)
       })
     })
+    /* 通知所有订阅者 */
     this._subscribers.forEach(sub => sub(mutation, this.state))
 
     if (
