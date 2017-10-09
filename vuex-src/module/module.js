@@ -32,6 +32,7 @@ export default class Module {
     return this._children[key]
   }
 
+  /* 更新module */
   update (rawModule) {
     this._rawModule.namespaced = rawModule.namespaced
     if (rawModule.actions) {

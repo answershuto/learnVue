@@ -75,11 +75,14 @@ export class Store {
 
     // initialize the store vm, which is responsible for the reactivity
     // (also registers _wrappedGetters as computed properties)
+    /* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
     resetStoreVM(this, state)
 
     // apply plugins
+    /* 调用插件 */
     plugins.forEach(plugin => plugin(this))
 
+    /* devtool插件 */
     if (Vue.config.devtools) {
       devtoolPlugin(this)
     }
@@ -134,13 +137,15 @@ export class Store {
     }
   }
 
-  dispatch (_type, _payload) {
+  /* 调用action的dispatch方法 */
+  \dispatch (_type, _payload) {
     // check object-style dispatch
     const {
       type,
       payload
     } = unifyObjectStyle(_type, _payload)
 
+    /* actions中取出type对应的ation */
     const entry = this._actions[type]
     if (!entry) {
       if (process.env.NODE_ENV !== 'production') {
@@ -148,11 +153,14 @@ export class Store {
       }
       return
     }
+
+    /* 是数组则包装Promise形成一个新的Promise，只有一个则直接返回第0个 */
     return entry.length > 1
       ? Promise.all(entry.map(handler => handler(payload)))
       : entry[0](payload)
   }
 
+  /* 注册一个订阅函数，返回取消订阅的函数 */
   subscribe (fn) {
     const subs = this._subscribers
     if (subs.indexOf(fn) < 0) {
@@ -166,6 +174,7 @@ export class Store {
     }
   }
 
+  /* 观察一个getter方法 */
   watch (getter, cb, options) {
     if (process.env.NODE_ENV !== 'production') {
       assert(typeof getter === 'function', `store.watch only accepts a function.`)
@@ -173,13 +182,16 @@ export class Store {
     return this._watcherVM.$watch(() => getter(this.state, this.getters), cb, options)
   }
 
+  /* 重置state */
   replaceState (state) {
     this._withCommit(() => {
       this._vm._data.$$state = state
     })
   }
 
+  /* 注册一个动态module，当业务进行异步加载的时候，可以通过该接口进行注册动态module */
   registerModule (path, rawModule) {
+    /* 转化称Array */
     if (typeof path === 'string') path = [path]
 
     if (process.env.NODE_ENV !== 'production') {
@@ -187,33 +199,47 @@ export class Store {
       assert(path.length > 0, 'cannot register the root module by using registerModule.')
     }
 
+    /*注册*/
     this._modules.register(path, rawModule)
+    /*初始化module*/
     installModule(this, this.state, path, this._modules.get(path))
     // reset store to update getters...
+    /* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
     resetStoreVM(this, this.state)
   }
 
+  /* 注销一个动态module */
   unregisterModule (path) {
+    /* 转化称Array */
     if (typeof path === 'string') path = [path]
 
     if (process.env.NODE_ENV !== 'production') {
       assert(Array.isArray(path), `module path must be a string or an Array.`)
     }
 
+    /*注销*/
     this._modules.unregister(path)
     this._withCommit(() => {
+      /* 获取父级的state */
       const parentState = getNestedState(this.state, path.slice(0, -1))
+      /* 从父级中删除 */
       Vue.delete(parentState, path[path.length - 1])
     })
+    /* 重制store */
     resetStore(this)
   }
 
+  /* 热更新 */
   hotUpdate (newOptions) {
+    /* 更新module */
     this._modules.update(newOptions)
+    /* 重制store */
     resetStore(this, true)
   }
 
+  /* 保证通过mutation修改store的数据 */
   _withCommit (fn) {
+    /* 调用withCommit修改state的值时会将store的committing值置为true，内部会有断言检查该值，在严格模式下只允许使用mutation来修改store中的值，而不允许直接修改store的数值 */
     const committing = this._committing
     this._committing = true
     fn()
@@ -221,6 +247,7 @@ export class Store {
   }
 }
 
+/* 重制store */
 function resetStore (store, hot) {
   store._actions = Object.create(null)
   store._mutations = Object.create(null)
@@ -233,13 +260,17 @@ function resetStore (store, hot) {
   resetStoreVM(store, state, hot)
 }
 
+/* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
 function resetStoreVM (store, state, hot) {
-  const oldVm = store._vm
+  /* 存放之前的vm对象 */
+  const oldVm = store._vm 
 
   // bind store public getters
   store.getters = {}
   const wrappedGetters = store._wrappedGetters
   const computed = {}
+
+  /* 为每一个getter方法设置get方法，比如获取this.$store.getters.test的时候获取的是store._vm.test，也就是Vue对象的computed属性 */
   forEachValue(wrappedGetters, (fn, key) => {
     // use computed to leverage its lazy-caching mechanism
     computed[key] = () => fn(store)
@@ -253,7 +284,9 @@ function resetStoreVM (store, state, hot) {
   // suppress warnings just in case the user has added
   // some funky global mixins
   const silent = Vue.config.silent
+  /* Vue.config.silent暂时设置为true的目的是在new一个Vue实例的过程中不会报出一切警告 */
   Vue.config.silent = true
+  /*  这里new了一个Vue对象，运用Vue内部的响应式实现注册state以及computed*/
   store._vm = new Vue({
     data: {
       $$state: state
@@ -263,11 +296,13 @@ function resetStoreVM (store, state, hot) {
   Vue.config.silent = silent
 
   // enable strict mode for new vm
+  /* 使能严格模式，保证修改store只能通过mutation */
   if (store.strict) {
     enableStrictMode(store)
   }
 
   if (oldVm) {
+    /* 解除旧vm的state的引用，以及销毁旧的Vue对象 */
     if (hot) {
       // dispatch changes in all subscribed watchers
       // to force getter re-evaluation for hot reloading.
@@ -422,6 +457,7 @@ function registerMutation (store, type, handler, local) {
 
 /* 遍历注册action */
 function registerAction (store, type, handler, local) {
+  /* 取出type对应的action */
   const entry = store._actions[type] || (store._actions[type] = [])
   entry.push(function wrappedActionHandler (payload, cb) {
     let res = handler.call(store, {
@@ -432,10 +468,13 @@ function registerAction (store, type, handler, local) {
       rootGetters: store.getters,
       rootState: store.state
     }, payload, cb)
+    /* 判断是否是Promise */
     if (!isPromise(res)) {
+      /* 不是Promise对象的时候转化称Promise对象 */
       res = Promise.resolve(res)
     }
     if (store._devtoolHook) {
+      /* 存在devtool插件的时候触发vuex的error给devtool */
       return res.catch(err => {
         store._devtoolHook.emit('vuex:error', err)
         throw err
@@ -448,12 +487,15 @@ function registerAction (store, type, handler, local) {
 
 /* 遍历注册getter */
 function registerGetter (store, type, rawGetter, local) {
+  /* 不存在直接返回 */
   if (store._wrappedGetters[type]) {
     if (process.env.NODE_ENV !== 'production') {
       console.error(`[vuex] duplicate getter key: ${type}`)
     }
     return
   }
+
+  /* 包装getter */
   store._wrappedGetters[type] = function wrappedGetter (store) {
     return rawGetter(
       local.state, // local state
@@ -464,9 +506,11 @@ function registerGetter (store, type, rawGetter, local) {
   }
 }
 
+/* 使能严格模式 */
 function enableStrictMode (store) {
   store._vm.$watch(function () { return this._data.$$state }, () => {
     if (process.env.NODE_ENV !== 'production') {
+      /* 检测store中的_committing的值，如果是true代表不是通过mutation的方法修改的 */
       assert(store._committing, `Do not mutate vuex store state outside mutation handlers.`)
     }
   }, { deep: true, sync: true })

@@ -98,9 +98,11 @@ function normalizeMap (map) {
 function normalizeNamespace (fn) {
   return (namespace, map) => {
     if (typeof namespace !== 'string') {
+      /* 兼容namespace不传的情况 */
       map = namespace
       namespace = ''
     } else if (namespace.charAt(namespace.length - 1) !== '/') {
+      /* namespace最后一位补上'/' */
       namespace += '/'
     }
     return fn(namespace, map)

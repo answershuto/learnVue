@@ -70,15 +70,18 @@ export default class ModuleCollection {
   }
 }
 
+/* 更新 */
 function update (path, targetModule, newModule) {
   if (process.env.NODE_ENV !== 'production') {
     assertRawModule(path, newModule)
   }
 
   // update target module
+  /* 更新module */
   targetModule.update(newModule)
 
   // update nested modules
+  /* 更新嵌套的module */
   if (newModule.modules) {
     for (const key in newModule.modules) {
       if (!targetModule.getChild(key)) {
