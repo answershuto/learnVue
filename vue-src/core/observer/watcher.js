@@ -200,6 +200,7 @@ export default class Watcher {
     */
   run () {
     if (this.active) {
+      /* get操作在获取value本身也会执行getter从而调用update更新视图 */
       const value = this.get()
       if (
         value !== this.value ||
@@ -217,7 +218,7 @@ export default class Watcher {
         /*设置新的值*/
         this.value = value
 
-        /*触发回调渲染视图*/
+        /*触发回调*/
         if (this.user) {
           try {
             this.cb.call(this.vm, value, oldValue)

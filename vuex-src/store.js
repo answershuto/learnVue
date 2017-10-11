@@ -41,14 +41,21 @@ export class Store {
     }
 
     // store internal state
+    /* 用来判断严格模式下是否是用mutation修改state的 */
     this._committing = false
+    /* 存放action */
     this._actions = Object.create(null)
+    /* 存放mutation */
     this._mutations = Object.create(null)
+    /* 存放getter */
     this._wrappedGetters = Object.create(null)
     /* module收集器 */
     this._modules = new ModuleCollection(options)
+    /* 根据namespace存放module */
     this._modulesNamespaceMap = Object.create(null)
+    /* 存放订阅者 */
     this._subscribers = []
+    /* 用以实现Watch的Vue实例 */
     this._watcherVM = new Vue()
 
     // bind commit and dispatch to self
@@ -138,7 +145,7 @@ export class Store {
   }
 
   /* 调用action的dispatch方法 */
-  \dispatch (_type, _payload) {
+  dispatch (_type, _payload) {
     // check object-style dispatch
     const {
       type,
@@ -270,7 +277,7 @@ function resetStoreVM (store, state, hot) {
   const wrappedGetters = store._wrappedGetters
   const computed = {}
 
-  /* 为每一个getter方法设置get方法，比如获取this.$store.getters.test的时候获取的是store._vm.test，也就是Vue对象的computed属性 */
+  /* 通过Object.defineProperty为每一个getter方法设置get方法，比如获取this.$store.getters.test的时候获取的是store._vm.test，也就是Vue对象的computed属性 */
   forEachValue(wrappedGetters, (fn, key) => {
     // use computed to leverage its lazy-caching mechanism
     computed[key] = () => fn(store)
@@ -333,7 +340,7 @@ function installModule (store, rootState, path, module, hot) {
     const parentState = getNestedState(rootState, path.slice(0, -1))
     /* module的name */
     const moduleName = path[path.length - 1]
-    store.`_withCommit`(() => {
+    store._withCommit(() => {
       /* 将子module设置称响应式的 */
       Vue.set(parentState, moduleName, module.state)
     })
@@ -547,7 +554,7 @@ export function install (_Vue) {
     }
     return
   }
-  /*保存Vue*/
+  /*保存Vue，同时用于检测是否重复安装*/
   Vue = _Vue
   /*将vuexInit混淆进Vue的beforeCreate(Vue2.0)或_init方法(Vue1.0)*/
   applyMixin(Vue)

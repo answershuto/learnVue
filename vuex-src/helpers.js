@@ -1,9 +1,11 @@
+/* https://vuex.vuejs.org/zh-cn/state.html#mapstate-辅助函数 */
 export const mapState = normalizeNamespace((namespace, states) => {
   const res = {}
   normalizeMap(states).forEach(({ key, val }) => {
     res[key] = function mappedState () {
       let state = this.$store.state
       let getters = this.$store.getters
+      /* 处理namespace */
       if (namespace) {
         const module = getModuleByNamespace(this.$store, 'mapState', namespace)
         if (!module) {
@@ -12,6 +14,25 @@ export const mapState = normalizeNamespace((namespace, states) => {
         state = module.context.state
         getters = module.context.getters
       }
+      /* 
+        如果val是一个函数，则返回函数的调用，否则从state里找出这个val对应的属性 
+        举个例子：
+          mapState({
+            test,
+            test2: state => {
+              return state.a + state.b
+            }
+          })
+          得到
+          {
+            test () {
+              return this.$store.state.test;
+            },
+            test2 (state, getters) {
+              return state.a + state.b;
+            }
+          }
+      */
       return typeof val === 'function'
         ? val.call(this, state, getters)
         : state[val]
@@ -22,6 +43,7 @@ export const mapState = normalizeNamespace((namespace, states) => {
   return res
 })
 
+/* https://vuex.vuejs.org/zh-cn/mutations.html#在组件中提交-mutation */
 export const mapMutations = normalizeNamespace((namespace, mutations) => {
   const res = {}
   normalizeMap(mutations).forEach(({ key, val }) => {
@@ -42,6 +64,7 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
   return res
 })
 
+/* https://vuex.vuejs.org/zh-cn/getters.html#mapgetters-辅助函数 */
 export const mapGetters = normalizeNamespace((namespace, getters) => {
   const res = {}
   normalizeMap(getters).forEach(({ key, val }) => {
@@ -62,6 +85,7 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
   return res
 })
 
+/* https://vuex.vuejs.org/zh-cn/actions.html#在组件中分发-action */
 export const mapActions = normalizeNamespace((namespace, actions) => {
   const res = {}
   normalizeMap(actions).forEach(({ key, val }) => {
@@ -89,6 +113,7 @@ export const createNamespacedHelpers = (namespace) => ({
   mapActions: mapActions.bind(null, namespace)
 })
 
+/* 将map转化成[{key, val},{key, val},{key, val}...]的数据结构 */
 function normalizeMap (map) {
   return Array.isArray(map)
     ? map.map(key => ({ key, val: key }))
@@ -109,8 +134,10 @@ function normalizeNamespace (fn) {
   }
 }
 
+/* 根据namespace获取module */
 function getModuleByNamespace (store, helper, namespace) {
   const module = store._modulesNamespaceMap[namespace]
+  /* 不存在打印err */
   if (process.env.NODE_ENV !== 'production' && !module) {
     console.error(`[vuex] module namespace not found in ${helper}(): ${namespace}`)
   }
