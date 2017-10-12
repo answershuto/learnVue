@@ -102,7 +102,9 @@ export function lifecycleMixin (Vue: Class<Component>) {
     if (vm._isBeingDestroyed) {
       return
     }
+    /* 调用beforeDestroy钩子 */
     callHook(vm, 'beforeDestroy')
+    /* 标志位 */
     vm._isBeingDestroyed = true
     // remove self from parent
     const parent = vm.$parent
@@ -110,6 +112,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
       remove(parent.$children, vm)
     }
     // teardown watchers
+    /* 该组件下的所有Watcher从其所在的Dep中释放 */
     if (vm._watcher) {
       vm._watcher.teardown()
     }
@@ -127,8 +130,10 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // invoke destroy hooks on current rendered tree
     vm.__patch__(vm._vnode, null)
     // fire destroyed hook
+    /* 调用destroyed钩子 */
     callHook(vm, 'destroyed')
     // turn off all instance listeners.
+    /* 移除所有事件监听 */
     vm.$off()
     // remove __vue__ reference
     if (vm.$el) {
