@@ -36,14 +36,17 @@ function pruneCache (cache: VNodeCache, current: VNode, filter: Function) {
   }
 }
 
+/* 销毁vnode对应的组件实例（Vue实例） */
 function pruneCacheEntry (vnode: ?VNode) {
   if (vnode) {
     vnode.componentInstance.$destroy()
   }
 }
 
+/* keep-alive组件 */
 export default {
   name: 'keep-alive',
+  /* 标志抽象组件 */
   abstract: true,
 
   props: {
@@ -52,9 +55,11 @@ export default {
   },
 
   created () {
+    /* 缓存对象 */
     this.cache = Object.create(null)
   },
 
+  /* destroyed钩子中销毁所有cache中的组件实例 */
   destroyed () {
     for (const key in this.cache) {
       pruneCacheEntry(this.cache[key])

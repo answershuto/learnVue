@@ -24,6 +24,7 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  /* 将vm对象存储到parent组件中（保证parent组件是非抽象组件，比如keep-alive） */
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
