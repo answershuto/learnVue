@@ -234,3 +234,87 @@ function installModule (store, rootState, path, module, hot) {
   })
 }
 ```
+
+### resetStoreVM
+
+```javascript
+/* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
+function resetStoreVM (store, state, hot) {
+  /* 存放之前的vm对象 */
+  const oldVm = store._vm 
+
+  // bind store public getters
+  store.getters = {}
+  const wrappedGetters = store._wrappedGetters
+  const computed = {}
+
+  /* 通过Object.defineProperty为每一个getter方法设置get方法，比如获取this.$store.getters.test的时候获取的是store._vm.test，也就是Vue对象的computed属性 */
+  forEachValue(wrappedGetters, (fn, key) => {
+    // use computed to leverage its lazy-caching mechanism
+    computed[key] = () => fn(store)
+    Object.defineProperty(store.getters, key, {
+      get: () => store._vm[key],
+      enumerable: true // for local getters
+    })
+  })
+
+  // use a Vue instance to store the state tree
+  // suppress warnings just in case the user has added
+  // some funky global mixins
+  const silent = Vue.config.silent
+  /* Vue.config.silent暂时设置为true的目的是在new一个Vue实例的过程中不会报出一切警告 */
+  Vue.config.silent = true
+  /*  这里new了一个Vue对象，运用Vue内部的响应式实现注册state以及computed*/
+  store._vm = new Vue({
+    data: {
+      $$state: state
+    },
+    computed
+  })
+  Vue.config.silent = silent
+
+  // enable strict mode for new vm
+  /* 使能严格模式，保证修改store只能通过mutation */
+  if (store.strict) {
+    enableStrictMode(store)
+  }
+
+  if (oldVm) {
+    /* 解除旧vm的state的引用，以及销毁旧的Vue对象 */
+    if (hot) {
+      // dispatch changes in all subscribed watchers
+      // to force getter re-evaluation for hot reloading.
+      store._withCommit(() => {
+        oldVm._data.$$state = null
+      })
+    }
+    Vue.nextTick(() => oldVm.$destroy())
+  }
+}
+```
+
+resetStoreVM首先会遍历wrappedGetters，使用Object.defineProperty方法为每一个getter绑定上get方法，这样我们就可以在组件里访问this.$store.getter.test就等同于访问store._vm.test。
+
+```javascript
+forEachValue(wrappedGetters, (fn, key) => {
+  // use computed to leverage its lazy-caching mechanism
+  computed[key] = () => fn(store)
+  Object.defineProperty(store.getters, key, {
+    get: () => store._vm[key],
+    enumerable: true // for local getters
+  })
+})
+```
+
+之后Vuex采用了new一个Vue对象来实现数据的“响应式化”，运用Vue.js内部提供的数据双向绑定功能来实现store的数据与视图的同步更新。不熟悉Vue.js响应式原理的同学可以通过笔者另一篇文章[响应式原理](https://github.com/answershuto/learnVue/blob/master/docs/%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86.MarkDown)了解Vue.js是如何进行数据双向绑定的。
+
+```javascript
+store._vm = new Vue({
+  data: {
+    $$state: state
+  },
+  computed
+})
+```
+
+这时候我们访问store._vm.test也就访问了Vue实例中的属性。
