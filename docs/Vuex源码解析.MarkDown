@@ -318,3 +318,51 @@ store._vm = new Vue({
 ```
 
 这时候我们访问store._vm.test也就访问了Vue实例中的属性。
+
+这两步执行完以后，我们就可以通过this.$store.getter.test访问vm中的test属性了。
+
+### 严格模式
+
+Vuex的Store构造类的option有一个strict的参数，可以控制Vuex执行严格模式，严格模式下，所有修改state的操作必须通过mutation实现，否则会抛出错误。
+
+```javascript
+/* 使能严格模式 */
+function enableStrictMode (store) {
+  store._vm.$watch(function () { return this._data.$$state }, () => {
+    if (process.env.NODE_ENV !== 'production') {
+      /* 检测store中的_committing的值，如果是true代表不是通过mutation的方法修改的 */
+      assert(store._committing, `Do not mutate vuex store state outside mutation handlers.`)
+    }
+  }, { deep: true, sync: true })
+}
+```
+
+首先，在严格模式下，Vuex会利用vm的$watch方法来观察$$state，也就是Store的state，在它被修改的时候进入回调。我们发现，回调中只有一句话，用assert断言来检测store._committing，当store._committing为false的时候会触发断言，抛出异常。
+
+我们发现，Store的commit方法中，执行mutation的语句是这样的。
+
+```javascript
+this._withCommit(() => {
+  entry.forEach(function commitIterator (handler) {
+    handler(payload)
+  })
+})
+```
+
+再来看看_withCommit的实现。
+
+```javascript
+_withCommit (fn) {
+  /* 调用withCommit修改state的值时会将store的committing值置为true，内部会有断言检查该值，在严格模式下只允许使用mutation来修改store中的值，而不允许直接修改store的数值 */
+  const committing = this._committing
+  this._committing = true
+  fn()
+  this._committing = committing
+}
+```
+
+我们发现，通过commit（mutation）修改state数据的时候，会再调用mutation方法之前将committing置为true，接下来再通过mutation函数修改state中的数据，这时候触发$watch中的回调断言committing是不会抛出异常的（此时committing为true）。而当我们直接修改state的数据时，触发$watch的回调执行断言，这时committing为false，则会抛出异常。这就是Vuex的严格模式的实现。
+
+接下来我们来看看Store提供的一些API。
+
+### commit（[mutation](https://vuex.vuejs.org/zh-cn/mutations.html)）
