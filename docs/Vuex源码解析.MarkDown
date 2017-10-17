@@ -366,3 +366,46 @@ _withCommit (fn) {
 接下来我们来看看Store提供的一些API。
 
 ### commit（[mutation](https://vuex.vuejs.org/zh-cn/mutations.html)）
+
+```javascript
+/* 调用mutation的commit方法 */
+commit (_type, _payload, _options) {
+  // check object-style commit
+  /* 校验参数 */
+  const {
+    type,
+    payload,
+    options
+  } = unifyObjectStyle(_type, _payload, _options)
+
+  const mutation = { type, payload }
+  /* 取出type对应的mutation的方法 */
+  const entry = this._mutations[type]
+  if (!entry) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] unknown mutation type: ${type}`)
+    }
+    return
+  }
+  /* 执行mutation中的所有方法 */
+  this._withCommit(() => {
+    entry.forEach(function commitIterator (handler) {
+      handler(payload)
+    })
+  })
+  /* 通知所有订阅者 */
+  this._subscribers.forEach(sub => sub(mutation, this.state))
+
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    options && options.silent
+  ) {
+    console.warn(
+      `[vuex] mutation type: ${type}. Silent option has been removed. ` +
+      'Use the filter functionality in the vue-devtools'
+    )
+  }
+}
+```
+
+commit方法会调用_mutations中的所有的所有方法
