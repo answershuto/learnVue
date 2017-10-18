@@ -408,4 +408,91 @@ commit (_type, _payload, _options) {
 }
 ```
 
-commit方法会调用_mutations中的所有的所有方法
+commit方法会根据type找到并调用_mutations中的所有type对应的mutation方法，所以当没有namespace的时候，commit方法会触发所有module中的mutation方法。再执行完所有的mutation之后会执行_subscribers中的所有订阅者。我们来看一下_subscribers是什么。
+
+Store给外部提供了一个subscribe方法，用以注册一个订阅函数，会push到Store实例的_subscribers中，同时返回一个从_subscribers中注销该订阅者的方法。
+
+```javascript
+/* 注册一个订阅函数，返回取消订阅的函数 */
+subscribe (fn) {
+  const subs = this._subscribers
+  if (subs.indexOf(fn) < 0) {
+    subs.push(fn)
+  }
+  return () => {
+    const i = subs.indexOf(fn)
+    if (i > -1) {
+      subs.splice(i, 1)
+    }
+  }
+}
+```
+
+在commit结束以后则会调用这些_subscribers中的订阅者，这个订阅者模式提供给外部一个监视state变化的可能。state通过mutation改变时，可以有效补获这些变化。
+
+### dispatch（[action](https://vuex.vuejs.org/zh-cn/actions.html)）
+
+来看一下dispatch的实现。
+
+```javascript
+/* 调用action的dispatch方法 */
+dispatch (_type, _payload) {
+  // check object-style dispatch
+  const {
+    type,
+    payload
+  } = unifyObjectStyle(_type, _payload)
+
+  /* actions中取出type对应的ation */
+  const entry = this._actions[type]
+  if (!entry) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] unknown action type: ${type}`)
+    }
+    return
+  }
+
+  /* 是数组则包装Promise形成一个新的Promise，只有一个则直接返回第0个 */
+  return entry.length > 1
+    ? Promise.all(entry.map(handler => handler(payload)))
+    : entry[0](payload)
+}
+```
+
+以及registerAction时候做的事情。
+
+```javascript
+/* 遍历注册action */
+function registerAction (store, type, handler, local) {
+  /* 取出type对应的action */
+  const entry = store._actions[type] || (store._actions[type] = [])
+  entry.push(function wrappedActionHandler (payload, cb) {
+    let res = handler.call(store, {
+      dispatch: local.dispatch,
+      commit: local.commit,
+      getters: local.getters,
+      state: local.state,
+      rootGetters: store.getters,
+      rootState: store.state
+    }, payload, cb)
+    /* 判断是否是Promise */
+    if (!isPromise(res)) {
+      /* 不是Promise对象的时候转化称Promise对象 */
+      res = Promise.resolve(res)
+    }
+    if (store._devtoolHook) {
+      /* 存在devtool插件的时候触发vuex的error给devtool */
+      return res.catch(err => {
+        store._devtoolHook.emit('vuex:error', err)
+        throw err
+      })
+    } else {
+      return res
+    }
+  })
+}
+```
+
+dispatch
+
+因为registerAction的时候将push进_actions的action进行了封装
