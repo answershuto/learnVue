@@ -493,6 +493,123 @@ function registerAction (store, type, handler, local) {
 }
 ```
 
-dispatch
+因为registerAction的时候将push进_actions的action进行了一层封装（wrappedActionHandler），所以我们在进行dispatch的第一个参数中获取state、commit等方法。之后，执行结果res会被进行判断是否是Promise，不是则会进行一层封装，将其转化成Promise对象。dispatch时则从_actions中取出，只有一个的时候直接返回，否则用Promise.all处理再返回。
 
-因为registerAction的时候将push进_actions的action进行了封装
+### watch
+
+```javascript
+/* 观察一个getter方法 */
+watch (getter, cb, options) {
+  if (process.env.NODE_ENV !== 'production') {
+    assert(typeof getter === 'function', `store.watch only accepts a function.`)
+  }
+  return this._watcherVM.$watch(() => getter(this.state, this.getters), cb, options)
+}
+```
+
+熟悉Vue的朋友应该很熟悉watch这个方法。这里采用了比较巧妙的设计，_watcherVM是一个Vue的实例，所以watch就可以直接采用了Vue内部的watch特性提供了一种观察数据getter变动的方法。
+
+### registerModule
+
+```javascript
+/* 注册一个动态module，当业务进行异步加载的时候，可以通过该接口进行注册动态module */
+registerModule (path, rawModule) {
+  /* 转化称Array */
+  if (typeof path === 'string') path = [path]
+
+  if (process.env.NODE_ENV !== 'production') {
+    assert(Array.isArray(path), `module path must be a string or an Array.`)
+    assert(path.length > 0, 'cannot register the root module by using registerModule.')
+  }
+
+  /*注册*/
+  this._modules.register(path, rawModule)
+  /*初始化module*/
+  installModule(this, this.state, path, this._modules.get(path))
+  // reset store to update getters...
+  /* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
+  resetStoreVM(this, this.state)
+}
+```
+
+registerModule用以注册一个动态模块，也就是在store创建以后再注册模块的时候用该接口。内部实现实际上也只有installModule与resetStoreVM两个步骤，前面已经讲过，这里不再累述。
+
+### unregisterModule
+
+```javascript
+ /* 注销一个动态module */
+unregisterModule (path) {
+  /* 转化称Array */
+  if (typeof path === 'string') path = [path]
+
+  if (process.env.NODE_ENV !== 'production') {
+    assert(Array.isArray(path), `module path must be a string or an Array.`)
+  }
+
+  /*注销*/
+  this._modules.unregister(path)
+  this._withCommit(() => {
+    /* 获取父级的state */
+    const parentState = getNestedState(this.state, path.slice(0, -1))
+    /* 从父级中删除 */
+    Vue.delete(parentState, path[path.length - 1])
+  })
+  /* 重制store */
+  resetStore(this)
+}
+```
+
+同样，与registerModule对应的方法unregisterModule，动态注销模块。实现方法是先从state中删除模块，然后用resetStore来重制store。
+
+### resetStore
+
+```javascript
+/* 重制store */
+function resetStore (store, hot) {
+  store._actions = Object.create(null)
+  store._mutations = Object.create(null)
+  store._wrappedGetters = Object.create(null)
+  store._modulesNamespaceMap = Object.create(null)
+  const state = store.state
+  // init all modules
+  installModule(store, state, [], store._modules.root, true)
+  // reset vm
+  resetStoreVM(store, state, hot)
+}
+```
+
+这里的resetStore其实也就是将store中的_actions等进行初始化以后，重新执行installModule与resetStoreVM来初始化module以及用Vue特性使其“响应式化”，这跟构造函数中的是一致的。
+
+## 插件
+
+Vue提供了一个非常好用的插件[Vue.js devtools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+
+```javascript
+/* 从window对象的__VUE_DEVTOOLS_GLOBAL_HOOK__中获取devtool插件 */
+const devtoolHook =
+  typeof window !== 'undefined' &&
+  window.__VUE_DEVTOOLS_GLOBAL_HOOK__
+
+export default function devtoolPlugin (store) {
+  if (!devtoolHook) return
+
+  /* devtoll插件实例存储在store的_devtoolHook上 */
+  store._devtoolHook = devtoolHook
+
+  /* 出发vuex的初始化事件，并将store的引用地址传给deltool插件，使插件获取store的实例 */
+  devtoolHook.emit('vuex:init', store)
+
+  /* 监听travel-to-state事件 */
+  devtoolHook.on('vuex:travel-to-state', targetState => {
+    /* 重制state */
+    store.replaceState(targetState)
+  })
+
+  /* 订阅store的变化 */
+  store.subscribe((mutation, state) => {
+    devtoolHook.emit('vuex:mutation', mutation, state)
+  })
+}
+```
+
+如果已经安装了该插件，则会在windows对象上暴露一个__VUE_DEVTOOLS_GLOBAL_HOOK__。devtoolHook用在初始化的时候会触发“vuex:init”事件通知插件，然后通过on方法监听“vuex:travel-to-state”事件来重置state。最后通过Store的subscribe方法来添加一个订阅者，在触发commit方法修改mutation数据以后，该订阅者会被通知，从而触发“vuex:mutation”事件。

@@ -481,7 +481,7 @@ function registerAction (store, type, handler, local) {
       res = Promise.resolve(res)
     }
     if (store._devtoolHook) {
-      /* 存在devtool插件的时候触发vuex的error给devtool */
+      /* 存在devtool捕获的时候触发vuex的error给devtool */
       return res.catch(err => {
         store._devtoolHook.emit('vuex:error', err)
         throw err
