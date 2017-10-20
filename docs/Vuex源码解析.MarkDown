@@ -1,12 +1,14 @@
 ## Vuex
 
-我们在使用Vue.js开发复杂的应用时，经常会遇到多个组件共享同一个状态，亦或是多个组件会去更新同一个状态，在应用代码量较少的时候，我们可以组件间通信去维护修改数据，但是当应用逐渐庞大以后，代码就会变得难以维护。
+我们在使用Vue.js开发复杂的应用时，经常会遇到多个组件共享同一个状态，亦或是多个组件会去更新同一个状态，在应用代码量较少的时候，我们可以组件间通信去维护修改数据，或者是通过事件总线来进行数据的传递以及修改。但是当应用逐渐庞大以后，代码就会变得难以维护，从父组件开始通过prop传递多层嵌套的数据由于层级过深而显得异常脆弱，而事件总线也会因为组件的增多、代码量的增大而显得交互错综复杂，难以捋清其中的传递关系。
 
 Vuex是一个专门为Vue.js框架设计的、用于对Vue.js应用程序进行状态管理的库，它借鉴了Flux、redux的基本思想，将共享的数据抽离到全局，以一个单例存放，同时利用Vue.js的响应式机制来进行高效的状态管理与更新。具体使用方法及API可以参考[Vuex的官网](https://vuex.vuejs.org/zh-cn/intro.html)。
 
 先来看一下这张Vuex的数据流程图，熟悉Vuex使用的同学应该已经有所了解。
 
 ![](https://vuex.vuejs.org/zh-cn/images/vuex.png)
+
+Vuex实现了一个单向数据流，在全局拥有一个State存放数据，所有修改State的操作必须通过Mutation进行，Mutation的同时提供了订阅者模式供外部插件调用获取State数据的更新。所有异步接口需要走Action，常见于调用后端接口异步获取更新数据，而Action也是无法直接修改State的，还是需要通过Mutation来修改State的数据。最后，根据State的变化，渲染到视图上。Vuex运行依赖Vue内部数据双向绑定机制，需要new一个Vue对象来实现“响应式化”，所以Vuex是一个专门为Vue.js设计的状态管理库。
 
 ## 安装
 
@@ -237,6 +239,39 @@ function installModule (store, rootState, path, module, hot) {
 
 ### resetStoreVM
 
+在说resetStoreVM之前，先来看一个小demo。
+
+```javascript
+let globalData = {
+    d: 'hello world'
+};
+new Vue({
+    data () {
+        return {
+            $$state: {
+                globalData
+            }
+        }
+    }
+});
+
+/* modify */
+setTimeout(() => {
+    globalData.d = 'hi~';
+}, 1000);
+
+Vue.prototype.globalData = globalData;
+
+/* 任意模板中 */
+<div>{{globalData.d}}</div>
+```
+
+上述代码在全局有一个globalData，它被传入一个Vue对象的data中，之后在任意Vue模板中对该变量进行展示，因为此时globalData已经在Vue的prototype上了所以直接通过this.prototype访问，也就是在模板中的{{prototype.d}}。此时，setTimeout在1s之后将globalData.d进行修改，我们发现模板中的globalData.d发生了变化。其实上述部分就是Vuex依赖Vue核心实现数据的“响应式化”。
+
+不熟悉Vue.js响应式原理的同学可以通过笔者另一篇文章[响应式原理](https://github.com/answershuto/learnVue/blob/master/docs/%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86.MarkDown)了解Vue.js是如何进行数据双向绑定的。
+
+接着来看代码。
+
 ```javascript
 /* 通过vm重设store，新建Vue对象使用Vue内部的响应式实现注册state以及computed */
 function resetStoreVM (store, state, hot) {
@@ -306,7 +341,7 @@ forEachValue(wrappedGetters, (fn, key) => {
 })
 ```
 
-之后Vuex采用了new一个Vue对象来实现数据的“响应式化”，运用Vue.js内部提供的数据双向绑定功能来实现store的数据与视图的同步更新。不熟悉Vue.js响应式原理的同学可以通过笔者另一篇文章[响应式原理](https://github.com/answershuto/learnVue/blob/master/docs/%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86.MarkDown)了解Vue.js是如何进行数据双向绑定的。
+之后Vuex采用了new一个Vue对象来实现数据的“响应式化”，运用Vue.js内部提供的数据双向绑定功能来实现store的数据与视图的同步更新。
 
 ```javascript
 store._vm = new Vue({
