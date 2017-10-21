@@ -648,3 +648,7 @@ export default function devtoolPlugin (store) {
 ```
 
 如果已经安装了该插件，则会在windows对象上暴露一个__VUE_DEVTOOLS_GLOBAL_HOOK__。devtoolHook用在初始化的时候会触发“vuex:init”事件通知插件，然后通过on方法监听“vuex:travel-to-state”事件来重置state。最后通过Store的subscribe方法来添加一个订阅者，在触发commit方法修改mutation数据以后，该订阅者会被通知，从而触发“vuex:mutation”事件。
+
+## 最后
+
+Vuex是一个非常优秀的库，代码量不多且结构清晰，非常适合研究学习其内部实现。最近的一系列源码阅读也使我自己受益匪浅，写这篇文章也希望可以帮助到更多想要学习探索Vuex内部实现原理的同学。

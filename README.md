@@ -36,6 +36,8 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [从template到DOM（Vue.js源码角度看内部运行机制）](./docs/从template到DOM(Vue.js源码角度看内部运行机制).MarkDown)
 
+[Vuex源码解析](./docs/Vuex源码解析.MarkDown)
+
 ### 随笔杂谈
 
 [Vue组件间通信](./docs/Vue组件间通信.MarkDown)
