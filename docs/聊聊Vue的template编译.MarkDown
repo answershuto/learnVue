@@ -84,7 +84,7 @@ Vue.prototype.$mount = function (
 
 ## 一些基础
 
-首先，template会被编译成AST语法树，那么AST是什么？
+首先，template会被编译成AST，那么AST是什么？
 
 在计算机科学中，抽象语法树（abstract syntax tree或者缩写为AST），或者语法树（syntax tree），是源代码的抽象语法结构的树状表现形式，这里特指编程语言的源代码。具体可以查看[抽象语法树](https://zh.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E8%AA%9E%E6%B3%95%E6%A8%B9)。
 
@@ -171,7 +171,7 @@ export default class VNode {
 
 ## createCompiler
 
-createCompiler用以创建编译器，返回值是compile以及compileToFunctions。compile是一个编译器，它会将传入的template转换成对应的AST树、render函数以及staticRenderFns函数。而compileToFunctions则是带缓存的编译器，同时staticRenderFns以及render函数会被转换成Funtion对象。
+createCompiler用以创建编译器，返回值是compile以及compileToFunctions。compile是一个编译器，它会将传入的template转换成对应的AST、render函数以及staticRenderFns函数。而compileToFunctions则是带缓存的编译器，同时staticRenderFns以及render函数会被转换成Funtion对象。
 
 因为不同平台有一些不同的options，所以createCompiler会根据平台区分传入一个baseOptions，会与compile本身传入的options合并得到最终的finalOptions。
 
@@ -295,7 +295,7 @@ createCompiler用以创建编译器，返回值是compile以及compileToFunction
 ## compile
 
 ```javascript
-  /*编译，将模板template编译成AST树、render函数以及staticRenderFns函数*/
+  /*编译，将模板template编译成AST、render函数以及staticRenderFns函数*/
   function compile (
     template: string,
     options?: CompilerOptions
@@ -353,17 +353,17 @@ function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
-  /*parse解析得到ast树*/
+  /*parse解析得到AST*/
   const ast = parse(template.trim(), options)
   /*
-    将AST树进行优化
-    优化的目标：生成模板AST树，检测不需要进行DOM改变的静态子树。
+    将AST进行优化
+    优化的目标：生成模板AST，检测不需要进行DOM改变的静态子树。
     一旦检测到这些静态树，我们就能做以下这些事情：
     1.把它们变成常数，这样我们就再也不需要每次重新渲染时创建新的节点了。
     2.在patch的过程中直接跳过。
  */
   optimize(ast, options)
-  /*根据ast树生成所需的code（内部包含render与staticRenderFns）*/
+  /*根据AST生成所需的code（内部包含render与staticRenderFns）*/
   const code = generate(ast, options)
   return {
     ast,
@@ -373,13 +373,13 @@ function baseCompile (
 }
 ```
 
-baseCompile首先会将模板template进行parse得到一个AST语法树，再通过optimize做一些优化，最后通过generate得到render以及staticRenderFns。
+baseCompile首先会将模板template进行parse得到一个AST，再通过optimize做一些优化，最后通过generate得到render以及staticRenderFns。
 
 ### parse
 
 parse的源码可以参见[https://github.com/answershuto/learnVue/blob/master/vue-src/compiler/parser/index.js#L53](https://github.com/answershuto/learnVue/blob/master/vue-src/compiler/parser/index.js#L53)。
 
-parse会用正则等方式解析template模板中的指令、class、style等数据，形成AST语法树。
+parse会用正则等方式解析template模板中的指令、class、style等数据，形成AST。
 
 ### optimize
 
@@ -387,11 +387,11 @@ optimize的主要作用是标记static静态节点，这是Vue在编译过程中
 
 ### generate
 
-generate是将AST语法树转化成render funtion字符串的过程，得到结果是render的字符串以及staticRenderFns字符串。
+generate是将AST转化成render funtion字符串的过程，得到结果是render的字符串以及staticRenderFns字符串。
 
 ---
 
-至此，我们的template模板已经被转化成了我们所需的AST语法树、render function字符串以及staticRenderFns字符串。
+至此，我们的template模板已经被转化成了我们所需的AST、render function字符串以及staticRenderFns字符串。
 
 ## 举个例子
 
@@ -414,11 +414,11 @@ generate是将AST语法树转化成render funtion字符串的过程，得到结�
 </div>
 ```
 
-转化后得到AST树，如下图：
+转化后得到AST，如下图：
 
 ![img](https://i.loli.net/2017/09/07/59b135001cbfa.png)
 
-我们可以看到最外层的div是这颗AST树的根节点，节点上有许多数据代表这个节点的形态，比如static表示是否是静态节点，staticClass表示静态class属性（非bind:class）。children代表该节点的子节点，可以看到children是一个长度为4的数组，里面包含的是该节点下的四个div子节点。children里面的节点与父节点的结构类似，层层往下形成一棵AST语法树。
+我们可以看到最外层的div是这颗AST的根节点，节点上有许多数据代表这个节点的形态，比如static表示是否是静态节点，staticClass表示静态class属性（非bind:class）。children代表该节点的子节点，可以看到children是一个长度为4的数组，里面包含的是该节点下的四个div子节点。children里面的节点与父节点的结构类似，层层往下形成一棵AST。
 
 再来看看由AST得到的render函数
 
