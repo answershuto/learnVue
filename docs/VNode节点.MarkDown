@@ -316,7 +316,7 @@ export function _createElement (
   normalizationType?: number
 ): VNode {
   /*
-    如果data未定义（undefined或者null）或者是data的__ob__已经定义（代表已经被observed，上面绑定了Oberver对象），
+    如果传递data参数且data的__ob__已经定义（代表已经被observed，上面绑定了Oberver对象），
     https://cn.vuejs.org/v2/guide/render-function.html#约束
     那么创建一个空节点
   */
