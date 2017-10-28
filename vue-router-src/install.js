@@ -3,14 +3,20 @@ import Link from './components/link'
 
 export let _Vue
 
+/* Vue.use安装插件时候需要暴露的install方法 */
 export function install (Vue) {
+  
+  /* 判断是否已安装过 */
   if (install.installed && _Vue === Vue) return
   install.installed = true
 
+  /* 保存Vue实例 */
   _Vue = Vue
 
+  /* 判断是否已定义 */
   const isDef = v => v !== undefined
 
+  /* 注册router实例 */
   const registerInstance = (vm, callVal) => {
     let i = vm.$options._parentVnode
     if (isDef(i) && isDef(i = i.data) && isDef(i = i.registerRouteInstance)) {
@@ -18,10 +24,15 @@ export function install (Vue) {
     }
   }
 
+  /* 混淆进Vue实例，在boforeCreate与destroyed钩子上混淆 */
   Vue.mixin({
+    /* boforeCreate钩子 */
     beforeCreate () {
       if (isDef(this.$options.router)) {
+        /* 在option上面存在router则代表是根组件 */
+        /* 保存跟组件vm */
         this._routerRoot = this
+        /* 保存router */
         this._router = this.$options.router
         this._router.init(this)
         Vue.util.defineReactive(this, '_route', this._router.history.current)

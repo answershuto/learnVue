@@ -227,9 +227,11 @@ function createHref (base: string, fullPath: string, mode) {
   return base ? cleanPath(base + '/' + path) : path
 }
 
+/* Vue.use安装插件时候需要暴露的install方法 */
 VueRouter.install = install
 VueRouter.version = '__VERSION__'
 
+/* 兼容用script标签引用的方法 */
 if (inBrowser && window.Vue) {
   window.Vue.use(VueRouter)
 }
