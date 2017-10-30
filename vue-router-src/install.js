@@ -16,7 +16,7 @@ export function install (Vue) {
   /* 判断是否已定义 */
   const isDef = v => v !== undefined
 
-  /* 注册router实例 */
+  /* 通过registerRouteInstance方法注册router实例 */
   const registerInstance = (vm, callVal) => {
     let i = vm.$options._parentVnode
     if (isDef(i) && isDef(i = i.data) && isDef(i = i.registerRouteInstance)) {
@@ -34,11 +34,15 @@ export function install (Vue) {
         this._routerRoot = this
         /* 保存router */
         this._router = this.$options.router
+        /* VueRouter对象的init方法 */
         this._router.init(this)
+        /* Vue内部方法，为对象defineProperty上在变化时通知的属性 */
         Vue.util.defineReactive(this, '_route', this._router.history.current)
       } else {
+        /* 非根组件则直接从父组件中获取 */
         this._routerRoot = (this.$parent && this.$parent._routerRoot) || this
       }
+      /* 通过registerRouteInstance方法注册router实例 */
       registerInstance(this, this)
     },
     destroyed () {

@@ -49,6 +49,7 @@ function clone (value) {
 }
 
 // the starting route that represents the initial state
+/* 起始路由 */
 export const START = createRoute(null, {
   path: '/'
 })

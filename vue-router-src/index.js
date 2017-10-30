@@ -15,6 +15,7 @@ import { AbstractHistory } from './history/abstract'
 
 import type { Matcher } from './create-matcher'
 
+/* 导出的VueRouter对象，用来包装store */
 export default class VueRouter {
   static install: () => void;
   static version: string;
@@ -34,6 +35,7 @@ export default class VueRouter {
 
   constructor (options: RouterOptions = {}) {
     this.app = null
+    /* 保存vm实例 */
     this.apps = []
     this.options = options
     this.beforeHooks = []
@@ -80,20 +82,25 @@ export default class VueRouter {
     return this.history && this.history.current
   }
 
+  /* 初始化 */
   init (app: any /* Vue component instance */) {
+    /* 未安装就调用init会抛出异常 */
     process.env.NODE_ENV !== 'production' && assert(
       install.installed,
       `not installed. Make sure to call \`Vue.use(VueRouter)\` ` +
       `before creating root instance.`
     )
 
+    /* 将当前vm实例保存在app中 */
     this.apps.push(app)
 
     // main app already initialized.
+    /* 已存在说明已经被init过了，直接返回 */
     if (this.app) {
       return
     }
 
+    /* this.app保存当前vm实例 */
     this.app = app
 
     const history = this.history
