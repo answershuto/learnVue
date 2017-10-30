@@ -92,8 +92,12 @@ function defineReactive (obj, key, val, cb) {
         configurable: true,
         get: ()=>{
             if (Dep.target) {
-                /*Watcher对象存在全局的Dep.target中*/
-                dep.addSub(Dep.target);
+                /*把当前dep的id存入全局的Watcher newDepIds*／
+                Dep.target.newDepIds.add(dep.id);
+                ／*把dep放入Watcher的newDeps*／
+                Dep.target.newDeps.push(dep);
+                ／*把保存dep和dep.id的Watcher放入dep的subs*／
+                dep.addSub(Dep.target);
             }
         },
         set:newVal=> {
