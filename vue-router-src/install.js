@@ -50,17 +50,21 @@ export function install (Vue) {
     }
   })
 
+  /* 在Vue的prototype上面绑定$router，这样可以在任意Vue对象中使用this.$router访问，同时经过Object.defineProperty，访问this.$router即访问this._routerRoot._router */
   Object.defineProperty(Vue.prototype, '$router', {
     get () { return this._routerRoot._router }
   })
 
+  /* 以上同理，访问this.$route即访问this._routerRoot._route */
   Object.defineProperty(Vue.prototype, '$route', {
     get () { return this._routerRoot._route }
   })
 
+  /* 注册touter-view以及router-link组件 */
   Vue.component('RouterView', View)
   Vue.component('RouterLink', Link)
 
+  /* 该对象保存了两个option合并的规则 */
   const strats = Vue.config.optionMergeStrategies
   // use the same hook merging strategy for route hooks
   strats.beforeRouteEnter = strats.beforeRouteLeave = strats.beforeRouteUpdate = strats.created
