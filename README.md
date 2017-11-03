@@ -43,3 +43,17 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 [Vue组件间通信](./docs/Vue组件间通信.MarkDown)
 
 [说说element组件库broadcast与dispatch](./docs/说说element组件库broadcast与dispatch.MarkDown)
+
+## 关于
+
+作者： 染陌
+
+Email：answershuto@gmail.com or answershuto@126.com
+
+Github: [https://github.com/answershuto](https://github.com/answershuto)
+
+知乎：[https://www.zhihu.com/people/cao-yang-49/activities](https://www.zhihu.com/people/cao-yang-49/activities)
+
+知乎专栏： [https://zhuanlan.zhihu.com/ranmo](https://zhuanlan.zhihu.com/ranmo)
+
+掘金：[https://juejin.im/user/58f87ae844d9040069ca7507](https://juejin.im/user/58f87ae844d9040069ca7507)
