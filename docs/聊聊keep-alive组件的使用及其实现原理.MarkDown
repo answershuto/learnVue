@@ -72,3 +72,48 @@ name为a的组件将不会被缓存。
 keep-alive提供了两个生命钩子，分别是activated与deactivated。
 
 因为keep-alive会将组件保存在内存中，并不会销毁以及重新创建，所以不会重新调用组件的created等方法，需要用activated与deactivated这两个生命钩子来得知当前组件是否处于活动状态。
+
+## 深入keep-alive组件实现
+
+说完了keep-alive组件的使用，我们从源码角度看一下keep-alive组件究竟是如何实现组件的缓存的呢？
+
+### render
+
+我们从keep-alive组件的render函数看起。
+
+```javascript
+render () {
+    /* 得到slot插槽中的第一个组件 */
+    const vnode: VNode = getFirstComponentChild(this.$slots.default)
+
+    const componentOptions: ?VNodeComponentOptions = vnode && vnode.componentOptions
+    if (componentOptions) {
+        // check pattern
+        /* 获取组件名称，优先获取组件的name字段，否则是组件的tag */
+        const name: ?string = getComponentName(componentOptions)
+        /* name不在inlcude中或者在exlude中则直接返回vnode（没有取缓存） */
+        if (name && (
+        (this.include && !matches(this.include, name)) ||
+        (this.exclude && matches(this.exclude, name))
+        )) {
+            return vnode
+        }
+        const key: ?string = vnode.key == null
+        // same constructor may get registered as different local components
+        // so cid alone is not enough (#3269)
+        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+        : vnode.key
+        /* 如果已经做过缓存了则直接从缓存中获取组件实例给vnode，还未缓存过则进行缓存 */
+        if (this.cache[key]) {
+            vnode.componentInstance = this.cache[key].componentInstance
+        } else {
+            this.cache[key] = vnode
+        }
+        /* keepAlive标记位 */
+        vnode.data.keepAlive = true
+    }
+    return vnode
+}
+```
+
+首先通过getFirstComponentChild获取第一个子组件。
