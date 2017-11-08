@@ -2,17 +2,16 @@
 
 ## 介绍
 
-Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心得以及收获。以及对于Vue框架，周边库的一些学习心得和个人见解。
+Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心得以及收获。以及对于Vue框架，周边库的一些个人见解。
 
-在学习的过程中我分别为Vue.js、Vuex、Vue-router加上了注释，分别在文件夹[vue-src](./vue-src)、[vuex-src](./vuex-src)以及[vue-router-src](./vue-router-src)中，希望可以帮助有需要的同学更好地学习理解Vue.js及周边库的源码。
+在学习的过程中我为Vue.js（2.3.0）、Vuex（2.4.0）、Vue-router（3.0.1）加上了注释，分别在文件夹[vue-src](./vue-src)、[vuex-src](./vuex-src)以及[vue-router-src](./vue-router-src)中，希望可以帮助有需要的同学更好地学习理解Vue.js及周边库的源码。
 
-感谢尤大提高生产力。
-
-当前Vue.js源码版本2.3.0，Vuex版本为2.4.0，Vue-router版本为3.0.1。
+感谢[尤大](https://github.com/yyx990803)提高生产力。
 
 本项目希望对Vue.js做更进一步的探索与学习，Vue.js基础内容请参考Vue.js官网，[https://cn.vuejs.org/v2/guide/](https://cn.vuejs.org/v2/guide/)。
 可能会有理解存在偏差的地方，欢迎提issue指出，共同学习，共同进步。
 
+---
 
 ## 目录
 
@@ -44,11 +43,13 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [说说element组件库broadcast与dispatch](./docs/说说element组件库broadcast与dispatch.MarkDown)
 
+---
+
 ## 关于
 
 作者： 染陌
 
-Wechat: answershuto 
+微信: answershuto 
 
 Email：answershuto@gmail.com or answershuto@126.com
 
