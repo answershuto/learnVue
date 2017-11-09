@@ -20,8 +20,6 @@ keep-alive是Vue.js的一个内置组件。它能够不活动的组件实例保�
 
 ### 举个栗子
 
-![](https://img3.duitang.com/uploads/item/201604/22/20160422030517_QwZMm.thumb.700_0.jpeg)
-
 ```html
 <keep-alive>
     <coma v-if="test"></coma>
