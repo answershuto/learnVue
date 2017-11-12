@@ -37,6 +37,8 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 [Vuex源码解析](./docs/Vuex源码解析.MarkDown)
 
+[聊聊keep-alive组件的使用及其实现原理](./docs/聊聊keep-alive组件的使用及其实现原理.MarkDown)
+
 ### 随笔杂谈
 
 [Vue组件间通信](./docs/Vue组件间通信.MarkDown)
