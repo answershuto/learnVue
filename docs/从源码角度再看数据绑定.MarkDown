@@ -333,7 +333,7 @@ export const arrayMethods = Object.create(arrayProto)
 
 在保证不污染不覆盖数组原生方法添加监听，主要做了两个操作，第一是通知所有注册的观察者进行响应式处理，第二是如果是添加成员的操作，需要对新成员进行observe。
 
-但是修改了数组的原生方法以后我们还是没法像原生数组一样直接通过数组的下标或者设置length来修改数组，Vue.js提供了[$set()及$remove()方法](http://v1-cn.vuejs.org/guide/list.html#问题)。
+但是修改了数组的原生方法以后我们还是没法像原生数组一样直接通过数组的下标或者设置length来修改数组，可以通过[Vue.set以及splice方法](https://cn.vuejs.org/v2/guide/list.html#%E6%9B%BF%E6%8D%A2%E6%95%B0%E7%BB%84)。
 
 ## Watcher
 
