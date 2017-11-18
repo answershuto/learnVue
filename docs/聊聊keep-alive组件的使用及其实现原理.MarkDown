@@ -23,7 +23,7 @@ keep-alive是Vue.js的一个内置组件。它能够不活动的组件实例保�
 ```html
 <keep-alive>
     <coma v-if="test"></coma>
-    <comb v-else="test"></comb>
+    <comb v-else></comb>
 </keep-alive>
 <button @click="test=handleClick">请点击</button>
 ```
