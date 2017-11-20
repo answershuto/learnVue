@@ -15,31 +15,42 @@ export default {
     }
   },
   render (_, { props, children, parent, data }) {
+    /* 标记位，标记是route-view组件 */
     data.routerView = true
 
     // directly use parent context's createElement() function
     // so that components rendered by router-view can resolve named slots
+    /* 直接使用父组件的createElement函数 */
     const h = parent.$createElement
+    /* props的name，默认'default' */
     const name = props.name
+    /* option中的VueRouter对象 */
     const route = parent.$route
+    /* 在parent上建立一个缓存对象 */
     const cache = parent._routerViewCache || (parent._routerViewCache = {})
 
     // determine current view depth, also check to see if the tree
     // has been toggled inactive but kept-alive.
+    /* 记录组件深度 */
     let depth = 0
+    /* 标记是否是待用（非alive状态）） */
     let inactive = false
+    /* _routerRoot中中存放了跟组件的势力，这边循环向上级访问，直到访问到根组件，得到depth深度 */
     while (parent && parent._routerRoot !== parent) {
       if (parent.$vnode && parent.$vnode.data.routerView) {
         depth++
       }
+      /* 如果_inactive为true，代表是在keep-alive中且是待用（非alive状态） */
       if (parent._inactive) {
         inactive = true
       }
       parent = parent.$parent
     }
+    /* 存放route-view组件的深度 */
     data.routerViewDepth = depth
 
     // render previous view if the tree is inactive and kept-alive
+    /* 如果inactive为true说明在keep-alive组件中，直接从缓存中取 */
     if (inactive) {
       return h(cache[name], data, children)
     }
