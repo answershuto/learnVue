@@ -35,7 +35,7 @@ export default {
     let depth = 0
     /* 标记是否是待用（非alive状态）） */
     let inactive = false
-    /* _routerRoot中中存放了跟组件的势力，这边循环向上级访问，直到访问到根组件，得到depth深度 */
+    /* _routerRoot中中存放了根组件的势力，这边循环向上级访问，直到访问到根组件，得到depth深度 */
     while (parent && parent._routerRoot !== parent) {
       if (parent.$vnode && parent.$vnode.data.routerView) {
         depth++
@@ -57,22 +57,28 @@ export default {
 
     const matched = route.matched[depth]
     // render empty node if no matched route
+    /* 如果没有匹配到的路由，则渲染一个空节点 */
     if (!matched) {
       cache[name] = null
       return h()
     }
 
+    /* 从成功匹配到的路由中取出组件 */
     const component = cache[name] = matched.components[name]
 
     // attach instance registration hook
     // this will be called in the instance's injected lifecycle hooks
-    data.registerRouteInstance = (vm, val) => {
+    /* 注册实例的registration钩子，这个函数将在实例被注入的加入到组件的生命钩子（beforeCreate与destroyed）中被调用 */
+    data.registerRouteInstance = (vm, val) => {  
+      /* 第二个值不存在的时候为注销 */
       // val could be undefined for unregistration
+      /* 获取组件实例 */
       const current = matched.instances[name]
       if (
         (val && current !== vm) ||
         (!val && current === vm)
       ) {
+        /* 这里有两种情况，一种是val存在，则用val替换当前组件实例，另一种则是val不存在，则直接将val（这个时候其实是一个undefined）赋给instances */
         matched.instances[name] = val
       }
     }
