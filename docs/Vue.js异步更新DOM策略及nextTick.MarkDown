@@ -350,7 +350,7 @@ export default {
             test: 0
         };
     },
-    created () {
+    mounted () {
       for(let i = 0; i < 1000; i++) {
         this.test++;
       }
@@ -358,7 +358,7 @@ export default {
 }
 ```
 
-现在有这样的一种情况，created的时候test的值会被++循环执行1000次。
+现在有这样的一种情况，mounted的时候test的值会被++循环执行1000次。
 每次++时，都会根据响应式触发setter->Dep->Watcher->update->patch。
 如果这时候没有异步更新视图，那么每次++都会直接操作DOM更新视图，这是非常消耗性能的。
 所以Vue.js实现了一个queue队列，在下一个tick的时候会统一执行queue中Watcher的run。同时，拥有相同id的Watcher不会被重复加入到该queue中去，所以不会执行1000次Watcher的run。最终更新视图只会直接将test对应的DOM的0变成1000。
