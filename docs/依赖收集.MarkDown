@@ -51,7 +51,7 @@ class Dep () {
 
 ## Watcher
 
-订阅者，当依赖收集的时候会addSub到sub中，在修改data中数据的时候会触dep对象的notify，通知所有Watcher对象去修改对应视图。
+订阅者，当依赖收集的时候会addSub到sub中，在修改data中数据的时候会触发dep对象的notify，通知所有Watcher对象去修改对应视图。
 
 ```javascript
 class Watcher () {
@@ -84,7 +84,7 @@ class Vue {
 }
 
 function defineReactive (obj, key, val, cb) {
-    ／*在闭包内存储一个Dep对象*／
+    /*在闭包内存储一个Dep对象*/
     const dep = new Dep();
 
     Object.defineProperty(obj, key, {
