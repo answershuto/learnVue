@@ -16,7 +16,7 @@ Vue在初始化组件数据时，在生命周期的[beforeCreate](https://github
 
 加注释版的vue源码也可以直接通过[传送门](https://github.com/answershuto/learnVue/tree/master/vue-src)查看，这些是我在阅读Vue源码过程中加的注释，持续更新中。
 
-initData主要是初始化data中的数据，将数据进行Oberver，监听数据的变化，其他的监视原理一致，这里以data为例。
+initData主要是初始化data中的数据，将数据进行Observer，监听数据的变化，其他的监视原理一致，这里以data为例。
 
 ```javascript
 function initData (vm: Component) {
