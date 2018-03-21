@@ -8,7 +8,7 @@ Vue.js是一款MVVM框架，上手快速简单易用，通过响应式在修改�
 那么Vue是如何将所有data下面的所有属性变成可观察的（observable）呢？
 
 ```javascript
-function observer(value, cb) {
+function observe(value, cb) {
     Object.keys(value).forEach((key) => defineReactive(value, key, value[key] , cb))
 }
 
@@ -29,7 +29,7 @@ function defineReactive (obj, key, val, cb) {
 class Vue {
     constructor(options) {
         this._data = options.data;
-        observer(this._data, options.render)
+        observe(this._data, options.render)
     }
 }
 
