@@ -47,6 +47,12 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 ---
 
+## 赞助我
+
+如果觉得这些内容不错，请我喝杯咖啡吧。
+
+![](https://i.loli.net/2018/03/25/5ab7a6958bea2.png)
+
 ## 关于作者
 
 作者： 染陌
@@ -62,3 +68,5 @@ Github: [https://github.com/answershuto](https://github.com/answershuto)
 知乎专栏： [https://zhuanlan.zhihu.com/ranmo](https://zhuanlan.zhihu.com/ranmo)
 
 掘金：[https://juejin.im/user/58f87ae844d9040069ca7507](https://juejin.im/user/58f87ae844d9040069ca7507)
+
+对内容有任何疑问，欢迎联系我。
