@@ -89,7 +89,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 
 ## observe
 
-接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下oberver的index.js文件中。
+接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下observer的index.js文件中。
 
 ```javascript
 /**
