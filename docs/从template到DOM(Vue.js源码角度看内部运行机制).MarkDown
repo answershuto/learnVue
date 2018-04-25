@@ -709,7 +709,7 @@ patchVnode的规则是这样的：
 
 ![img](https://i.loli.net/2017/08/28/59a4015bb2765.png)
 
-首先，在新老两个VNode节点的左右头尾两侧都有一个变量标记，在遍历过程中这几个变量都会向中间靠拢。当oldStartIdx <= oldEndIdx或者newStartIdx <= newEndIdx时结束循环。
+首先，在新老两个VNode节点的左右头尾两侧都有一个变量标记，在遍历过程中这几个变量都会向中间靠拢。当oldStartIdx > oldEndIdx或者newStartIdx > newEndIdx时结束循环。
 
 索引与VNode节点的对应关系：
 oldStartIdx => oldStartVnode

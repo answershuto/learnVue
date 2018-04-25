@@ -6,7 +6,7 @@
 
 ![](https://cn.vuejs.org/images/data.png)
 
-这张图比较清晰地展示了整个流程，首先通过一次渲染操作触发Data的getter（这里保证只有视图中需要被用到的data才会触发getter）进行依赖收集，这时候其实Watcher与data可以看成一种被绑定的状态（实际上是data的闭包中有一个Deps订阅着，在修改的时候会通知所有的Watcher观察者），在data发生变化的时候会触发它的setter，setter通知Watcher，Watcher进行回调通知组件重新渲染的函数，之后根据diff算法来决定是否发生视图的更新。
+这张图比较清晰地展示了整个流程，首先通过一次渲染操作触发Data的getter（这里保证只有视图中需要被用到的data才会触发getter）进行依赖收集，这时候其实Watcher与data可以看成一种被绑定的状态（实际上是data的闭包中有一个Deps订阅者，在修改的时候会通知所有的Watcher观察者），在data发生变化的时候会触发它的setter，setter通知Watcher，Watcher进行回调通知组件重新渲染的函数，之后根据diff算法来决定是否发生视图的更新。
 
 Vue在初始化组件数据时，在生命周期的[beforeCreate](https://github.com/vuejs/vue/blob/dev/src/core/instance/init.js#L55)与[created](https://github.com/vuejs/vue/blob/dev/src/core/instance/init.js#L59)钩子函数之间实现了对[data、props、computed、methods、events以及watch](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L43)的处理。
 
@@ -89,7 +89,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 
 ## observe
 
-接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下oberver的index.js文件中。
+接下来是[observe](https://github.com/vuejs/vue/blob/dev/src/core/observer/index.js#L106)，这个函数定义在core文件下observer的index.js文件中。
 
 ```javascript
 /**
