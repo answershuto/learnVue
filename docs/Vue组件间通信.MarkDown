@@ -15,7 +15,7 @@
 
 父组件vue模板father.vue
 
-```
+``` vue
 <template>
     <child :msg="message"></child>
 </template>
@@ -39,7 +39,7 @@ export default {
 
 子组件vue模板child.vue
 
-```
+``` vue
 <template>
     <div>{{msg}}</div>
 </template>
@@ -75,7 +75,7 @@ export default {
 
 父组件vue模板father.vue
 
-```
+``` vue
 <template>
     <child @msgFunc="func"></child>
 </template>
@@ -99,7 +99,7 @@ export default {
 
 子组件vue模板child.vue
 
-```
+``` vue
 <template>
     <button @click="handleClick">点我</button>
 </template>
