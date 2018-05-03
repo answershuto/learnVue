@@ -154,8 +154,8 @@ export class  {
     this.dep = new Dep()
     this.vmCount = 0
 
-    /* 
-    将Observer实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放Observer实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16 
+    /*
+    将Observer实例绑定到data的__ob__属性上面去，之前说过observe的时候会先检测是否已经有__ob__对象存放Observer实例了，def方法定义可以参考https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L16
     */
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -319,7 +319,7 @@ export const arrayMethods = Object.create(arrayProto)
         break
     }
     if (inserted) ob.observeArray(inserted)
-      
+
     // notify change
     /*dep通知所有注册的观察者进行响应式处理*/
     ob.dep.notify()
@@ -337,7 +337,7 @@ export const arrayMethods = Object.create(arrayProto)
 
 ## Watcher
 
-[Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。依赖收集以后Watcher对象会被保存在Deps中，数据变动的时候会由于Deps通知Watcher实例，然后由Watcher实例回调cb进行视图的更新。
+[Watcher](https://github.com/vuejs/vue/blob/dev/src/core/observer/watcher.js#L24)是一个观察者对象。依赖收集以后Watcher对象会被保存在Deps中，数据变动的时候会由Deps通知Watcher实例，然后由Watcher实例回调cb进行视图的更新。
 
 ```javascript
 export default class Watcher {
