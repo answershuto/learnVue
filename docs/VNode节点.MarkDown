@@ -132,17 +132,17 @@ isOnce: 是否有v-once指令
 
 ```json
 {
-    tag: 'div'
-    data: {
-        class: 'test'
+    "tag": "div",
+    "data": {
+        "class": "test"
     },
-    children: [
+    "children": [
         {
-            tag: 'span',
-            data: {
-                class: 'demo'
-            }
-            text: 'hello,VNode'
+            "tag": "span",
+            "data": {
+                "class": "demo"
+            },
+            "text": "hello,VNode"
         }
     ]
 }
