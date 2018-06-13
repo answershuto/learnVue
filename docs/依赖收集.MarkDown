@@ -26,7 +26,7 @@ new Vue({
 定义一个依赖收集类Dep。
 
 ```javascript
-class Dep () {
+class Dep {
     constructor () {
         this.subs = [];
     }
@@ -47,6 +47,13 @@ class Dep () {
         }
     }
 }
+function remove (arr, item) {
+    if (arr.length) {
+        const index = arr.indexOf(item)
+        if (index > -1) {
+            return arr.splice(index, 1)
+    }
+}
 ```
 
 ## Watcher
@@ -54,7 +61,7 @@ class Dep () {
 订阅者，当依赖收集的时候会addSub到sub中，在修改data中数据的时候会触发dep对象的notify，通知所有Watcher对象去修改对应视图。
 
 ```javascript
-class Watcher () {
+class Watcher {
     constructor (vm, expOrFn, cb, options) {
         this.cb = cb;
         this.vm = vm;
