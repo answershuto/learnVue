@@ -19,8 +19,10 @@ function defineReactive (obj, key, val, cb) {
         get: ()=>{
             /*....依赖收集等....*/
             /*Github:https://github.com/answershuto*/
+            return val
         },
         set:newVal=> {
+            val = newVal;
             cb();/*订阅者收到消息的回调*/
         }
     })
@@ -54,7 +56,7 @@ let app = new Vue({
 我们可以在Vue的构造函数constructor中为data执行一个代理[proxy](https://github.com/vuejs/vue/blob/dev/src/core/instance/state.js#L33)。这样我们就把data上面的属性代理到了vm实例上。
 
 ```javascript
-_proxy(options.data);/*构造函数中*/
+_proxy.call(this, options.data);/*构造函数中*/
 
 /*代理*/
 function _proxy (data) {
