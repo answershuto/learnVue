@@ -5,7 +5,7 @@
 ## 初始化事件
 
 初始化事件在vm上创建一个_events对象，用来存放事件。_events的内容如下：
-```json
+```javascript
 {
     eventName: [func1, func2, func3]
 }
