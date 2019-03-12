@@ -70,7 +70,7 @@ export default class VNode {
     this.raw = false
     /*静态节点标志*/
     this.isStatic = false
-    /*是否作为跟节点插入*/
+    /*是否作为根节点插入*/
     this.isRootInsert = true
     /*是否为注释节点*/
     this.isComment = false
@@ -130,7 +130,7 @@ isOnce: 是否有v-once指令
 
 打个比方，比如说我现在有这么一个VNode树
 
-```json
+```JavaScript
 {
     tag: 'div'
     data: {
