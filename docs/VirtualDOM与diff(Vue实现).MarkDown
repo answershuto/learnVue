@@ -215,7 +215,7 @@ function sameVnode (a, b) {
 // so they need to be treated as different nodes
 /*
   判断当标签是<input>的时候，type是否相同
-  某些浏览器不支持动态修改<input>类型，所以他们被视为不同类型
+  某些浏览器不支持动态修改<input>类型，所以他们被视为不同节点
 */
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
