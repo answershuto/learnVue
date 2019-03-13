@@ -515,7 +515,7 @@ isOnce: 是否有v-once指令
 
 打个比方，比如说我现在有这么一个VNode树
 
-```json
+```JavaScript
 {
     tag: 'div'
     data: {
