@@ -42,7 +42,7 @@ export function initRender (vm: Component) {
   vm._c = (a, b, c, d) => createElement(vm, a, b, c, d, false)
   // normalization is always applied for the public version, used in
   // user-written render functions.
-  /*常规方法呗用于公共版本，被用来作为用户界面的渲染方法*/
+  /*常规方法被用于公共版本，被用来作为用户界面的渲染方法*/
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 }
 
