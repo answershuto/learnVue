@@ -197,7 +197,7 @@ export class  {
    */
   observeArray (items: Array<any>) {
 
-    /*数组需要便利每一个成员进行observe*/
+    /*数组需要遍历每一个成员进行observe*/
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
     }
@@ -280,7 +280,7 @@ export const arrayMethods = Object.create(arrayProto)
  * Intercept mutating methods and emit events
  */
  /*这里重写了数组的这些方法，在保证不污染原生数组原型的情况下重写数组的这些方法，截获数组的成员发生的变化，执行原生数组操作的同时dep通知关联的所有观察者进行响应式处理*/
-;[
+[
   'push',
   'pop',
   'shift',
@@ -420,7 +420,7 @@ export default class Watcher {
 
     /*
       执行了getter操作，看似执行了渲染操作，其实是执行了依赖收集。
-      在将Dep.target设置为自生观察者实例以后，执行getter操作。
+      在将Dep.target设置为自身观察者实例以后，执行getter操作。
       譬如说现在的的data中可能有a、b、c三个数据，getter渲染需要依赖a跟c，
       那么在执行getter的时候就会触发a跟c两个数据的getter函数，
       在getter函数中即可判断Dep.target是否存在然后完成依赖收集，
