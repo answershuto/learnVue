@@ -144,7 +144,7 @@ Vue的响应式数据都会有一个__ob__的属性作为标记，里面存放�
  * object's property keys into getter/setters that
  * collect dependencies and dispatches updates.
  */
-export class  {
+export class Observer {
   value: any;
   dep: Dep;
   vmCount: number; // number of vms that has this object as root $data
