@@ -9,7 +9,7 @@ let vm = new Vue({
 
 很多同学好奇，在new一个Vue对象的时候，内部究竟发生了什么？
 
-究竟Vue.js是如何将data中的数据渲染到真实的宿主环境环境中的？
+究竟Vue.js是如何将data中的数据渲染到真实的宿主环境中的？
 
 又是如何通过“响应式”修改数据的？
 
@@ -32,7 +32,7 @@ function Vue (options) {
 }
 ```
 
-Vue的构造类只做了一件事情，就是调用_init函数进行
+Vue的构造类只做了一件事情，就是调用_init函数进行初始化
 
 来看一下init的代码
 
@@ -263,7 +263,7 @@ export const arrayMethods = Object.create(arrayProto)
  * Intercept mutating methods and emit events
  */
  /*这里重写了数组的这些方法，在保证不污染原生数组原型的情况下重写数组的这些方法，截获数组的成员发生的变化，执行原生数组操作的同时dep通知关联的所有观察者进行响应式处理*/
-;[
+[
   'push',
   'pop',
   'shift',
@@ -312,7 +312,7 @@ export const arrayMethods = Object.create(arrayProto)
 
 ```
 
-从数组的原型新建一个Object.create(arrayProto)对象，通过修改此原型可以保证原生数组方法不被污染。如果当前浏览器支持__proto__这个属性的话就可以直接覆盖该属性则使数组对象具有了重写后的数组方法。如果没有该属性的浏览器，则必须通过遍历def所有需要重写的数组方法，这种方法效率较低，所以优先使用第一种。
+从数组的原型新建一个Object.create(arrayProto)对象，通过修改此原型可以保证原生数组方法不被污染。如果当前浏览器支持__proto__这个属性的话就可以直接覆盖该属性使数组对象具有了重写后的数组方法。如果浏览器没有该属性，则必须通过遍历def所有需要重写的数组方法，这种方法效率较低，所以优先使用第一种。
 
 在保证不污染不覆盖数组原生方法添加监听，主要做了两个操作，第一是通知所有注册的观察者进行响应式处理，第二是如果是添加成员的操作，需要对新成员进行observe。
 
@@ -323,7 +323,7 @@ export const arrayMethods = Object.create(arrayProto)
 
 ## template编译
 
-在$mount过程中，如果是独立构建构建，则会在此过程中将template编译成render function。当然，你也可以采用运行时构建。具体参考[运行时-编译器-vs-只包含运行时](https://cn.vuejs.org/v2/guide/installation.html#运行时-编译器-vs-只包含运行时)。
+在$mount过程中，如果是使用独立构建，则会在此过程中将template编译成render function。当然，你也可以采用运行时构建。具体参考[运行时-编译器-vs-只包含运行时](https://cn.vuejs.org/v2/guide/installation.html#运行时-编译器-vs-只包含运行时)。
 
 template是如何被编译成render function的呢？
 

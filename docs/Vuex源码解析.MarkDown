@@ -8,7 +8,7 @@ Vuex是一个专门为Vue.js框架设计的、用于对Vue.js应用程序进行�
 
 先来看一下这张Vuex的数据流程图，熟悉Vuex使用的同学应该已经有所了解。
 
-![](https://vuex.vuejs.org/zh-cn/images/vuex.png)
+![](https://vuex.vuejs.org/vuex.png)
 
 Vuex实现了一个单向数据流，在全局拥有一个State存放数据，所有修改State的操作必须通过Mutation进行，Mutation的同时提供了订阅者模式供外部插件调用获取State数据的更新。所有异步接口需要走Action，常见于调用后端接口异步获取更新数据，而Action也是无法直接修改State的，还是需要通过Mutation来修改State的数据。最后，根据State的变化，渲染到视图上。Vuex运行依赖Vue内部数据双向绑定机制，需要new一个Vue对象来实现“响应式化”，所以Vuex是一个专门为Vue.js设计的状态管理库。
 
@@ -51,7 +51,7 @@ export function install (_Vue) {
 }
 ```
 
-这段install代码做了两件事情，一件是防止Vuex被重复安装，另一件是执行applyMixin，目的是执行vuexInit方法初始化Vuex。Vuex针对Vue1.0与2.0分别进行了不同的处理，如果是Vue1.0，Vuex会将vuexInit方法放入Vue的_init方法中，而对于Vue2.0，则会将vuexinit混淆进Vue的beforeCreacte钩子中。来看一下vuexInit的代码。
+这段install代码做了两件事情，一件是防止Vuex被重复安装，另一件是执行applyMixin，目的是执行vuexInit方法初始化Vuex。Vuex针对Vue1.0与2.0分别进行了不同的处理，如果是Vue1.0，Vuex会将vuexInit方法放入Vue的_init方法中，而对于Vue2.0，则会将vuexinit混淆进Vue的beforeCreate钩子中。来看一下vuexInit的代码。
 
 ```javascript
  /*Vuex的init钩子，会存入每一个Vue实例等钩子列表*/
@@ -76,7 +76,7 @@ vuexInit会尝试从options中获取store，如果当前组件是根组件（Roo
 
 ## Store
 
-我们传入到根组件到store，就是Store实例，用Vuex提供到Store方法构造。
+我们传入到根组件的store，就是Store实例，用Vuex提供的Store方法构造。
 
 ```javascript
 export default new Vuex.Store({
@@ -161,7 +161,7 @@ constructor (options = {}) {
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
-    /*初始化根module，这也同时递归注册了所有子modle，收集所有module的getter到_wrappedGetters中去，this._modules.root代表根module才独有保存的Module对象*/
+    /*初始化根module，这也同时递归注册了所有子module，收集所有module的getter到_wrappedGetters中去，this._modules.root代表根module才独有保存的Module对象*/
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
@@ -184,7 +184,7 @@ Store的构造类除了初始化一些内部变量以外，主要执行了instal
 
 ### installModule
 
-installModule的作用主要是用为module加上namespace名字空间（如果有）后，注册mutation、action以及getter，同时递归安装所有子module。
+installModule的作用主要是为module加上namespace名字空间（如果有）后，注册mutation、action以及getter，同时递归安装所有子module。
 
 ```javascript
 /*初始化module*/
@@ -207,7 +207,7 @@ function installModule (store, rootState, path, module, hot) {
     /* module的name */
     const moduleName = path[path.length - 1]
     store.`_withCommit`(() => {
-      /* 将子module设置称响应式的 */
+      /* 将子module设成响应式的 */
       Vue.set(parentState, moduleName, module.state)
     })
   }
@@ -367,7 +367,7 @@ Vuex的Store构造类的option有一个strict的参数，可以控制Vuex执行�
 function enableStrictMode (store) {
   store._vm.$watch(function () { return this._data.$$state }, () => {
     if (process.env.NODE_ENV !== 'production') {
-      /* 检测store中的_committing的值，如果是true代表不是通过mutation的方法修改的 */
+      /* 检测store中的_committing的值，如果是false代表不是通过mutation的方法修改的 */
       assert(store._committing, `Do not mutate vuex store state outside mutation handlers.`)
     }
   }, { deep: true, sync: true })
@@ -398,7 +398,7 @@ _withCommit (fn) {
 }
 ```
 
-我们发现，通过commit（mutation）修改state数据的时候，会再调用mutation方法之前将committing置为true，接下来再通过mutation函数修改state中的数据，这时候触发$watch中的回调断言committing是不会抛出异常的（此时committing为true）。而当我们直接修改state的数据时，触发$watch的回调执行断言，这时committing为false，则会抛出异常。这就是Vuex的严格模式的实现。
+我们发现，通过commit（mutation）修改state数据的时候，会在调用mutation方法之前将committing置为true，接下来再通过mutation函数修改state中的数据，这时候触发$watch中的回调断言committing是不会抛出异常的（此时committing为true）。而当我们直接修改state的数据时，触发$watch的回调执行断言，这时committing为false，则会抛出异常。这就是Vuex的严格模式的实现。
 
 接下来我们来看看Store提供的一些API。
 
@@ -480,7 +480,7 @@ dispatch (_type, _payload) {
     payload
   } = unifyObjectStyle(_type, _payload)
 
-  /* actions中取出type对应的ation */
+  /* actions中取出type对应的action */
   const entry = this._actions[type]
   if (!entry) {
     if (process.env.NODE_ENV !== 'production') {
