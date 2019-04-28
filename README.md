@@ -55,11 +55,11 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 ![](https://i.loli.net/2018/04/01/5ac0836626d86.jpg)
 
-## 赞助我
+## 我的公众号
 
-如果觉得这些内容不错，请我喝杯咖啡吧。
+长期分享各种前端技术，扫码或搜索“染陌的技术空间”
 
-![](https://i.loli.net/2018/03/26/5ab9081f17fe5.jpg)
+![](https://img.alicdn.com/tfs/TB1rWrVTgHqK1RjSZFgXXa7JXXa-258-258.jpg)
 
 ## 关于作者
 
