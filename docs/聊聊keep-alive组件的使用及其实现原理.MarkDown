@@ -171,7 +171,7 @@ if (this.cache[key]) {
 
 ### watch
 
-用watch来监听pruneCache与pruneCache这两个属性的改变，在改变的时候修改cache缓存中的缓存数据。
+用watch来监听include与exclude这两个属性的改变，在改变的时候修改cache缓存中的缓存数据。
 
 ```javascript
 watch: {
