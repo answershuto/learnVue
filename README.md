@@ -53,13 +53,11 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 笔者撰写的[《剖析 Vue.js 内部运行机制》](https://juejin.im/book/5a36661851882538e2259c0f)或许可以帮到你。
 
-![](https://i.loli.net/2018/04/01/5ac0836626d86.jpg)
-
 ## 我的公众号
 
-长期分享各种前端技术，扫码或搜索“染陌的技术空间”
+长期分享各种前端技术，扫码或搜索“前端技术优选”
 
-![](https://img.alicdn.com/tfs/TB1rWrVTgHqK1RjSZFgXXa7JXXa-258-258.jpg)
+![](https://img.alicdn.com/tfs/TB1N04OXoKF3KVjSZFEXXXExFXa-344-344.jpg)
 
 ## 关于作者
 
