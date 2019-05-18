@@ -330,7 +330,7 @@ function resetStoreVM (store, state, hot) {
 }
 ```
 
-resetStoreVM首先会遍历wrappedGetters，使用Object.defineProperty方法为每一个getter绑定上get方法，这样我们就可以在组件里访问this.$store.getter.test就等同于访问store._vm.test。
+resetStoreVM首先会遍历wrappedGetters，使用Object.defineProperty方法为每一个getter绑定上get方法，这样我们就可以在组件里访问this.$store.getters.test就等同于访问store._vm.test。
 
 ```javascript
 forEachValue(wrappedGetters, (fn, key) => {
