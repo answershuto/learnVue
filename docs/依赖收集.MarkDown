@@ -52,6 +52,7 @@ function remove (arr, item) {
         const index = arr.indexOf(item)
         if (index > -1) {
             return arr.splice(index, 1)
+        }
     }
 }
 ```
@@ -70,11 +71,11 @@ class Watcher {
         Dep.target = this;
         /*Github:https://github.com/answershuto*/
         /*触发渲染操作进行依赖收集*/
-        this.cb.call(this.vm);
+        this.cb && this.cb.call(this.vm);
     }
 
     update () {
-        this.cb.call(this.vm);
+        this.cb && this.cb.call(this.vm);
     }
 }
 ```
