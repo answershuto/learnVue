@@ -97,7 +97,7 @@ function initProps (vm: Component, propsOptions: Object) {
       }
       defineReactive(props, key, value, () => {
         /*
-          由于父组件重新渲染的时候会充血prop的值，所以应该直接使用prop来作为一个data或者计算属性的依赖
+          由于父组件重新渲染的时候会重写prop的值，所以应该直接使用prop来作为一个data或者计算属性的依赖
           https://cn.vuejs.org/v2/guide/components.html#字面量语法-vs-动态语法
         */
         if (vm.$parent && !observerState.isSettingProps) {

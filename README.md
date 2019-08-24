@@ -57,22 +57,21 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 扫码或微信搜索“前端技术优选”，长期分享前端及Node.js领域优质技术博文，欢迎关注。
 
-![](https://img.alicdn.com/tfs/TB1JpCeXR1D3KVjSZFyXXbuFpXa-344-344.jpg)
+<img src="https://img.alicdn.com/tfs/TB1JpCeXR1D3KVjSZFyXXbuFpXa-344-344.jpg" width="300px;"/><br />
 
+## 与更多技术同行交流
+
+<img src="./images/youxuan.png" width="300px;"/><br />
 
 ## 关于作者
 
 作者： 染陌
 
-微信: answershuto 
-
-Email：answershuto@gmail.com or answershuto@126.com
+Email：answershuto@gmail.com
 
 Github: [https://github.com/answershuto](https://github.com/answershuto)
 
 知乎：[https://www.zhihu.com/people/cao-yang-49/activities](https://www.zhihu.com/people/cao-yang-49/activities)
-
-知乎专栏： [https://zhuanlan.zhihu.com/ranmo](https://zhuanlan.zhihu.com/ranmo)
 
 掘金：[https://juejin.im/user/58f87ae844d9040069ca7507](https://juejin.im/user/58f87ae844d9040069ca7507)
 
