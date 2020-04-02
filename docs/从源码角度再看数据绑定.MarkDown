@@ -123,7 +123,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   }
   if (asRootData && ob) {
 
-    /*如果是根数据则计数，后面Observer中的observe的asRootData非true*/
+    /*如果是根数据则计数，后面Observer中的observe的asRootData为true*/
     ob.vmCount++
   }
   return ob
