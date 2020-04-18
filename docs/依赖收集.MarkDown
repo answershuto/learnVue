@@ -52,6 +52,7 @@ function remove (arr, item) {
         const index = arr.indexOf(item)
         if (index > -1) {
             return arr.splice(index, 1)
+        }
     }
 }
 ```
