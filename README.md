@@ -57,11 +57,11 @@ Vue.js源码分析，记录了个人学习Vue.js源码的过程中的一些心�
 
 扫码或微信搜索“前端技术优选”，长期分享前端及Node.js领域优质技术博文，欢迎关注。
 
-<img src="https://img.alicdn.com/tfs/TB1JpCeXR1D3KVjSZFyXXbuFpXa-344-344.jpg" width="300px;"/><br />
+![前端技术优选](https://i.loli.net/2020/04/29/ZxXGiWdU1f943Jy.jpg)
 
 ## 与更多技术同行交流
 
-<img src="./images/youxuan.png" width="300px;"/><br />
+![加群](https://i.loli.net/2020/04/29/pvof3IGCcgMB2ls.png)
 
 ## 关于作者
 
