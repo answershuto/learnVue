@@ -62,7 +62,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
-    /*基于后端渲染Vue.prototype.__patch__被用来作为一个入口*/
+    /*Vue.prototype.__patch__方法在入口处platforms/web/runtime/index.js注入。该方法是作为渲染过程的后台方法被使用到。渲染过程为：render函数 => vnode虚拟dom => 真实dom*/
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(
