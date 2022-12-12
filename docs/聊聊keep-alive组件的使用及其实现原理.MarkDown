@@ -1,6 +1,6 @@
 ## keep-alive
 
-keep-alive是Vue.js的一个内置组件。它能够不活动的组件实例保存在内存中，而不是直接将其销毁，它是一个抽象组件，不会被渲染到真实DOM中，也不会出现在父组件链中。
+keep-alive是Vue.js的一个内置组件。它能够将不活动的组件实例保存在内存中，而不是直接将其销毁，它是一个抽象组件，不会被渲染到真实DOM中，也不会出现在父组件链中。
 
 它提供了include与exclude两个属性，允许组件有条件地进行缓存。
 
@@ -171,7 +171,7 @@ if (this.cache[key]) {
 
 ### watch
 
-用watch来监听pruneCache与pruneCache这两个属性的改变，在改变的时候修改cache缓存中的缓存数据。
+用watch来监听include与exclude这两个属性的改变，在改变的时候修改cache缓存中的缓存数据。
 
 ```javascript
 watch: {
