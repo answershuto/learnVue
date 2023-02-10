@@ -383,7 +383,7 @@ patchVnode的规则是这样的：
             /*因为已经patchVnode进去了，所以将这个老节点赋值undefined，之后如果还有新节点与该节点key相同可以检测出来提示已有重复的key*/
             oldCh[idxInOld] = undefined
             /*当有标识位canMove实可以直接插入oldStartVnode对应的真实DOM节点前面*/
-            canMove && nodeOps.insertBefore(parentElm, newStartVnode.elm, oldStartVnode.elm)
+            canMove && nodeOps.insertBefore(parentElm, elmToMove.elm, oldStartVnode.elm)
             newStartVnode = newCh[++newStartIdx]
           } else {
             // same key but different element. treat as new element
